@@ -17,12 +17,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Balance
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material.icons.filled.SafetyCheck
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Thermostat
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Vibration
+import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -56,6 +62,12 @@ private data class Tool(
 
 private val TOOLS = listOf(
     Tool("level", "Spirit level", Icons.Filled.Balance, live = true),
+    Tool("compass", "Compass", Icons.Filled.Explore, live = true),
+    Tool("torch", "Torch + strobe", Icons.Filled.FlashlightOn, live = true),
+    Tool("vibration", "Vibration meter", Icons.Filled.Vibration, live = true),
+    Tool("tally", "Tally + stopwatch", Icons.Filled.Timer, live = true),
+    Tool("qr", "QR scanner", Icons.Filled.QrCode2, live = true),
+    Tool("wifi", "WiFi analyzer", Icons.Filled.Wifi, live = true),
     Tool("lux", "Light meter", Icons.Filled.Lightbulb, live = false),
     Tool("emf", "Metal + EMF", Icons.Filled.SafetyCheck, live = false),
     Tool("db", "Sound meter", Icons.Filled.Mic, live = false),
@@ -77,6 +89,14 @@ fun ToolboxNav() {
             })
         }
         composable("level") { LevelScreen(onBack = { nav.popBackStack() }) }
+        composable("compass") { CompassScreen(onBack = { nav.popBackStack() }) }
+        composable("torch") { TorchScreen(onBack = { nav.popBackStack() }) }
+        composable("vibration") {
+            VibrationScreen(onBack = { nav.popBackStack() })
+        }
+        composable("tally") { TallyScreen(onBack = { nav.popBackStack() }) }
+        composable("qr") { QrScreen(onBack = { nav.popBackStack() }) }
+        composable("wifi") { WifiScreen(onBack = { nav.popBackStack() }) }
     }
 }
 

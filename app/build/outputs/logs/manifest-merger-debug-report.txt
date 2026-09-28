@@ -1,16 +1,22 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-22:12
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-22:12
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-22:12
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-22:12
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-29:12
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-29:12
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-29:12
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-29:12
+MERGED from [androidx.camera:camera-video:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1910795be0a16ce71cd3346dedf45586/transformed/camera-video-1.4.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.camera:camera-view:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/0af6e96b9da586cadc1de9f6b9ef8638/transformed/camera-view-1.4.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.camera:camera-lifecycle:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/f9e40431be1505a6d5f83d290d934006/transformed/camera-lifecycle-1.4.1/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:17:1-36:12
+MERGED from [androidx.camera:camera-core:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/bd06696429c1337ddf4129e4715b090e/transformed/camera-core-1.4.1/AndroidManifest.xml:17:1-36:12
 MERGED from [androidx.navigation:navigation-runtime-android:2.10.1] /home/kedhar/.gradle/caches/9.7.1/transforms/3fb7fe3eb80457f6b037e470a01f9c97/transformed/navigation-runtime/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-common-android:2.10.1] /home/kedhar/.gradle/caches/9.7.1/transforms/9ed5a8e3cf52e6aa9a035ef223fffc51/transformed/navigation-common/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-compose-android:2.10.1] /home/kedhar/.gradle/caches/9.7.1/transforms/57815ee7224ee054060b1e46e4949fef/transformed/navigation-compose/AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.compose.foundation:foundation-layout-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1f1cd718828c4c3373319f1d18a138e5/transformed/foundation-layout/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.animation:animation-core-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/f0f2d6999aaa7e34aa29978a14236926/transformed/animation-core/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.material:material-ripple-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/077c059584526ef845d28e580606a851/transformed/material-ripple/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.animation:animation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/c35b6a86cb5d4ce76fcd1175bd82eb5e/transformed/animation/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1f1cd718828c4c3373319f1d18a138e5/transformed/foundation-layout/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/e37f2c71bded69dcbe53f555dcf8ec37/transformed/foundation/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.ui:ui-tooling-data-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1d6c16c81f932193707f58a77e27f63b/transformed/ui-tooling-data/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.ui:ui-unit-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/c1fd66f671207b0cc05d6038b23197aa/transformed/ui-unit/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.ui:ui-geometry-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/ff22da62fdd8c6d2ceb39e6123aad328/transformed/ui-geometry/AndroidManifest.xml:2:1-7:12
@@ -20,35 +26,46 @@ MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.12.1] /home/kedhar
 MERGED from [androidx.compose.ui:ui-graphics-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/5f31481082df1fd88b310e0e992a002b/transformed/ui-graphics/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.ui:ui-tooling-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/78c8064863411a6dc2863078562aee12/transformed/ui-tooling/AndroidManifest.xml:17:1-28:12
 MERGED from [androidx.compose.material3:material3-android:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/4be30ed5fbf5d158eb3eb53d79578037/transformed/material3/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.compose.foundation:foundation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/e37f2c71bded69dcbe53f555dcf8ec37/transformed/foundation/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.appcompat:appcompat:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0e1ae65ca49fa88e473032c1c4214fae/transformed/appcompat-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.fragment:fragment:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/cc31d45c76a0ad2f2bb3814723268711/transformed/fragment-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.activity:activity-ktx:1.13.0] /home/kedhar/.gradle/caches/9.7.1/transforms/7b5817b68dccab7d0e83400debc752db/transformed/activity-ktx-1.13.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.activity:activity:1.13.0] /home/kedhar/.gradle/caches/9.7.1/transforms/8a74023ef7b674a6fc0aea32823f3dc5/transformed/activity-1.13.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.activity:activity-compose:1.13.0] /home/kedhar/.gradle/caches/9.7.1/transforms/3fed22424901820988ad7772ec9f47df/transformed/activity-compose-1.13.0/AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.navigationevent:navigationevent-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/4a864d897fd26bec3a0c27dc3fa77874/transformed/navigationevent/AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.navigationevent:navigationevent-compose-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/e66d8071e6ec9da82c493c9059fe0163/transformed/navigationevent-compose/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:17:1-35:12
 MERGED from [androidx.lifecycle:lifecycle-process:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2c86240f8073fccfe3a2222fc24fe83d/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:17:1-35:12
-MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/272a18a66dff970ee12063e0237a44dc/transformed/lifecycle-livedata-core-2.11.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d2e5af12d3d3a91cc59354a6f7256861/transformed/lifecycle-viewmodel-compose/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d1ea3fb8542fdfe37f1980155e02379a/transformed/lifecycle-viewmodel-savedstate/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/ca7c58e6849256917323ea170216d2fc/transformed/lifecycle-runtime-ktx/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.loader:loader:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/831267f3cff3b84de0548229f5f42697/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/335aba204ca502cc4af18ff28abb7889/transformed/lifecycle-viewmodel-2.11.0/AndroidManifest.xml:2:1-5:12
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/5ec5ed3c6d06a77b282a3574643b7d54/transformed/lifecycle-viewmodel/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/df7f13db856fcfa4aad199e394c7b8b5/transformed/lifecycle-livedata-core-ktx-2.11.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/272a18a66dff970ee12063e0237a44dc/transformed/lifecycle-livedata-core-2.11.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.appcompat:appcompat-resources:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0e5fb574d965498fb5749353780fa559/transformed/appcompat-resources-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/b399f94d3f638f98f26bd5625644d7f1/transformed/drawerlayout-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.autofill:autofill:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2d5b389ebdfa1615da95cd860f5b5f7c/transformed/autofill-1.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.window:window-core-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/e67b5822f7b1932716307fd770898f6e/transformed/window-core/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:17:1-31:12
 MERGED from [androidx.graphics:graphics-path:1.0.1] /home/kedhar/.gradle/caches/9.7.1/transforms/3a4e24ba389087b64add9539953b18bb/transformed/graphics-path-1.0.1/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/fdfee971daa1c85e09efde2e868d5e58/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:17:1-23:12
-MERGED from [androidx.savedstate:savedstate-compose-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/9d430251b6a3219c4987e8df45275a60/transformed/savedstate-compose/AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.savedstate:savedstate-ktx:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/80bb990296e4bdcbbe1905c64eee0704/transformed/savedstate-ktx-1.5.0/AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.savedstate:savedstate-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c79c9ff6759277c0bffa540c6c7595/transformed/savedstate/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.core:core-ktx:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0c3a877eae1962257a0119d8f58e2b82/transformed/core-ktx-1.18.0/AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:17:1-30:12
-MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/b27f3e30d48c2c8ae1bcf5891b8e01be/transformed/lifecycle-runtime/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d0f1635de4ee9a7ce0dd3ae5fbb7f8e3/transformed/lifecycle-viewmodel-ktx-2.11.0/AndroidManifest.xml:2:1-7:12
-MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d2e5af12d3d3a91cc59354a6f7256861/transformed/lifecycle-viewmodel-compose/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigationevent:navigationevent-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/4a864d897fd26bec3a0c27dc3fa77874/transformed/navigationevent/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigationevent:navigationevent-compose-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/e66d8071e6ec9da82c493c9059fe0163/transformed/navigationevent-compose/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.runtime:runtime-annotation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/d838fc6e3705461f1a73cd27a5fc3359/transformed/runtime-annotation/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.runtime:runtime-retain-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a03c3f07263b4725a87c83ad7ec8ab1f/transformed/runtime-retain/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.runtime:runtime-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/7d197856a1e7f8b332b7fba361377777/transformed/runtime/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.runtime:runtime-saveable-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/7d3d77ec48df4f968c9a579625e3532d/transformed/runtime-saveable/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.savedstate:savedstate-compose-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/9d430251b6a3219c4987e8df45275a60/transformed/savedstate-compose/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.savedstate:savedstate-ktx:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/80bb990296e4bdcbbe1905c64eee0704/transformed/savedstate-ktx-1.5.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.savedstate:savedstate-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c79c9ff6759277c0bffa540c6c7595/transformed/savedstate/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core-ktx:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0c3a877eae1962257a0119d8f58e2b82/transformed/core-ktx-1.18.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/babb0f0b50fc7655c8e41f5f0a9dec06/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/43fdb085d1827aa621da1bdf461e1a13/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/02c20f1d6bb3b5f0f4a9f30edba73076/transformed/vectordrawable-1.1.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.customview:customview:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/260b34cc885c238667b41b682bc515ae/transformed/customview-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/b27f3e30d48c2c8ae1bcf5891b8e01be/transformed/lifecycle-runtime/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d0f1635de4ee9a7ce0dd3ae5fbb7f8e3/transformed/lifecycle-viewmodel-ktx-2.11.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/785843550a6ba7a1195d2c99b3b5c9d7/transformed/lifecycle-livedata-2.11.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/17e4cbcf0c68c07273e3944902b19e2e/transformed/lifecycle-runtime-compose/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.material:material-icons-extended-android:1.7.8] /home/kedhar/.gradle/caches/9.7.1/transforms/a8e1dcb23022f48185f6559ce11f8d08/transformed/material-icons-extended-release/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.material:material-icons-core-android:1.7.8] /home/kedhar/.gradle/caches/9.7.1/transforms/efd5e0a68779cfb3c98a63871e75177d/transformed/material-icons-core-release/AndroidManifest.xml:2:1-7:12
@@ -57,9 +74,12 @@ MERGED from [androidx.compose.ui:ui-test-manifest:1.12.1] /home/kedhar/.gradle/c
 MERGED from [androidx.annotation:annotation-experimental:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/e88613f2c865214f3b77a2ddfeec5164/transformed/annotation-experimental-1.4.1/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:17:1-55:12
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/37849c5ceb0651405a7428e78767e2ec/transformed/startup-runtime-1.1.1/AndroidManifest.xml:17:1-33:12
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/ded759333ae152ba8bd98837fa0d10eb/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
-MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/efa9f730b7e1921bbcc22908be3e11eb/transformed/core-runtime-2.2.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.tracing:tracing:1.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2439de7aa68bd810f84b29a4a4481165/transformed/tracing-1.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.tracing:tracing-ktx:1.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/93be97574370a1a2ae6283b8bf14aa2e/transformed/tracing-ktx-1.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] /home/kedhar/.gradle/caches/9.7.1/transforms/3925bf2310a66ce186faf1d0f6965fa7/transformed/exifinterface-1.3.2/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/1666479bee29df0776aa6cf1a32677a1/transformed/cursoradapter-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/efa9f730b7e1921bbcc22908be3e11eb/transformed/core-runtime-2.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/ded759333ae152ba8bd98837fa0d10eb/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
 MERGED from [androidx.interpolator:interpolator:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/4c85ef26b25ab56cbf78991d3c80911d/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.core:core-viewtree:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/04114d47576e8b10bcb216b58cd9304e/transformed/core-viewtree-1.0.0/AndroidManifest.xml:2:1-7:12
 	package
@@ -70,9 +90,29 @@ MERGED from [androidx.core:core-viewtree:1.0.0] /home/kedhar/.gradle/caches/9.7.
 		INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.CAMERA
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:7:5-65
+	android:name
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:7:22-62
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:8:5-79
+	android:name
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:8:22-76
+uses-permission#android.permission.CHANGE_WIFI_STATE
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:10:5-76
+	android:name
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:10:22-73
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:11:5-76
+	android:name
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:11:22-73
 application
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:6:5-20:19
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:6:5-20:19
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:13:5-27:19
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:13:5-27:19
+MERGED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-core:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/bd06696429c1337ddf4129e4715b090e/transformed/camera-core-1.4.1/AndroidManifest.xml:23:5-34:19
+MERGED from [androidx.camera:camera-core:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/bd06696429c1337ddf4129e4715b090e/transformed/camera-core-1.4.1/AndroidManifest.xml:23:5-34:19
 MERGED from [androidx.compose.ui:ui-tooling-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/78c8064863411a6dc2863078562aee12/transformed/ui-tooling/AndroidManifest.xml:22:5-26:19
 MERGED from [androidx.compose.ui:ui-tooling-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/78c8064863411a6dc2863078562aee12/transformed/ui-tooling/AndroidManifest.xml:22:5-26:19
 MERGED from [androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:23:5-33:19
@@ -96,49 +136,61 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/kedha
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:10:9-35
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:17:9-35
 	android:label
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:9:9-41
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:9-41
 	android:icon
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:8:9-43
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:15:9-43
 	android:allowBackup
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:7:9-36
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:9-36
 	android:theme
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:11:9-66
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:18:9-66
 activity#com.krafttools.app.MainActivity
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:12:9-19:20
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:19:9-26:20
 	android:exported
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:13-36
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:21:13-36
 	android:name
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:13:13-41
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:20:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:15:13-18:29
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:22:13-25:29
 action#android.intent.action.MAIN
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:17-69
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:23:17-69
 	android:name
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:25-66
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:23:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:17:17-77
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:24:17-77
 	android:name
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:17:27-74
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:24:27-74
 uses-sdk
 INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml
 INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml
+MERGED from [androidx.camera:camera-video:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1910795be0a16ce71cd3346dedf45586/transformed/camera-video-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-video:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1910795be0a16ce71cd3346dedf45586/transformed/camera-video-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-view:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/0af6e96b9da586cadc1de9f6b9ef8638/transformed/camera-view-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-view:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/0af6e96b9da586cadc1de9f6b9ef8638/transformed/camera-view-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-lifecycle:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/f9e40431be1505a6d5f83d290d934006/transformed/camera-lifecycle-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-lifecycle:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/f9e40431be1505a6d5f83d290d934006/transformed/camera-lifecycle-1.4.1/AndroidManifest.xml:5:5-44
+MERGED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-core:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/bd06696429c1337ddf4129e4715b090e/transformed/camera-core-1.4.1/AndroidManifest.xml:21:5-44
+MERGED from [androidx.camera:camera-core:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/bd06696429c1337ddf4129e4715b090e/transformed/camera-core-1.4.1/AndroidManifest.xml:21:5-44
 MERGED from [androidx.navigation:navigation-runtime-android:2.10.1] /home/kedhar/.gradle/caches/9.7.1/transforms/3fb7fe3eb80457f6b037e470a01f9c97/transformed/navigation-runtime/AndroidManifest.xml:20:5-44
 MERGED from [androidx.navigation:navigation-runtime-android:2.10.1] /home/kedhar/.gradle/caches/9.7.1/transforms/3fb7fe3eb80457f6b037e470a01f9c97/transformed/navigation-runtime/AndroidManifest.xml:20:5-44
 MERGED from [androidx.navigation:navigation-common-android:2.10.1] /home/kedhar/.gradle/caches/9.7.1/transforms/9ed5a8e3cf52e6aa9a035ef223fffc51/transformed/navigation-common/AndroidManifest.xml:20:5-44
 MERGED from [androidx.navigation:navigation-common-android:2.10.1] /home/kedhar/.gradle/caches/9.7.1/transforms/9ed5a8e3cf52e6aa9a035ef223fffc51/transformed/navigation-common/AndroidManifest.xml:20:5-44
 MERGED from [androidx.navigation:navigation-compose-android:2.10.1] /home/kedhar/.gradle/caches/9.7.1/transforms/57815ee7224ee054060b1e46e4949fef/transformed/navigation-compose/AndroidManifest.xml:5:5-44
 MERGED from [androidx.navigation:navigation-compose-android:2.10.1] /home/kedhar/.gradle/caches/9.7.1/transforms/57815ee7224ee054060b1e46e4949fef/transformed/navigation-compose/AndroidManifest.xml:5:5-44
-MERGED from [androidx.compose.foundation:foundation-layout-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1f1cd718828c4c3373319f1d18a138e5/transformed/foundation-layout/AndroidManifest.xml:5:5-44
-MERGED from [androidx.compose.foundation:foundation-layout-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1f1cd718828c4c3373319f1d18a138e5/transformed/foundation-layout/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.animation:animation-core-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/f0f2d6999aaa7e34aa29978a14236926/transformed/animation-core/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.animation:animation-core-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/f0f2d6999aaa7e34aa29978a14236926/transformed/animation-core/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.material:material-ripple-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/077c059584526ef845d28e580606a851/transformed/material-ripple/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.material:material-ripple-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/077c059584526ef845d28e580606a851/transformed/material-ripple/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.animation:animation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/c35b6a86cb5d4ce76fcd1175bd82eb5e/transformed/animation/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.animation:animation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/c35b6a86cb5d4ce76fcd1175bd82eb5e/transformed/animation/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1f1cd718828c4c3373319f1d18a138e5/transformed/foundation-layout/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1f1cd718828c4c3373319f1d18a138e5/transformed/foundation-layout/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/e37f2c71bded69dcbe53f555dcf8ec37/transformed/foundation/AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/e37f2c71bded69dcbe53f555dcf8ec37/transformed/foundation/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.ui:ui-tooling-data-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1d6c16c81f932193707f58a77e27f63b/transformed/ui-tooling-data/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.ui:ui-tooling-data-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1d6c16c81f932193707f58a77e27f63b/transformed/ui-tooling-data/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.ui:ui-unit-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/c1fd66f671207b0cc05d6038b23197aa/transformed/ui-unit/AndroidManifest.xml:5:5-44
@@ -157,30 +209,40 @@ MERGED from [androidx.compose.ui:ui-tooling-android:1.12.1] /home/kedhar/.gradle
 MERGED from [androidx.compose.ui:ui-tooling-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/78c8064863411a6dc2863078562aee12/transformed/ui-tooling/AndroidManifest.xml:20:5-44
 MERGED from [androidx.compose.material3:material3-android:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/4be30ed5fbf5d158eb3eb53d79578037/transformed/material3/AndroidManifest.xml:20:5-44
 MERGED from [androidx.compose.material3:material3-android:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/4be30ed5fbf5d158eb3eb53d79578037/transformed/material3/AndroidManifest.xml:20:5-44
-MERGED from [androidx.compose.foundation:foundation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/e37f2c71bded69dcbe53f555dcf8ec37/transformed/foundation/AndroidManifest.xml:5:5-44
-MERGED from [androidx.compose.foundation:foundation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/e37f2c71bded69dcbe53f555dcf8ec37/transformed/foundation/AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0e1ae65ca49fa88e473032c1c4214fae/transformed/appcompat-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0e1ae65ca49fa88e473032c1c4214fae/transformed/appcompat-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/cc31d45c76a0ad2f2bb3814723268711/transformed/fragment-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/cc31d45c76a0ad2f2bb3814723268711/transformed/fragment-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.activity:activity-ktx:1.13.0] /home/kedhar/.gradle/caches/9.7.1/transforms/7b5817b68dccab7d0e83400debc752db/transformed/activity-ktx-1.13.0/AndroidManifest.xml:5:5-44
 MERGED from [androidx.activity:activity-ktx:1.13.0] /home/kedhar/.gradle/caches/9.7.1/transforms/7b5817b68dccab7d0e83400debc752db/transformed/activity-ktx-1.13.0/AndroidManifest.xml:5:5-44
 MERGED from [androidx.activity:activity:1.13.0] /home/kedhar/.gradle/caches/9.7.1/transforms/8a74023ef7b674a6fc0aea32823f3dc5/transformed/activity-1.13.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.activity:activity:1.13.0] /home/kedhar/.gradle/caches/9.7.1/transforms/8a74023ef7b674a6fc0aea32823f3dc5/transformed/activity-1.13.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.activity:activity-compose:1.13.0] /home/kedhar/.gradle/caches/9.7.1/transforms/3fed22424901820988ad7772ec9f47df/transformed/activity-compose-1.13.0/AndroidManifest.xml:5:5-44
 MERGED from [androidx.activity:activity-compose:1.13.0] /home/kedhar/.gradle/caches/9.7.1/transforms/3fed22424901820988ad7772ec9f47df/transformed/activity-compose-1.13.0/AndroidManifest.xml:5:5-44
-MERGED from [androidx.navigationevent:navigationevent-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/4a864d897fd26bec3a0c27dc3fa77874/transformed/navigationevent/AndroidManifest.xml:5:5-44
-MERGED from [androidx.navigationevent:navigationevent-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/4a864d897fd26bec3a0c27dc3fa77874/transformed/navigationevent/AndroidManifest.xml:5:5-44
-MERGED from [androidx.navigationevent:navigationevent-compose-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/e66d8071e6ec9da82c493c9059fe0163/transformed/navigationevent-compose/AndroidManifest.xml:5:5-44
-MERGED from [androidx.navigationevent:navigationevent-compose-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/e66d8071e6ec9da82c493c9059fe0163/transformed/navigationevent-compose/AndroidManifest.xml:5:5-44
 MERGED from [androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:21:5-44
 MERGED from [androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:21:5-44
 MERGED from [androidx.lifecycle:lifecycle-process:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2c86240f8073fccfe3a2222fc24fe83d/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:21:5-44
 MERGED from [androidx.lifecycle:lifecycle-process:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2c86240f8073fccfe3a2222fc24fe83d/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:21:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/272a18a66dff970ee12063e0237a44dc/transformed/lifecycle-livedata-core-2.11.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/272a18a66dff970ee12063e0237a44dc/transformed/lifecycle-livedata-core-2.11.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d2e5af12d3d3a91cc59354a6f7256861/transformed/lifecycle-viewmodel-compose/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d2e5af12d3d3a91cc59354a6f7256861/transformed/lifecycle-viewmodel-compose/AndroidManifest.xml:5:5-44
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d1ea3fb8542fdfe37f1980155e02379a/transformed/lifecycle-viewmodel-savedstate/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d1ea3fb8542fdfe37f1980155e02379a/transformed/lifecycle-viewmodel-savedstate/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/ca7c58e6849256917323ea170216d2fc/transformed/lifecycle-runtime-ktx/AndroidManifest.xml:5:5-44
 MERGED from [androidx.lifecycle:lifecycle-runtime-ktx-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/ca7c58e6849256917323ea170216d2fc/transformed/lifecycle-runtime-ktx/AndroidManifest.xml:5:5-44
+MERGED from [androidx.loader:loader:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/831267f3cff3b84de0548229f5f42697/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/831267f3cff3b84de0548229f5f42697/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/335aba204ca502cc4af18ff28abb7889/transformed/lifecycle-viewmodel-2.11.0/AndroidManifest.xml:4:5-43
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/335aba204ca502cc4af18ff28abb7889/transformed/lifecycle-viewmodel-2.11.0/AndroidManifest.xml:4:5-43
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/5ec5ed3c6d06a77b282a3574643b7d54/transformed/lifecycle-viewmodel/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/5ec5ed3c6d06a77b282a3574643b7d54/transformed/lifecycle-viewmodel/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/df7f13db856fcfa4aad199e394c7b8b5/transformed/lifecycle-livedata-core-ktx-2.11.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/df7f13db856fcfa4aad199e394c7b8b5/transformed/lifecycle-livedata-core-ktx-2.11.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/272a18a66dff970ee12063e0237a44dc/transformed/lifecycle-livedata-core-2.11.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/272a18a66dff970ee12063e0237a44dc/transformed/lifecycle-livedata-core-2.11.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0e5fb574d965498fb5749353780fa559/transformed/appcompat-resources-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat-resources:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0e5fb574d965498fb5749353780fa559/transformed/appcompat-resources-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/b399f94d3f638f98f26bd5625644d7f1/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/b399f94d3f638f98f26bd5625644d7f1/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.autofill:autofill:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2d5b389ebdfa1615da95cd860f5b5f7c/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.autofill:autofill:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2d5b389ebdfa1615da95cd860f5b5f7c/transformed/autofill-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.window:window-core-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/e67b5822f7b1932716307fd770898f6e/transformed/window-core/AndroidManifest.xml:5:5-44
@@ -191,22 +253,10 @@ MERGED from [androidx.graphics:graphics-path:1.0.1] /home/kedhar/.gradle/caches/
 MERGED from [androidx.graphics:graphics-path:1.0.1] /home/kedhar/.gradle/caches/9.7.1/transforms/3a4e24ba389087b64add9539953b18bb/transformed/graphics-path-1.0.1/AndroidManifest.xml:5:5-44
 MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/fdfee971daa1c85e09efde2e868d5e58/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:20:5-21:38
 MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/fdfee971daa1c85e09efde2e868d5e58/transformed/customview-poolingcontainer-1.0.0/AndroidManifest.xml:20:5-21:38
-MERGED from [androidx.savedstate:savedstate-compose-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/9d430251b6a3219c4987e8df45275a60/transformed/savedstate-compose/AndroidManifest.xml:5:5-44
-MERGED from [androidx.savedstate:savedstate-compose-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/9d430251b6a3219c4987e8df45275a60/transformed/savedstate-compose/AndroidManifest.xml:5:5-44
-MERGED from [androidx.savedstate:savedstate-ktx:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/80bb990296e4bdcbbe1905c64eee0704/transformed/savedstate-ktx-1.5.0/AndroidManifest.xml:5:5-44
-MERGED from [androidx.savedstate:savedstate-ktx:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/80bb990296e4bdcbbe1905c64eee0704/transformed/savedstate-ktx-1.5.0/AndroidManifest.xml:5:5-44
-MERGED from [androidx.savedstate:savedstate-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c79c9ff6759277c0bffa540c6c7595/transformed/savedstate/AndroidManifest.xml:20:5-44
-MERGED from [androidx.savedstate:savedstate-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c79c9ff6759277c0bffa540c6c7595/transformed/savedstate/AndroidManifest.xml:20:5-44
-MERGED from [androidx.core:core-ktx:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0c3a877eae1962257a0119d8f58e2b82/transformed/core-ktx-1.18.0/AndroidManifest.xml:5:5-44
-MERGED from [androidx.core:core-ktx:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0c3a877eae1962257a0119d8f58e2b82/transformed/core-ktx-1.18.0/AndroidManifest.xml:5:5-44
-MERGED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/b27f3e30d48c2c8ae1bcf5891b8e01be/transformed/lifecycle-runtime/AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/b27f3e30d48c2c8ae1bcf5891b8e01be/transformed/lifecycle-runtime/AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d0f1635de4ee9a7ce0dd3ae5fbb7f8e3/transformed/lifecycle-viewmodel-ktx-2.11.0/AndroidManifest.xml:5:5-44
-MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d0f1635de4ee9a7ce0dd3ae5fbb7f8e3/transformed/lifecycle-viewmodel-ktx-2.11.0/AndroidManifest.xml:5:5-44
-MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d2e5af12d3d3a91cc59354a6f7256861/transformed/lifecycle-viewmodel-compose/AndroidManifest.xml:5:5-44
-MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d2e5af12d3d3a91cc59354a6f7256861/transformed/lifecycle-viewmodel-compose/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigationevent:navigationevent-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/4a864d897fd26bec3a0c27dc3fa77874/transformed/navigationevent/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigationevent:navigationevent-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/4a864d897fd26bec3a0c27dc3fa77874/transformed/navigationevent/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigationevent:navigationevent-compose-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/e66d8071e6ec9da82c493c9059fe0163/transformed/navigationevent-compose/AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigationevent:navigationevent-compose-android:1.1.2] /home/kedhar/.gradle/caches/9.7.1/transforms/e66d8071e6ec9da82c493c9059fe0163/transformed/navigationevent-compose/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.runtime:runtime-annotation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/d838fc6e3705461f1a73cd27a5fc3359/transformed/runtime-annotation/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.runtime:runtime-annotation-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/d838fc6e3705461f1a73cd27a5fc3359/transformed/runtime-annotation/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.runtime:runtime-retain-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a03c3f07263b4725a87c83ad7ec8ab1f/transformed/runtime-retain/AndroidManifest.xml:5:5-44
@@ -215,6 +265,30 @@ MERGED from [androidx.compose.runtime:runtime-android:1.12.1] /home/kedhar/.grad
 MERGED from [androidx.compose.runtime:runtime-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/7d197856a1e7f8b332b7fba361377777/transformed/runtime/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.runtime:runtime-saveable-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/7d3d77ec48df4f968c9a579625e3532d/transformed/runtime-saveable/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.runtime:runtime-saveable-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/7d3d77ec48df4f968c9a579625e3532d/transformed/runtime-saveable/AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate-compose-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/9d430251b6a3219c4987e8df45275a60/transformed/savedstate-compose/AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate-compose-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/9d430251b6a3219c4987e8df45275a60/transformed/savedstate-compose/AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/80bb990296e4bdcbbe1905c64eee0704/transformed/savedstate-ktx-1.5.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/80bb990296e4bdcbbe1905c64eee0704/transformed/savedstate-ktx-1.5.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c79c9ff6759277c0bffa540c6c7595/transformed/savedstate/AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-android:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c79c9ff6759277c0bffa540c6c7595/transformed/savedstate/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core-ktx:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0c3a877eae1962257a0119d8f58e2b82/transformed/core-ktx-1.18.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/0c3a877eae1962257a0119d8f58e2b82/transformed/core-ktx-1.18.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/babb0f0b50fc7655c8e41f5f0a9dec06/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/babb0f0b50fc7655c8e41f5f0a9dec06/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/43fdb085d1827aa621da1bdf461e1a13/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/43fdb085d1827aa621da1bdf461e1a13/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/02c20f1d6bb3b5f0f4a9f30edba73076/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/02c20f1d6bb3b5f0f4a9f30edba73076/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.customview:customview:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/260b34cc885c238667b41b682bc515ae/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/260b34cc885c238667b41b682bc515ae/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/b27f3e30d48c2c8ae1bcf5891b8e01be/transformed/lifecycle-runtime/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/b27f3e30d48c2c8ae1bcf5891b8e01be/transformed/lifecycle-runtime/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d0f1635de4ee9a7ce0dd3ae5fbb7f8e3/transformed/lifecycle-viewmodel-ktx-2.11.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d0f1635de4ee9a7ce0dd3ae5fbb7f8e3/transformed/lifecycle-viewmodel-ktx-2.11.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/785843550a6ba7a1195d2c99b3b5c9d7/transformed/lifecycle-livedata-2.11.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/785843550a6ba7a1195d2c99b3b5c9d7/transformed/lifecycle-livedata-2.11.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/17e4cbcf0c68c07273e3944902b19e2e/transformed/lifecycle-runtime-compose/AndroidManifest.xml:5:5-44
 MERGED from [androidx.lifecycle:lifecycle-runtime-compose-android:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/17e4cbcf0c68c07273e3944902b19e2e/transformed/lifecycle-runtime-compose/AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.material:material-icons-extended-android:1.7.8] /home/kedhar/.gradle/caches/9.7.1/transforms/a8e1dcb23022f48185f6559ce11f8d08/transformed/material-icons-extended-release/AndroidManifest.xml:5:5-44
@@ -231,12 +305,18 @@ MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gra
 MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:21:5-44
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/37849c5ceb0651405a7428e78767e2ec/transformed/startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/37849c5ceb0651405a7428e78767e2ec/transformed/startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/ded759333ae152ba8bd98837fa0d10eb/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/ded759333ae152ba8bd98837fa0d10eb/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/efa9f730b7e1921bbcc22908be3e11eb/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/efa9f730b7e1921bbcc22908be3e11eb/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.tracing:tracing:1.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2439de7aa68bd810f84b29a4a4481165/transformed/tracing-1.2.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.tracing:tracing:1.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2439de7aa68bd810f84b29a4a4481165/transformed/tracing-1.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.tracing:tracing-ktx:1.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/93be97574370a1a2ae6283b8bf14aa2e/transformed/tracing-ktx-1.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.tracing:tracing-ktx:1.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/93be97574370a1a2ae6283b8bf14aa2e/transformed/tracing-ktx-1.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] /home/kedhar/.gradle/caches/9.7.1/transforms/3925bf2310a66ce186faf1d0f6965fa7/transformed/exifinterface-1.3.2/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.2] /home/kedhar/.gradle/caches/9.7.1/transforms/3925bf2310a66ce186faf1d0f6965fa7/transformed/exifinterface-1.3.2/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/1666479bee29df0776aa6cf1a32677a1/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/1666479bee29df0776aa6cf1a32677a1/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/efa9f730b7e1921bbcc22908be3e11eb/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/kedhar/.gradle/caches/9.7.1/transforms/efa9f730b7e1921bbcc22908be3e11eb/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/ded759333ae152ba8bd98837fa0d10eb/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/ded759333ae152ba8bd98837fa0d10eb/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.interpolator:interpolator:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/4c85ef26b25ab56cbf78991d3c80911d/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.interpolator:interpolator:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/4c85ef26b25ab56cbf78991d3c80911d/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.core:core-viewtree:1.0.0] /home/kedhar/.gradle/caches/9.7.1/transforms/04114d47576e8b10bcb216b58cd9304e/transformed/core-viewtree-1.0.0/AndroidManifest.xml:5:5-44
@@ -245,6 +325,26 @@ MERGED from [androidx.core:core-viewtree:1.0.0] /home/kedhar/.gradle/caches/9.7.
 		INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml
 	android:minSdkVersion
 		INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml
+service#androidx.camera.core.impl.MetadataHolderService
+ADDED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:24:9-33:19
+MERGED from [androidx.camera:camera-core:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/bd06696429c1337ddf4129e4715b090e/transformed/camera-core-1.4.1/AndroidManifest.xml:29:9-33:78
+MERGED from [androidx.camera:camera-core:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/bd06696429c1337ddf4129e4715b090e/transformed/camera-core-1.4.1/AndroidManifest.xml:29:9-33:78
+	tools:node
+		ADDED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:29:13-31
+	android:enabled
+		ADDED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:26:13-36
+	android:exported
+		ADDED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:27:13-37
+	tools:ignore
+		ADDED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:28:13-75
+	android:name
+		ADDED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:25:13-75
+meta-data#androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER
+ADDED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:30:13-32:89
+	android:value
+		ADDED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:32:17-86
+	android:name
+		ADDED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:31:17-103
 activity#androidx.compose.ui.tooling.PreviewActivity
 ADDED from [androidx.compose.ui:ui-tooling-android:1.12.1] /home/kedhar/.gradle/caches/9.7.1/transforms/78c8064863411a6dc2863078562aee12/transformed/ui-tooling/AndroidManifest.xml:23:9-25:39
 	android:exported

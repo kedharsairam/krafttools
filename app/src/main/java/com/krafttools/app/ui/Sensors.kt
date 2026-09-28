@@ -19,7 +19,10 @@ import androidx.compose.ui.platform.LocalContext
  *
  * @param type one of [Sensor.TYPE_*]; null when the device lacks it,
  *   in which case [reading] stays null and the tool shows its gate.
- * @param delay one of [SensorManager.SENSOR_DELAY_*].
+ * @param delay one of [SensorManager.SENSOR_DELAY_*]. Never pass
+ *   SENSOR_DELAY_FASTEST (0 microseconds): modern Android throws
+ *   SecurityException without HIGH_SAMPLING_RATE_SENSORS. GAME rate
+ *   (≈50 Hz) is plenty for every viewer tool here.
  */
 @Composable
 fun rememberSensor(
