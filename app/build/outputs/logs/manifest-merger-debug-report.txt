@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-29:12
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-29:12
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-29:12
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-29:12
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-32:12
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-32:12
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-32:12
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-32:12
 MERGED from [androidx.camera:camera-video:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1910795be0a16ce71cd3346dedf45586/transformed/camera-video-1.4.1/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.camera:camera-view:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/0af6e96b9da586cadc1de9f6b9ef8638/transformed/camera-view-1.4.1/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.camera:camera-lifecycle:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/f9e40431be1505a6d5f83d290d934006/transformed/camera-lifecycle-1.4.1/AndroidManifest.xml:2:1-7:12
@@ -98,17 +98,25 @@ uses-permission#android.permission.ACCESS_FINE_LOCATION
 ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:8:5-79
 	android:name
 		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:8:22-76
+uses-permission#android.permission.RECORD_AUDIO
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:9:5-71
+	android:name
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:9:22-68
+uses-permission#android.permission.VIBRATE
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:11:5-66
+	android:name
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:11:22-63
 uses-permission#android.permission.CHANGE_WIFI_STATE
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:10:5-76
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:13:5-76
 	android:name
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:10:22-73
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:13:22-73
 uses-permission#android.permission.ACCESS_WIFI_STATE
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:11:5-76
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:5-76
 	android:name
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:11:22-73
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:22-73
 application
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:13:5-27:19
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:13:5-27:19
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:5-30:19
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:5-30:19
 MERGED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:23:5-34:19
 MERGED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:23:5-34:19
 MERGED from [androidx.camera:camera-core:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/bd06696429c1337ddf4129e4715b090e/transformed/camera-core-1.4.1/AndroidManifest.xml:23:5-34:19
@@ -136,31 +144,31 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/kedha
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:17:9-35
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:20:9-35
 	android:label
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:9-41
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:19:9-41
 	android:icon
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:15:9-43
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:18:9-43
 	android:allowBackup
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:9-36
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:17:9-36
 	android:theme
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:18:9-66
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:21:9-66
 activity#com.krafttools.app.MainActivity
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:19:9-26:20
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:22:9-29:20
 	android:exported
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:21:13-36
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:24:13-36
 	android:name
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:20:13-41
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:23:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:22:13-25:29
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:25:13-28:29
 action#android.intent.action.MAIN
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:23:17-69
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:26:17-69
 	android:name
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:23:25-66
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:26:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:24:17-77
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:27:17-77
 	android:name
-		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:24:27-74
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:27:27-74
 uses-sdk
 INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml

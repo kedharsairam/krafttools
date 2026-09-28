@@ -68,13 +68,13 @@ private val TOOLS = listOf(
     Tool("tally", "Tally + stopwatch", Icons.Filled.Timer, live = true),
     Tool("qr", "QR scanner", Icons.Filled.QrCode2, live = true),
     Tool("wifi", "WiFi analyzer", Icons.Filled.Wifi, live = true),
-    Tool("lux", "Light meter", Icons.Filled.Lightbulb, live = false),
-    Tool("emf", "Metal + EMF", Icons.Filled.SafetyCheck, live = false),
-    Tool("db", "Sound meter", Icons.Filled.Mic, live = false),
-    Tool("color", "Color picker", Icons.Filled.Palette, live = false),
-    Tool("angle", "Angle ruler", Icons.Filled.AspectRatio, live = false),
-    Tool("speed", "Speedometer", Icons.Filled.Speed, live = false),
-    Tool("pressure", "Barometer", Icons.Filled.Thermostat, live = false),
+    Tool("lux", "Light meter", Icons.Filled.Lightbulb, live = true),
+    Tool("emf", "Metal + EMF", Icons.Filled.SafetyCheck, live = true),
+    Tool("db", "Sound meter", Icons.Filled.Mic, live = true),
+    Tool("color", "Color picker", Icons.Filled.Palette, live = true),
+    Tool("angle", "Angle ruler", Icons.Filled.AspectRatio, live = true),
+    Tool("speed", "Speedometer", Icons.Filled.Speed, live = true),
+    Tool("pressure", "Barometer", Icons.Filled.Thermostat, live = true),
 )
 
 @Composable
@@ -97,6 +97,17 @@ fun ToolboxNav() {
         composable("tally") { TallyScreen(onBack = { nav.popBackStack() }) }
         composable("qr") { QrScreen(onBack = { nav.popBackStack() }) }
         composable("wifi") { WifiScreen(onBack = { nav.popBackStack() }) }
+        composable("lux") { LuxScreen(onBack = { nav.popBackStack() }) }
+        composable("emf") { EmfScreen(onBack = { nav.popBackStack() }) }
+        composable("db") { DecibelScreen(onBack = { nav.popBackStack() }) }
+        composable("color") {
+            ColorPickerScreen(onBack = { nav.popBackStack() })
+        }
+        composable("angle") { AngleScreen(onBack = { nav.popBackStack() }) }
+        composable("speed") { SpeedScreen(onBack = { nav.popBackStack() }) }
+        composable("pressure") {
+            BarometerScreen(onBack = { nav.popBackStack() })
+        }
     }
 }
 
