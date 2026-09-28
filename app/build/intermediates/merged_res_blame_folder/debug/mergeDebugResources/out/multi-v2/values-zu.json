@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.toolbox.app-mergeDebugResources-37:/values-zu/values-zu.xml",
+            "outputFile": "com.krafttools.app-mergeDebugResources-37:/values-zu/values-zu.xml",
             "map": [
                 {
                     "source": "/home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/res/values-zu/values-zu.xml",

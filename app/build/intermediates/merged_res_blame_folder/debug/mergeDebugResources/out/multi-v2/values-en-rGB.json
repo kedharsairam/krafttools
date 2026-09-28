@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.toolbox.app-mergeDebugResources-37:/values-en-rGB/values-en-rGB.xml",
+            "outputFile": "com.krafttools.app-mergeDebugResources-37:/values-en-rGB/values-en-rGB.xml",
             "map": [
                 {
                     "source": "/home/kedhar/.gradle/caches/9.7.1/transforms/80a7da0e40469916e1ec088c33157456/transformed/ui/res/values-en-rGB/values-en-rGB.xml",

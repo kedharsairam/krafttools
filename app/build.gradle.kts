@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.toolbox.app"
+    namespace = "com.krafttools.app"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.toolbox.app"
+        applicationId = "com.krafttools.app"
         minSdk = 26
         targetSdk = 37
         versionCode = 1

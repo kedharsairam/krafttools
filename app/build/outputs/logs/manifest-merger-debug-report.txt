@@ -105,7 +105,7 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/kedha
 		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:7:9-36
 	android:theme
 		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:11:9-66
-activity#com.toolbox.app.MainActivity
+activity#com.krafttools.app.MainActivity
 ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:12:9-19:20
 	android:exported
 		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:13-36
@@ -297,7 +297,7 @@ ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transfo
 		ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:24:9-44
 	android:name
 		ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:23:9-81
-permission#com.toolbox.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+permission#com.krafttools.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:22:5-24:47
 	android:protectionLevel
 		ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:24:9-44
@@ -307,7 +307,7 @@ uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:26:5-97
 	android:name
 		ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:26:22-94
-uses-permission#com.toolbox.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+uses-permission#com.krafttools.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:26:5-97
 	android:name
 		ADDED from [androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:26:22-94

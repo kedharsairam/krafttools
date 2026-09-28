@@ -1,8 +1,8 @@
-com.toolbox.app-pngs-0 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/generated/res/pngs/debug
-com.toolbox.app-updated_navigation_xml-1 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/generated/updated_navigation_xml/debug
-com.toolbox.app-packageDebugResources-2 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
-com.toolbox.app-packageDebugResources-3 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
-com.toolbox.app-debug-4 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/intermediates/merged_res/debug/mergeDebugResources
-com.toolbox.app-debug-5 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/debug/res
-com.toolbox.app-main-6 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/res
+com.krafttools.app-pngs-0 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/generated/res/pngs/debug
+com.krafttools.app-updated_navigation_xml-1 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/generated/updated_navigation_xml/debug
+com.krafttools.app-packageDebugResources-2 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.krafttools.app-packageDebugResources-3 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.krafttools.app-debug-4 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/intermediates/merged_res/debug/mergeDebugResources
+com.krafttools.app-debug-5 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/debug/res
+com.krafttools.app-main-6 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/res
 gradleHome-0 /home/kedhar/.gradle

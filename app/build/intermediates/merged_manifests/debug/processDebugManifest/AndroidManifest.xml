@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.toolbox.app"
+    package="com.krafttools.app"
     android:versionCode="1"
     android:versionName="0.1.0" >
 
@@ -9,10 +9,10 @@
         android:targetSdkVersion="37" />
 
     <permission
-        android:name="com.toolbox.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        android:name="com.krafttools.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.toolbox.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- No permissions. v0.1 tools (level) need only foreground sensors. -->
+    <uses-permission android:name="com.krafttools.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- No permissions. v0.1 tools (level) need only foreground sensors. -->
     <application
         android:allowBackup="false"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.NoActionBar" >
         <activity
-            android:name="com.toolbox.app.MainActivity"
+            android:name="com.krafttools.app.MainActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,7 +37,7 @@
 
         <provider
             android:name="androidx.startup.InitializationProvider"
-            android:authorities="com.toolbox.app.androidx-startup"
+            android:authorities="com.krafttools.app.androidx-startup"
             android:exported="false" >
             <meta-data
                 android:name="androidx.emoji2.text.EmojiCompatInitializer"
