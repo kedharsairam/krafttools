@@ -356,7 +356,18 @@ private fun Bubble(dx: Float, dy: Float, level: Boolean, modifier: Modifier = Mo
     )
     Canvas(modifier = modifier) {
         val r = size.minDimension / 2f
+        // Machined bezel: outer ring + cardinal ticks give the vial
+        // a physical housing instead of floating lines.
         drawCircle(color = ring, radius = r, style = androidx.compose.ui.graphics.drawscope.Stroke(4f))
+        drawCircle(color = ring, radius = r * 0.97f, style = androidx.compose.ui.graphics.drawscope.Stroke(10f))
+        for (deg in listOf(0f, 90f, 180f, 270f)) {
+            val rad = Math.toRadians(deg.toDouble())
+            val x1 = size.width / 2f + (r * 0.88f * Math.sin(rad)).toFloat()
+            val y1 = size.height / 2f - (r * 0.88f * Math.cos(rad)).toFloat()
+            val x2 = size.width / 2f + (r * 0.97f * Math.sin(rad)).toFloat()
+            val y2 = size.height / 2f - (r * 0.97f * Math.cos(rad)).toFloat()
+            drawLine(ring, Offset(x1, y1), Offset(x2, y2), 5f)
+        }
         drawCircle(color = ring, radius = r * 0.25f, style = androidx.compose.ui.graphics.drawscope.Stroke(3f))
         drawCircle(
             color = bubble,

@@ -6,11 +6,13 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -34,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -220,6 +223,12 @@ private fun SpeedBody(onBack: () -> Unit) {
                     status = null,
                     mirror = hud,
                 )
+                SpeedGauge(
+                    fraction = (shown / (if (metric) 120f else 75f)).coerceIn(0f, 1f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(110.dp),
+                )
                 Text(
                     "±%.0f m accuracy".format(accuracy!!.toDouble()),
                     style = MaterialTheme.typography.bodyMedium,
@@ -294,4 +303,51 @@ private fun haversineKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double):
         Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2)
     return 2 * r * Math.asin(kotlin.math.sqrt(a))
+}
+
+/**
+ * Arc gauge: 240° sweep with ticks every 1/8 and a needle for the
+ * current fraction. The number above owns precision; the gauge owns
+ * glanceability — together they read at any distance.
+ */
+@Composable
+private fun SpeedGauge(fraction: Float, modifier: Modifier = Modifier) {
+    val track = MaterialTheme.colorScheme.outlineVariant
+    val needle = MaterialTheme.colorScheme.primary
+    androidx.compose.foundation.Canvas(modifier = modifier) {
+        val cx = size.width / 2f
+        val cy = size.height * 0.92f
+        val r = size.minDimension * 0.62f
+        // 240° sweep: 150° .. 30° going through top (-90°).
+        val start = 150f
+        val sweep = 240f
+        drawArc(
+            color = track,
+            startAngle = start,
+            sweepAngle = sweep,
+            useCenter = false,
+            topLeft = Offset(cx - r, cy - r),
+            size = androidx.compose.ui.geometry.Size(r * 2f, r * 2f),
+            style = androidx.compose.ui.graphics.drawscope.Stroke(10f),
+        )
+        for (i in 0..8) {
+            val a = Math.toRadians((start + sweep * i / 8).toDouble())
+            val x1 = cx + (r * 0.82f * Math.cos(a)).toFloat()
+            val y1 = cy + (r * 0.82f * Math.sin(a)).toFloat()
+            val x2 = cx + (r * 0.98f * Math.cos(a)).toFloat()
+            val y2 = cy + (r * 0.98f * Math.sin(a)).toFloat()
+            drawLine(track, Offset(x1, y1), Offset(x2, y2), 4f)
+        }
+        val na = Math.toRadians((start + sweep * fraction.coerceIn(0f, 1f)).toDouble())
+        drawLine(
+            color = needle,
+            start = Offset(cx, cy),
+            end = Offset(
+                (cx + (r * 0.78f * Math.cos(na))).toFloat(),
+                (cy + (r * 0.78f * Math.sin(na))).toFloat(),
+            ),
+            strokeWidth = 9f,
+        )
+        drawCircle(color = needle, radius = 12f, center = Offset(cx, cy))
+    }
 }

@@ -140,10 +140,27 @@ private fun AxisReadout(label: String, value: Float) {
 private fun TiltLine(rollDeg: Float, modifier: Modifier = Modifier) {
     val horizon = MaterialTheme.colorScheme.outlineVariant
     val edge = MaterialTheme.colorScheme.primary
+    val tick = MaterialTheme.colorScheme.onSurfaceVariant
     Canvas(modifier = modifier) {
+        val cx = size.width / 2f
         val cy = size.height / 2f
         // Fixed reference: what "flat" looks like on this screen.
         drawLine(horizon, Offset(0f, cy), Offset(size.width, cy), strokeWidth = 2f)
+        // Protractor arc behind the edge: 15° ticks, longer each 45°.
+        // The arc makes small angles readable that a bare line hides.
+        val radius = size.minDimension * 0.42f
+        for (deg in -90..90 step 15) {
+            val rad = Math.toRadians(deg.toDouble())
+            val major = deg % 45 == 0
+            // Arc spans upward (protractor position); angles measured
+            // from flat, positive clockwise like the roll value.
+            val inner = radius * if (major) 0.78f else 0.86f
+            val x1 = cx + (inner * Math.sin(rad)).toFloat()
+            val y1 = cy - (inner * Math.cos(rad)).toFloat()
+            val x2 = cx + (radius * Math.sin(rad)).toFloat()
+            val y2 = cy - (radius * Math.cos(rad)).toFloat()
+            drawLine(tick, Offset(x1, y1), Offset(x2, y2), if (major) 4f else 2f)
+        }
         // Device edge rotates with roll; rotate() keeps the pivot math exact.
         rotate(degrees = -rollDeg, pivot = center) {
             drawLine(edge, Offset(size.width * 0.1f, cy), Offset(size.width * 0.9f, cy), strokeWidth = 8f)
