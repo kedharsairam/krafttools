@@ -112,10 +112,14 @@ private fun DecibelBody(onBack: () -> Unit) {
                 val block = ShortArray(SAMPLE_RATE / 10)
                 val ring = FloatArray(2048)
                 var ringPos = 0
-                // 1 s LAeq window = energy mean of the last 10 blocks.
-                val energyWin = FloatArray(10)
+                // 1 s LAeq window: written ONLY by the spectrum pass below
+                // (A-weighted spectral energy). The time-domain RMS above
+                // feeds the instant headline, never the average — mixing
+                // weighted and unweighted energies would corrupt both.
+                val energyWin = FloatArray(2)
                 var energyPos = 0
                 var energyFill = 0
+                var blockCount = 0L
                 while (isActive) {
                     val read = rec.read(block, 0, block.size)
                     if (read <= 0) continue
@@ -133,8 +137,6 @@ private fun DecibelBody(onBack: () -> Unit) {
                         (20 * log10(rms) + DB_REFERENCE).toFloat()
                     }
                     instantDb = (blockDb + offset).coerceIn(0f, 120f)
-                    energyWin[energyPos] = (rms * rms).toFloat()
-                    energyPos = (energyPos + 1) % energyWin.size
                     if (energyFill < energyWin.size) energyFill++
                     if (energyFill == energyWin.size) {
                         var e = 0f
@@ -150,11 +152,23 @@ private fun DecibelBody(onBack: () -> Unit) {
                     minDb = minOf(minDb ?: instantDb, instantDb)
                     maxDb = maxOf(maxDb ?: instantDb, instantDb)
                     // Spectrum every ~0.5 s from the raw ring (not the
-                    // smoothed blocks): 8 log bands, 0..1 normalized.
-                    if (energyPos % 5 == 0) {
-                        val bands = spectrumBands(ring, ringPos)
+                    // smoothed blocks). Its A-weighted energy feeds the
+                    // LAeq window, so bars and number share one domain.
+                    blockCount++
+                    if (blockCount % 5 == 0L) {
+                        val spec = spectrumBands(ring, ringPos)
                         spectrum.clear()
-                        spectrum.addAll(bands)
+                        spectrum.addAll(spec.bands)
+                        // Normalize to mean-square pressure: two-sided spectrum
+                        // (×2), DFT length squared, and the Hann window's
+                        // power gain (0.375) — without all three the LAeq
+                        // reads tens of dB off. Lands within a few dB of
+                        // the instant headline in steady noise, as it must.
+                        val n = 1024.0
+                        energyWin[energyPos] =
+                            (2.0 * spec.energy / (n * n * 0.375)).toFloat()
+                        energyPos = (energyPos + 1) % energyWin.size
+                        if (energyFill < energyWin.size) energyFill++
                     }
                 }
             } finally {
@@ -241,27 +255,52 @@ private fun DecibelBody(onBack: () -> Unit) {
 /** 8 log-spaced bands (63 Hz .. 8 kHz) from a DFT over the ring.
  * Magnitudes normalized 0..1 against the strongest band: shape of
  * the sound, not absolute level (the dB headline owns that). */
-private fun spectrumBands(ring: FloatArray, ringPos: Int): List<Float> {
+private data class Spectrum(
+    val bands: List<Float>,
+    /** Total A-weighted linear energy (for LAeq, not display). */
+    val energy: Double,
+)
+
+private fun spectrumBands(ring: FloatArray, ringPos: Int): Spectrum {
     val n = 1024
     val centers = floatArrayOf(63f, 125f, 250f, 500f, 1000f, 2000f, 4000f, 8000f)
     val mags = FloatArray(centers.size)
+    var energy = 0.0
+    // Full-spectrum A-weighted energy for LAeq: EVERY bin 1..511, not
+    // just the 8 display bands. Summing 8 narrow bins would under-read
+    // by an order of magnitude (all inter-bin energy goes missing).
+    for (k in 1 until n / 2) {
+        var re = 0.0
+        var im = 0.0
+        for (i in 0 until n) {
+            val s = ring[(ringPos + i) % ring.size].toDouble() * hann(i, n)
+            val angle = 2.0 * Math.PI * k * i / n
+            re += s * Math.cos(angle)
+            im -= s * Math.sin(angle)
+        }
+        val freq = k * SAMPLE_RATE.toFloat() / n
+        if (freq in 20f..16000f) {
+            energy += (re * re + im * im) * aWeightLinear(freq)
+        }
+    }
     for (b in centers.indices) {
         // Direct bin nearest the center: bin = f * n / sampleRate.
         val k = ((centers[b] * n / SAMPLE_RATE).toInt()).coerceIn(1, n / 2 - 1)
         var re = 0.0
         var im = 0.0
         for (i in 0 until n) {
-            val s = ring[(ringPos + i) % ring.size].toDouble()
+            val s = ring[(ringPos + i) % ring.size].toDouble() * hann(i, n)
             val angle = 2.0 * Math.PI * k * i / n
             re += s * Math.cos(angle)
             im -= s * Math.sin(angle)
         }
-        mags[b] = sqrt(re * re + im * im).toFloat()
+        val mag = sqrt(re * re + im * im).toFloat()
+        mags[b] = mag
     }
     val peak = mags.maxOrNull() ?: 0f
-    if (peak <= 0f) return List(centers.size) { 0f }
+    if (peak <= 0f) return Spectrum(List(centers.size) { 0f }, 0.0)
     // Log-ish compression so quiet bands stay visible.
-    return mags.map { (it / peak).coerceIn(0f, 1f) }
+    return Spectrum(mags.map { (it / peak).coerceIn(0f, 1f) }, energy)
 }
 
 @Composable

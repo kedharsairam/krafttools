@@ -1,6 +1,7 @@
 int drawable ic_launcher_foreground 0x0
 int drawable ic_tile_level 0x0
 int drawable ic_tile_torch 0x0
+int font space_grotesk 0x0
 int mipmap ic_launcher 0x0
 int mipmap ic_launcher_round 0x0
 int string app_name 0x0

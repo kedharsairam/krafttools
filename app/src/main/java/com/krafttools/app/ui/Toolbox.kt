@@ -336,6 +336,24 @@ private fun Bubble(dx: Float, dy: Float, level: Boolean, modifier: Modifier = Mo
     } else {
         MaterialTheme.colorScheme.onSurfaceVariant
     }
+    // Spring physics on the bubble: it lags and settles like a real
+    // vial instead of teleporting with the sensor.
+    val adx by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = dx,
+        animationSpec = androidx.compose.animation.core.spring(
+            dampingRatio = 0.55f,
+            stiffness = 220f,
+        ),
+        label = "bubbleX",
+    )
+    val ady by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = dy,
+        animationSpec = androidx.compose.animation.core.spring(
+            dampingRatio = 0.55f,
+            stiffness = 220f,
+        ),
+        label = "bubbleY",
+    )
     Canvas(modifier = modifier) {
         val r = size.minDimension / 2f
         drawCircle(color = ring, radius = r, style = androidx.compose.ui.graphics.drawscope.Stroke(4f))
@@ -343,7 +361,7 @@ private fun Bubble(dx: Float, dy: Float, level: Boolean, modifier: Modifier = Mo
         drawCircle(
             color = bubble,
             radius = r * 0.16f,
-            center = Offset(size.width / 2f + dx * r * 0.8f, size.height / 2f + dy * r * 0.8f),
+            center = Offset(size.width / 2f + adx * r * 0.8f, size.height / 2f + ady * r * 0.8f),
         )
     }
 }

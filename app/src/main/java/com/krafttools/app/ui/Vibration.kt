@@ -162,7 +162,8 @@ fun dominantFrequency(samples: List<Float>, sampleHz: Float): Float? {
         var im = 0.0
         for (i in samples.indices) {
             val angle = 2.0 * Math.PI * k * i / n
-            val d = (samples[i] - mean).toDouble()
+            // Hann window: unwindowed DFT smears one tone across bins.
+            val d = (samples[i] - mean).toDouble() * hann(i, n)
             re += d * Math.cos(angle)
             im -= d * Math.sin(angle)
         }

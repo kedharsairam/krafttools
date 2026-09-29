@@ -8,9 +8,13 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.krafttools.app.R
 
 // Instrument cyan on near-black: precision-tool identity, dark-only
 // (documented choice). GitaKraft keeps saffron; KraftTools is its own.
@@ -40,10 +44,26 @@ val ToolboxShapes = Shapes(
     extraLarge = RoundedCornerShape(20.dp),
 )
 
+// Brand voice: Space Grotesk (OFL) for numerals and headlines —
+// instrument-panel character. One variable file, four weight
+// instances; body text stays system Roboto (long-form readability
+// plus clean Devanagari fallback, which Grotesk lacks).
+private val Grotesk = FontFamily(
+    Font(R.font.space_grotesk, FontWeight.Normal,
+        variationSettings = FontVariation.Settings(FontVariation.weight(400))),
+    Font(R.font.space_grotesk, FontWeight.Medium,
+        variationSettings = FontVariation.Settings(FontVariation.weight(500))),
+    Font(R.font.space_grotesk, FontWeight.SemiBold,
+        variationSettings = FontVariation.Settings(FontVariation.weight(600))),
+    Font(R.font.space_grotesk, FontWeight.Bold,
+        variationSettings = FontVariation.Settings(FontVariation.weight(700))),
+)
+
 val ToolboxTypography = Typography(
-    headlineMedium = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.SemiBold, lineHeight = 28.sp),
-    titleLarge = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold, lineHeight = 26.sp),
-    titleMedium = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold, lineHeight = 22.sp),
+    displayLarge = TextStyle(fontSize = 34.sp, fontWeight = FontWeight.Bold, lineHeight = 40.sp, fontFamily = Grotesk),
+    headlineMedium = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.SemiBold, lineHeight = 28.sp, fontFamily = Grotesk),
+    titleLarge = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold, lineHeight = 26.sp, fontFamily = Grotesk),
+    titleMedium = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold, lineHeight = 22.sp, fontFamily = Grotesk),
     bodyLarge = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Normal, lineHeight = 26.sp),
     bodyMedium = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Normal, lineHeight = 22.sp),
     labelMedium = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),

@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -81,6 +82,10 @@ private fun SpeedBody(onBack: () -> Unit) {
     }
 
     var speedMs by rememberSaveable { mutableStateOf(0f) }
+    // Display smoothing: 3-fix moving average kills GPS jitter at
+    // walking pace. Trip math uses RAW fixes (averaging would shave
+    // real distance), so the two deliberately disagree by design.
+    val speedWin = remember { mutableStateListOf<Float>() }
     var accuracy by remember { mutableStateOf<Float?>(null) }
     var gpsOn by rememberSaveable { mutableStateOf(manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) }
     var metric by rememberSaveable { mutableStateOf(true) }
@@ -119,6 +124,8 @@ private fun SpeedBody(onBack: () -> Unit) {
         val listener = object : LocationListener {
             override fun onLocationChanged(loc: Location) {
                 speedMs = loc.speed
+                speedWin.add(loc.speed)
+                if (speedWin.size > 3) speedWin.removeAt(0)
                 accuracy = if (loc.hasAccuracy()) loc.accuracy else null
                 gpsOn = true
                 if (tripActive && loc.hasAccuracy() && loc.accuracy < 25f) {
@@ -160,7 +167,14 @@ private fun SpeedBody(onBack: () -> Unit) {
         onDispose { manager.removeUpdates(listener) }
     }
 
-    val shown = if (metric) speedMs * 3.6f else speedMs * 2.23694f
+    val shownRaw = if (metric) speedMs * 3.6f else speedMs * 2.23694f
+    // Displayed number is the smoothed one; trip computer eats raw.
+    val shown = if (speedWin.isEmpty()) {
+        shownRaw
+    } else {
+        val avg = speedWin.average().toFloat()
+        if (metric) avg * 3.6f else avg * 2.23694f
+    }
     val unit = if (metric) "km/h" else "mph"
 
     Scaffold(

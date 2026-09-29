@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -117,6 +118,20 @@ fun CompassScreen(onBack: () -> Unit) {
             (mag!![0] * mag!![0] + mag!![1] * mag!![1] + mag!![2] * mag!![2]).toDouble(),
         ).toFloat()
         val disturbed = strength < 20f || strength > 70f
+        // Tilt quality: compass math assumes a flat phone (gravity along
+        // device -Z). Past ~35° of tilt the heading degrades fast — say
+        // so instead of showing a confident wrong number.
+        val gMag = Math.sqrt(
+            (accel!![0] * accel!![0] + accel!![1] * accel!![1] + accel!![2] * accel!![2]).toDouble(),
+        ).toFloat()
+        val tiltDeg = if (gMag > 0.1f) {
+            Math.toDegrees(
+                Math.acos((kotlin.math.abs(accel!![2]) / gMag).toDouble().coerceIn(-1.0, 1.0)),
+            ).toFloat()
+        } else {
+            0f
+        }
+        val tilted = tiltDeg > 35f
         // True bearing = magnetic + east declination. Displayed always;
         // the dial needle stays magnetic (what the sensor feels) while
         // the headline reads true (what maps use). Both labeled.
@@ -179,6 +194,13 @@ fun CompassScreen(onBack: () -> Unit) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            } else if (tilted) {
+                Text(
+                    text = "Tilted %.0f° — lay the phone flat; headings " +
+                        "measured tilted read wrong.".format(tiltDeg.toDouble()),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             } else {
                 Text(
                     text = "Wave a figure-8 if the needle feels stuck.",
@@ -195,13 +217,29 @@ private fun Dial(azimuth: Float, modifier: Modifier = Modifier) {
     val ring = MaterialTheme.colorScheme.outlineVariant
     val needle = MaterialTheme.colorScheme.primary
     val text = MaterialTheme.colorScheme.onSurfaceVariant
+    // Unwrapped angle: 359° -> 0° sweeps forward 1°, never whips back.
+    var shown by remember { mutableStateOf(azimuth) }
+    LaunchedEffect(azimuth) {
+        var delta = (azimuth - shown) % 360f
+        if (delta > 180f) delta -= 360f
+        if (delta < -180f) delta += 360f
+        shown += delta
+    }
+    val animated by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = shown,
+        animationSpec = androidx.compose.animation.core.spring(
+            dampingRatio = 0.7f,
+            stiffness = 120f,
+        ),
+        label = "dial",
+    )
     Canvas(modifier = modifier) {
         val cx = size.width / 2f
         val cy = size.height / 2f
         val r = size.minDimension / 2f * 0.92f
         drawCircle(color = ring, radius = r, style = Stroke(4f))
         // Cardinal ticks rotate with the world (needle stays up).
-        rotate(-azimuth, Offset(cx, cy)) {
+        rotate(-animated, Offset(cx, cy)) {
             val labels = listOf("N" to 0f, "E" to 90f, "S" to 180f, "W" to 270f)
             for ((_, deg) in labels) {
                 val rad = Math.toRadians(deg.toDouble())

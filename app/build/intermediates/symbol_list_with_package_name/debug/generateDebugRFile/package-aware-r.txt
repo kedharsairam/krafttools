@@ -2,6 +2,7 @@ com.krafttools.app
 drawable ic_launcher_foreground
 drawable ic_tile_level
 drawable ic_tile_torch
+font space_grotesk
 mipmap ic_launcher
 mipmap ic_launcher_round
 string app_name
