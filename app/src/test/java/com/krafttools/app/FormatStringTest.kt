@@ -31,16 +31,22 @@ class FormatStringTest {
         // lines by a literal carrying .format(.
         val trailingPlus = Regex("\"\\s*\\+\\s*$")
         val carriesFormat = Regex("\"\\s*\\.format\\(")
+        // A line that ends the current expression: the concat is over,
+        // so any .format beyond it belongs to something else. Without
+        // this the lint reads the next `when` branch as a continuation.
+        val endsExpression = Regex("^\\s*(\\)|\\)|else\\b|\\w.*->|\\}|\\))")
         val offenders = mutableListOf<String>()
 
         for (file in sourceFiles()) {
             val lines = file.readLines()
             for (i in lines.indices) {
                 if (!trailingPlus.containsMatchIn(lines[i])) continue
-                val lookahead = lines.drop(i + 1).take(4).joinToString(" ")
-                if (carriesFormat.containsMatchIn(lookahead)) {
-                    offenders += "${file.name}:${i + 1}"
+                var hit = false
+                for (ahead in lines.drop(i + 1).take(4)) {
+                    if (endsExpression.containsMatchIn(ahead)) break
+                    if (carriesFormat.containsMatchIn(ahead)) hit = true
                 }
+                if (hit) offenders += "${file.name}:${i + 1}"
             }
         }
         assertTrue(

@@ -146,6 +146,7 @@ fun TraceGraph(
     min: Float? = null,
     peak: Float? = null,
     showZero: Boolean = false,
+    logScale: Boolean = false,
 ) {
     val line = MaterialTheme.colorScheme.primary
     val grid = MaterialTheme.colorScheme.outlineVariant
@@ -173,26 +174,76 @@ fun TraceGraph(
         ) + 10.dp.toPx()
         val x0 = gutter
         val plotW = size.width - x0
-        val norm = { v: Float -> ((v - floor) / range).coerceIn(0f, 1f) }
+        // A log axis is the right one for a quantity that spans
+        // decades. The gridlines become 1/2/5 per decade rather than
+        // even fractions of the span, which is also how light meters
+        // are actually graduated.
+        val logLo = kotlin.math.log10(maxOf(floor, 1e-3f))
+        val logHi = kotlin.math.log10(maxOf(ceiling, maxOf(floor, 1e-3f) * 10f))
+        val norm: (Float) -> Float = { v: Float ->
+            if (logScale) {
+                ((kotlin.math.log10(maxOf(v, 1e-3f)) - logLo) / (logHi - logLo))
+                    .coerceIn(0f, 1f)
+            } else {
+                ((v - floor) / range).coerceIn(0f, 1f)
+            }
+        }
 
         // Horizontal gridlines: quiet structure, not decoration, each
         // one labelled in the gutter.
-        val lines = listOf(0.25f, 0.5f, 0.75f, 1f)
-        // Decimals must suit the span: one decimal printed "0.1" twice
-        // on a 0.2 ceiling and told the reader nothing.
+        // Decades, not every 1/2/5. A light meter is graduated by the
+        // decade with minor marks inside it; printing a label at every
+        // 2 and 5 as well gave seventeen labels and none of them
+        // readable.
+        val lines: List<Float>
+        if (logScale) {
+            val lo = maxOf(floor, 1e-3f)
+            val hi = maxOf(ceiling, lo * 10f)
+            val firstDecade = kotlin.math.floor(kotlin.math.log10(lo)).toInt()
+            val lastDecade = kotlin.math.ceil(kotlin.math.log10(hi)).toInt()
+            val ticks = mutableListOf<Float>()
+            for (d in firstDecade..lastDecade) {
+                val decade = Math.pow(10.0, d.toDouble()).toFloat()
+                if (decade in lo..hi) ticks += decade
+            }
+            lines = ticks
+        } else {
+            lines = listOf(0.25f, 0.5f, 0.75f, 1f)
+        }
         val span = range
         val decimals = decimalsFor(span)
         for (f in lines) {
-            val y = size.height * (1f - f)
+            val y = size.height * (1f - norm(f))
             drawLine(grid, Offset(0f, y), Offset(size.width, y), 2f)
-            val text = "%.${decimals}f".format(floor + range * f)
+            // Minor marks at 2x and 5x each decade, unlabelled.
+            if (logScale) {
+                for (m in listOf(2f, 5f)) {
+                    val minor = f * m
+                    if (minor > floor && minor < ceiling) {
+                        val my = size.height * (1f - norm(minor))
+                        drawLine(
+                            grid.copy(alpha = 0.4f),
+                            Offset(0f, my),
+                            Offset(size.width, my),
+                            1.5f,
+                        )
+                    }
+                }
+            }
+            val text = if (f >= 1000f) {
+                "%.0fk".format(f / 1000f)
+            } else if (f >= 1f) {
+                "%.0f".format(f)
+            } else {
+                "%.1f".format(f)
+            }
             val layout = measurer.measure(text, labelStyle)
             drawText(
                 textLayoutResult = layout,
                 topLeft = Offset(x0 - 6.dp.toPx() - layout.size.width, y - layout.size.height / 2f),
             )
         }
-        if (showZero) {
+        if (showZero && !logScale) {
             val layout = measurer.measure(zeroText, labelStyle)
             drawText(
                 textLayoutResult = layout,
