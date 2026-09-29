@@ -199,12 +199,17 @@ fun CompassScreen(onBack: () -> Unit) {
             // Tilt is not filler: it is the number that explains WHY
             // the heading may be wrong, so it belongs on the panel
             // rather than only in the warning paragraph.
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                StatChip(Stat.Tilt(tiltDeg))
-                StatChip(Stat.Field(strength))
+            StatRow {
+                StatChip(
+                    "tilt",
+                    "%.0f°".format(tiltDeg.toDouble()),
+                    emphasise = tilted,
+                )
+                StatChip(
+                    "field",
+                    "%.0f µT".format(strength.toDouble()),
+                    emphasise = disturbed,
+                )
             }
 
             Text(
@@ -216,7 +221,7 @@ fun CompassScreen(onBack: () -> Unit) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Text(
+            ToolHint(
                 text = when {
                     disturbed ->
                         "Metal nearby — the field reads %.0f µT, outside the " +
@@ -231,12 +236,7 @@ fun CompassScreen(onBack: () -> Unit) {
                         )
                     else -> "Wave a figure-8 if the needle feels stuck."
                 },
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (disturbed) {
-                    MaterialTheme.colorScheme.error
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
+                warn = disturbed,
             )
         }
     }
@@ -249,51 +249,6 @@ fun CompassScreen(onBack: () -> Unit) {
  * navigator actually wants — which way, and how far — without reading
  * a single digit.
  */
-/** What a companion readout is showing. A sealed shape, so "no value"
- *  is a state and not a magic null meaning two different things. */
-private sealed interface Stat {
-    val label: String
-    val text: String
-    val bad: Boolean
-
-    data class Tilt(val degrees: Float) : Stat {
-        override val label = "tilt"
-        override val text = "%.0f°".format(degrees)
-        /** The rotation matrix assumes a flat phone; past 35° the
-         *  heading degrades fast enough to stop trusting. */
-        override val bad = degrees > 35f
-    }
-
-    data class Field(val microTesla: Float) : Stat {
-        override val label = "field"
-        override val text = "%.0f µT".format(microTesla)
-        /** Earth's field is 25-65 µT. Outside that, something metal is
-         *  near and the needle is reading that instead. */
-        override val bad = microTesla < 20f || microTesla > 70f
-    }
-}
-
-/** One labeled companion readout under the dial. */
-@Composable
-private fun StatChip(stat: Stat) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = stat.label.uppercase(),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            text = stat.text,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = if (stat.bad) {
-                MaterialTheme.colorScheme.error
-            } else {
-                MaterialTheme.colorScheme.onSurface
-            },
-        )
-    }
-}
 
 @Composable
 private fun Dial(

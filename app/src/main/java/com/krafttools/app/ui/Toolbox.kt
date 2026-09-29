@@ -549,22 +549,3 @@ private fun Bubble(dx: Float, dy: Float, level: Boolean, modifier: Modifier = Mo
     }
 }
 
-/** The hardware gate every tool shows when its sensor is absent. */
-@Composable
-fun NoSensor(modifier: Modifier = Modifier, name: String) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = "No $name on this phone.",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Text(
-            text = "This tool needs hardware yours doesn't have.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-}

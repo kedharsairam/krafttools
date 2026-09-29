@@ -235,19 +235,15 @@ private fun DecibelBody(onBack: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                StatChip(label = "min", value = minDb)
-                StatChip(label = "peak", value = maxDb)
-                StatChip(label = "LAeq", value = leqDb)
+                StatChip("min", minDb?.let { "%.0f".format(it) } ?: "—")
+                StatChip("peak", maxDb?.let { "%.0f".format(it) } ?: "—")
+                StatChip("laeq", "%.0f".format(leqDb))
             }
 
             Spacer(modifier = Modifier.weight(0.2f))
 
             // Labelled frequency plot, not a row of anonymous bars.
-            Text(
-                text = "SPECTRUM",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            SectionLabel("Spectrum")
             SpectrumPlot(
                 values = spectrum.toList(),
                 centers = BAND_CENTERS.toList(),
@@ -334,23 +330,6 @@ private fun DecibelBody(onBack: () -> Unit) {
     }
 }
 
-/** One labeled statistic, so min/peak/LAeq read as a row of readouts
- *  rather than three floating sentences. */
-@Composable
-private fun StatChip(label: String, value: Float?) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = label.uppercase(),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            text = if (value == null) "—" else "%.0f".format(value),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
 
 /** The eight display bands, shared by the analysis and its labels. */
 private val BAND_CENTERS = floatArrayOf(63f, 125f, 250f, 500f, 1000f, 2000f, 4000f, 8000f)
