@@ -1,9 +1,0 @@
-com.krafttools.app-pngs-0 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/generated/res/pngs/release
-com.krafttools.app-updated_navigation_xml-1 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/generated/updated_navigation_xml/release
-com.krafttools.app-packageReleaseResources-2 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/intermediates/incremental/release/packageReleaseResources/merged.dir
-com.krafttools.app-packageReleaseResources-3 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/intermediates/incremental/release/packageReleaseResources/stripped.dir
-com.krafttools.app-merged-not-compiled-resources-4 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/intermediates/merged-not-compiled-resources/release
-com.krafttools.app-release-5 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/build/intermediates/merged_res/release/mergeReleaseResources
-com.krafttools.app-main-6 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/res
-com.krafttools.app-release-7 /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/release/res
-gradleHome-0 /home/kedhar/.gradle

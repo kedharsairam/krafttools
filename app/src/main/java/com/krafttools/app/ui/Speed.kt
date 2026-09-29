@@ -36,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
@@ -93,6 +94,7 @@ private fun SpeedBody(onBack: () -> Unit) {
     var gpsOn by rememberSaveable { mutableStateOf(manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) }
     var metric by rememberSaveable { mutableStateOf(true) }
     var hud by rememberSaveable { mutableStateOf(false) }
+    val speedView = LocalView.current
     // Trip computer: distance accumulates by haversine between fixes
     // while active. Positions live in RAM only, die with the screen.
     var tripActive by rememberSaveable { mutableStateOf(false) }
@@ -266,7 +268,10 @@ private fun SpeedBody(onBack: () -> Unit) {
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = { startTrip() }) {
+                Button(onClick = {
+                    Haptics.confirm(speedView)
+                    startTrip()
+                }) {
                     Text(if (tripActive) "Stop trip" else "Start trip")
                 }
                 OutlinedButton(

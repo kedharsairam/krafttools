@@ -3,6 +3,7 @@ package com.krafttools.app.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -120,3 +121,19 @@ fun TraceGraph(
         }
     }
 }
+
+/**
+ * The house segmented-control palette. M3's stock active segment is a
+ * flat filled pill; here the active segment is the instrument lit from
+ * within — cyan text on tinted glass with a cyan bezel — so mode
+ * selectors read as part of the same panel as the dial and the trace.
+ */
+@Composable
+fun instrumentSegmentedColors() = SegmentedButtonDefaults.colors(
+    activeContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f),
+    activeContentColor = MaterialTheme.colorScheme.primary,
+    activeBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+    inactiveContainerColor = Color.Transparent,
+    inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    inactiveBorderColor = MaterialTheme.colorScheme.outline,
+)

@@ -35,6 +35,10 @@ private val DarkColorScheme = darkColorScheme(
     surfaceContainerHighest = Color(0xFF35363E),
     tertiaryContainer = Color(0xFF18242B),
     onTertiaryContainer = Color(0xFFF2F5F7),
+    // M3's stock secondaryContainer is mauve — a stranger in an
+    // instrument panel. Every container that lights up lights up cyan.
+    secondaryContainer = Color(0xFF12313C),
+    onSecondaryContainer = InstrumentCyan,
 )
 
 val ToolboxShapes = Shapes(

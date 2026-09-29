@@ -31,6 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
@@ -58,6 +59,7 @@ fun CompassScreen(onBack: () -> Unit) {
     // already declared for wifi/speed. No fix -> 0° + honest note.
     var declination by remember { mutableStateOf<Float?>(null) }
     var locked by rememberSaveable { mutableStateOf<Float?>(null) }
+    val compassView = LocalView.current
 
     androidx.compose.runtime.DisposableEffect(Unit) {
         try {
@@ -177,7 +179,10 @@ fun CompassScreen(onBack: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .clickable { locked = if (locked == null) azimuth else null },
+                    .clickable {
+                        Haptics.confirm(compassView)
+                        locked = if (locked == null) azimuth else null
+                    },
             )
             Text(
                 text = if (locked == null) {
@@ -197,8 +202,8 @@ fun CompassScreen(onBack: () -> Unit) {
                 )
             } else if (tilted) {
                 Text(
-                    text = "Tilted %.0f° — lay the phone flat; headings " +
-                        "measured tilted read wrong.".format(tiltDeg.toDouble()),
+                    text = ("Tilted %.0f° — lay the phone flat; headings " +
+                        "measured tilted read wrong.").format(tiltDeg.toDouble()),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

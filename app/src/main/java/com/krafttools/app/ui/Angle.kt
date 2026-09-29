@@ -29,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 
@@ -44,6 +45,7 @@ fun AngleScreen(onBack: () -> Unit) {
     // Picture frames and shelves live at these angles; the toggle
     // admits the tool is rounding, not that the phone got better.
     var snap by rememberSaveable { mutableStateOf(false) }
+    val view = LocalView.current
     fun snap45(v: Float): Float {
         if (!snap) return v
         val q = Math.round(v / 45f) * 45f
@@ -100,7 +102,10 @@ fun AngleScreen(onBack: () -> Unit) {
                 AxisReadout("ROLL", shown.second)
             }
             if (held == null) {
-                Button(onClick = { held = Triple(pitch, roll, live) }) { Text("Hold") }
+                Button(onClick = {
+                    Haptics.confirm(view)
+                    held = Triple(pitch, roll, live)
+                }) { Text("Hold") }
             } else {
                 OutlinedButton(onClick = { held = null }) { Text("Resume") }
             }
