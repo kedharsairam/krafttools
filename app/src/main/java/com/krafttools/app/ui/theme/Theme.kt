@@ -60,13 +60,13 @@ private val Grotesk = FontFamily(
 )
 
 val ToolboxTypography = Typography(
-    displayLarge = TextStyle(fontSize = 34.sp, fontWeight = FontWeight.Bold, lineHeight = 40.sp, fontFamily = Grotesk),
+    displayLarge = TextStyle(fontSize = 34.sp, fontWeight = FontWeight.Bold, lineHeight = 40.sp, fontFamily = Grotesk, fontFeatureSettings = "tnum"),
     headlineMedium = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.SemiBold, lineHeight = 28.sp, fontFamily = Grotesk),
     titleLarge = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold, lineHeight = 26.sp, fontFamily = Grotesk),
     titleMedium = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold, lineHeight = 22.sp, fontFamily = Grotesk),
     bodyLarge = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Normal, lineHeight = 26.sp),
     bodyMedium = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Normal, lineHeight = 22.sp),
-    labelMedium = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
+    labelMedium = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.8.sp),
 )
 
 @Composable

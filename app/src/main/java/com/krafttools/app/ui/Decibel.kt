@@ -202,11 +202,10 @@ private fun DecibelBody(onBack: () -> Unit) {
                 Text(error!!, style = MaterialTheme.typography.bodyLarge)
                 return@Column
             }
-            Text(
-                text = "%.0f dB".format(instantDb),
-                style = MaterialTheme.typography.displayLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
+            ReadingHeader(
+                value = "%.0f".format(instantDb),
+                unit = "dB",
+                status = "LAeq %.0f · 1 s".format(leqDb),
             )
             LinearProgressIndicator(
                 progress = { (instantDb / 120f).coerceIn(0f, 1f) },
@@ -223,7 +222,6 @@ private fun DecibelBody(onBack: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 Text("min %.0f".format(minDb ?: 0f), style = MaterialTheme.typography.titleMedium)
-                Text("LAeq %.0f".format(leqDb), style = MaterialTheme.typography.titleMedium)
                 Text("max %.0f".format(maxDb ?: 0f), style = MaterialTheme.typography.titleMedium)
             }
             // Phone mics are not calibrated: same room reads differently

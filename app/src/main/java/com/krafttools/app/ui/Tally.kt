@@ -83,11 +83,10 @@ fun TallyScreen(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text(
-                text = "$count",
-                style = MaterialTheme.typography.displayLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
+            ReadingHeader(
+                value = "$count",
+                unit = null,
+                status = "tally",
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),

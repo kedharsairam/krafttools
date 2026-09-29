@@ -98,20 +98,12 @@ fun EmfScreen(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = "%.1f µT".format(total.toDouble()),
-                style = MaterialTheme.typography.displayLarge,
-                fontWeight = FontWeight.Bold,
-                // Error color only carries meaning here (over threshold);
-                // nominal readings stay on the cyan primary.
-                color = if (alert) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = if (alert) "Above threshold — metal or wire nearby"
+            ReadingHeader(
+                value = "%.1f".format(total.toDouble()),
+                unit = "µT",
+                status = if (alert) "above threshold — metal or wire nearby"
                 else "Ambient field",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                live = !alert,
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),

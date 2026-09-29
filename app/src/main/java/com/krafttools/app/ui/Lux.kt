@@ -77,15 +77,11 @@ fun LuxScreen(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text(
-                text = "%.1f lux".format(shown) + if (held) " (held)" else "",
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Text(
-                text = luxLabel(shown),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
+            ReadingHeader(
+                value = "%.1f".format(shown) + if (held) " (held)" else "",
+                unit = "lux",
+                status = luxLabel(shown),
+                live = !held,
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),

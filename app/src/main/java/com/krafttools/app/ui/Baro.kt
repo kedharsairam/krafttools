@@ -148,16 +148,10 @@ fun BarometerScreen(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = "%.2f hPa".format(smooth.toDouble()),
-                style = MaterialTheme.typography.displayLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = "station pressure (30-min average)",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            ReadingHeader(
+                value = "%.2f".format(smooth.toDouble()),
+                unit = "hPa",
+                status = "station pressure · 30-min average",
             )
             Text(
                 text = forecast
@@ -170,7 +164,7 @@ fun BarometerScreen(onBack: () -> Unit) {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
             )
-            PressureTrace(
+            TraceGraph(
                 values = history.toList(),
                 modifier = Modifier.fillMaxWidth().height(160.dp),
             )
@@ -201,29 +195,6 @@ fun BarometerScreen(onBack: () -> Unit) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-        }
-    }
-}
-
-@Composable
-private fun PressureTrace(values: List<Float>, modifier: Modifier = Modifier) {
-    val line = MaterialTheme.colorScheme.primary
-    val grid = MaterialTheme.colorScheme.outlineVariant
-    Canvas(modifier = modifier) {
-        val midY = size.height / 2f
-        drawLine(grid, Offset(0f, midY), Offset(size.width, midY), 2f)
-        if (values.size < 2) return@Canvas
-        // Autoscale to the window: weather moves ~1 hPa/hr, so a fixed
-        // scale would render a flat line. Guard the flat case explicitly.
-        val min = values.minOrNull() ?: return@Canvas
-        val max = values.maxOrNull() ?: return@Canvas
-        val span = (max - min).coerceAtLeast(0.1f)
-        var prev = Offset(0f, size.height - ((values[0] - min) / span) * (size.height - 16f) - 8f)
-        for (i in 1 until values.size) {
-            val x = size.width * i / (values.size - 1)
-            val y = size.height - ((values[i] - min) / span) * (size.height - 16f) - 8f
-            drawLine(line, prev, Offset(x, y), 4f)
-            prev = Offset(x, y)
         }
     }
 }

@@ -79,15 +79,14 @@ fun AngleScreen(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                "%.1f°".format(shown.third),
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                if (held != null) "HELD — live %.1f° underneath".format(live) else "from flat",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            ReadingHeader(
+                value = "%.1f°".format(shown.third),
+                unit = null,
+                status = if (held != null) {
+                    "held — live %.1f° underneath".format(live)
+                } else {
+                    "from flat"
+                },
             )
             // Rotating edge shows roll against a fixed horizon; pitch is numeric
             // since one line cannot show two axes without becoming a bubble again.

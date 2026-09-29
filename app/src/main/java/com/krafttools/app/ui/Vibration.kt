@@ -83,16 +83,10 @@ fun VibrationScreen(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = "%.2f m/s²".format(vibe.toDouble()),
-                style = MaterialTheme.typography.displayLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = "peak this session %.2f m/s²".format(peak.toDouble()),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            ReadingHeader(
+                value = "%.2f".format(vibe.toDouble()),
+                unit = "m/s²",
+                status = "peak %.2f this session".format(peak.toDouble()),
             )
             if (dominantHz != null) {
                 Text(
@@ -104,8 +98,10 @@ fun VibrationScreen(onBack: () -> Unit) {
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
-            Trace(
+            TraceGraph(
                 values = history.toList(),
+                max = 4f,
+                peak = peak,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(160.dp),
@@ -120,23 +116,6 @@ fun VibrationScreen(onBack: () -> Unit) {
     }
 }
 
-@Composable
-private fun Trace(values: List<Float>, modifier: Modifier = Modifier) {    val line = MaterialTheme.colorScheme.primary
-    val grid = MaterialTheme.colorScheme.outlineVariant
-    Canvas(modifier = modifier) {
-        val midY = size.height / 2f
-        drawLine(grid, Offset(0f, midY), Offset(size.width, midY), 2f)
-        if (values.size < 2) return@Canvas
-        val scale = (size.height / 2f - 8f) / 4f // 4 m/s² full-scale
-        var prev = Offset(0f, midY - (values[0].coerceAtMost(4f) * scale))
-        for (i in 1 until values.size) {
-            val x = size.width * i / (values.size - 1)
-            val y = midY - (values[i].coerceAtMost(4f) * scale)
-            drawLine(line, prev, Offset(x, y), 4f)
-            prev = Offset(x, y)
-        }
-    }
-}
 
 /**
  * Dominant frequency of a vibration window via DFT magnitude.

@@ -214,16 +214,12 @@ private fun SpeedBody(onBack: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
-                Text(
-                    text = "%.0f".format(shown.toDouble()),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.graphicsLayer {
-                        // HUD mirror mode: reflect for windshield use.
-                        scaleX = if (hud) -1f else 1f
-                    },
+                ReadingHeader(
+                    value = "%.0f".format(shown.toDouble()),
+                    unit = unit,
+                    status = null,
+                    mirror = hud,
                 )
-                Text(unit, style = MaterialTheme.typography.titleMedium)
                 Text(
                     "±%.0f m accuracy".format(accuracy!!.toDouble()),
                     style = MaterialTheme.typography.bodyMedium,

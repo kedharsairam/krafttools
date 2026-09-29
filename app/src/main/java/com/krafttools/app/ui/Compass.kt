@@ -34,6 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -146,11 +148,10 @@ fun CompassScreen(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = "${trueNorth.toInt()}° ${cardinal(trueNorth)} true",
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
+            ReadingHeader(
+                value = "${trueNorth.toInt()}° ${cardinal(trueNorth)}",
+                unit = null,
+                status = "true north",
             )
             Text(
                 text = "${azimuth.toInt()}° magnetic" +
@@ -233,15 +234,34 @@ private fun Dial(azimuth: Float, modifier: Modifier = Modifier) {
         ),
         label = "dial",
     )
+    // Cardinal paint once: canvas text needs Android Paint, not Compose.
+    val cardinalPaint = remember(text) {
+        android.graphics.Paint().apply {
+            color = text.toArgb()
+            textSize = 44f
+            textAlign = android.graphics.Paint.Align.CENTER
+            isAntiAlias = true
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
+        }
+    }
+    val northPaint = remember(needle) {
+        android.graphics.Paint().apply {
+            color = needle.toArgb()
+            textSize = 52f
+            textAlign = android.graphics.Paint.Align.CENTER
+            isAntiAlias = true
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
+        }
+    }
     Canvas(modifier = modifier) {
         val cx = size.width / 2f
         val cy = size.height / 2f
         val r = size.minDimension / 2f * 0.92f
         drawCircle(color = ring, radius = r, style = Stroke(4f))
-        // Cardinal ticks rotate with the world (needle stays up).
+        // Cardinal ticks + letters rotate with the world (needle stays up).
         rotate(-animated, Offset(cx, cy)) {
             val labels = listOf("N" to 0f, "E" to 90f, "S" to 180f, "W" to 270f)
-            for ((_, deg) in labels) {
+            for ((letter, deg) in labels) {
                 val rad = Math.toRadians(deg.toDouble())
                 val x1 = cx + (r * 0.82f * Math.sin(rad)).toFloat()
                 val y1 = cy - (r * 0.82f * Math.cos(rad)).toFloat()
@@ -252,6 +272,12 @@ private fun Dial(azimuth: Float, modifier: Modifier = Modifier) {
                     start = Offset(x1, y1),
                     end = Offset(x2, y2),
                     strokeWidth = if (deg == 0f) 8f else 5f,
+                )
+                drawContext.canvas.nativeCanvas.drawText(
+                    letter,
+                    (cx + (r * 0.64f * Math.sin(rad)).toFloat()),
+                    (cy - (r * 0.64f * Math.cos(rad)).toFloat()) + 16f,
+                    if (deg == 0f) northPaint else cardinalPaint,
                 )
             }
         }

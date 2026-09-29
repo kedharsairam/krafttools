@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -89,7 +90,12 @@ private fun QrBody(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            AndroidView(
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            ) {
+                AndroidView(
                 factory = { ctx ->
                     PreviewView(ctx).also { view ->
                         val provider =
@@ -125,10 +131,40 @@ private fun QrBody(onBack: () -> Unit) {
                         )
                     }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                modifier = Modifier.fillMaxSize(),
             )
+                // Corner-bracket viewfinder: the universal scanner idiom.
+                // Same Box as the preview, zero camera cost.
+                val primary = MaterialTheme.colorScheme.primary
+                androidx.compose.foundation.Canvas(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(48.dp),
+                ) {
+                    val c = primary
+                    val len = 72f
+                    val w = 10f
+                    // Four L corners.
+                    drawLine(c, Offset(0f, len), Offset(0f, 0f), w)
+                    drawLine(c, Offset(0f, 0f), Offset(len, 0f), w)
+                    drawLine(c, Offset(size.width - len, 0f), Offset(size.width, 0f), w)
+                    drawLine(c, Offset(size.width, 0f), Offset(size.width, len), w)
+                    drawLine(c, Offset(0f, size.height - len), Offset(0f, size.height), w)
+                    drawLine(c, Offset(0f, size.height), Offset(len, size.height), w)
+                    drawLine(
+                        c,
+                        Offset(size.width - len, size.height),
+                        Offset(size.width, size.height),
+                        w,
+                    )
+                    drawLine(
+                        c,
+                        Offset(size.width, size.height - len),
+                        Offset(size.width, size.height),
+                        w,
+                    )
+                }
+            }
             result?.let { text ->
                 Text(
                     text = text,
