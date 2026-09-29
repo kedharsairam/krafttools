@@ -31,6 +31,14 @@ private val DarkColorScheme = darkColorScheme(
     surface = Color(0xFF1C1C20),
     onSurface = Color(0xFFF2F5F7),
     surfaceVariant = Color(0xFF2E2E35),
+    // M3's stock dark `outlineVariant` lands around #49454F here, which
+    // is 2.0:1 against the #121214 background. A trace's gridlines are
+    // not decoration — they ARE the scale, the thing that tells you
+    // where a reading sits in its range — and WCAG asks 3:1 of any
+    // meaningful non-text graphic. Measured off a rendered screenshot,
+    // not assumed from the token. #616163 is the lightest blue-cast
+    // grey that clears 3:1 without turning the grid into a foreground.
+    outlineVariant = Color(0xFF616163),
     onSurfaceVariant = Color(0xFFB4BCC4),
     surfaceContainerHighest = Color(0xFF35363E),
     tertiaryContainer = Color(0xFF18242B),

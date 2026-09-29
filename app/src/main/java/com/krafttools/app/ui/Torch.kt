@@ -346,6 +346,11 @@ private fun TorchBody(onBack: () -> Unit) {
                     steps = 10,
                     modifier = Modifier.touchTarget(),
                 )
+                // Room for the tick marks M3 draws BELOW this
+                // component's own layout box. Without it a stepped
+                // slider's ticks print through whatever sits under
+                // them.
+                Spacer(modifier = Modifier.height(14.dp))
             }
             if (sos) {
                 Text(

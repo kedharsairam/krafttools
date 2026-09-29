@@ -197,8 +197,22 @@ fun PermissionGate(
             if (onBack != null || optional) {
                 OutlinedButton(
                     onClick = {
-                        if (optional) asked = true
-                        onBack?.invoke()
+                        // For an optional permission "Not now" means
+                        // "open it anyway, without the extra detail" —
+                        // it must NOT navigate away. Calling onBack here
+                        // was right for a required permission, where the
+                        // gate is a wall, and wrong for an optional one,
+                        // where the button sits on a screen whose only
+                        // purpose is the tool behind it. The first
+                        // version did both, so declining sent the user
+                        // back to the grid and the compass they had
+                        // just been told works without location never
+                        // appeared.
+                        if (optional) {
+                            asked = true
+                        } else {
+                            onBack?.invoke()
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()

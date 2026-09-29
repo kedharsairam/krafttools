@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,6 +47,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.util.Locale
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 
 @Composable
 fun DecibelScreen(onBack: () -> Unit) {
@@ -204,11 +207,16 @@ private fun DecibelBody(onBack: () -> Unit) {
         onBack = onBack,
 
     ) { padding ->
+        // Scrollable: at a 2x font this screen's content is taller than
+        // the viewport, and a non-scrolling Column lays the overflow out
+        // below the screen edge — "Reset stats" and "Zero" were present,
+        // laid out, and completely untappable, with nothing to say so.
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 24.dp, vertical = 16.dp),
+                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -241,7 +249,12 @@ private fun DecibelBody(onBack: () -> Unit) {
                 peakDb = maxDb ?: 0f,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(96.dp)
+                    // The scale draws its own tick numbers, so it needs
+                    // room for them at whatever size the user has set.
+                    // A fixed 96dp is enough for the labels and the bar
+                    // only at the default font; at 2x the labels double
+                    // and there is nowhere for the extra to go.
+                    .height(96.dp + ((LocalDensity.current.fontScale - 1f) * 56).dp)
                     .instrumentSemantics(
                         label = "Sound level scale",
                         value = "%.0f decibels, %s, peak %.0f".format(
@@ -262,19 +275,27 @@ private fun DecibelBody(onBack: () -> Unit) {
                 StatChip("laeq", "%.0f".format(Locale.ROOT, leqDb))
             }
 
-            Spacer(modifier = Modifier.weight(0.2f))
+            Spacer(modifier = Modifier.height(6.dp))
 
             // Labelled frequency plot, not a row of anonymous bars.
             SectionLabel("Spectrum")
+            // A real height, not `weight(1f)`. This column scrolls, so
+            // a weighted child is measured against an infinite
+            // constraint and collapses to nothing — the spectrum
+            // disappeared entirely when the scroll went in. The plot
+            // is a fixed set of eight bands; it does not need to
+            // absorb slack, it needs to be big enough to read.
             SpectrumPlot(
                 values = spectrum.toList(),
                 centers = BAND_CENTERS.toList(),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .height(
+                        170.dp + ((LocalDensity.current.fontScale - 1f) * 60).dp,
+                    ),
             )
 
-            Spacer(modifier = Modifier.weight(0.2f))
+            Spacer(modifier = Modifier.height(6.dp))
 
             // Phone mics are not calibrated: the same room reads
             // differently on every device, so this is for comparing
@@ -295,7 +316,7 @@ private fun DecibelBody(onBack: () -> Unit) {
                     text = "Calibration",
                     style = MaterialTheme.typography.titleMedium,
                 )
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "%+.0f dB".format(Locale.ROOT, offset),
                     style = MaterialTheme.typography.titleMedium,
@@ -315,6 +336,12 @@ private fun DecibelBody(onBack: () -> Unit) {
                     .fillMaxWidth()
                     .heightIn(min = 48.dp),
             )
+                // Room for the tick marks M3 draws BELOW this
+                // component's own 48dp box. Without it a stepped
+                // slider's ticks print straight through the buttons
+                // under it — visible on the sound meter's calibration
+                // slider at a 2x font scale.
+            Spacer(modifier = Modifier.height(14.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),

@@ -370,17 +370,18 @@ private fun SpeedBody(onBack: () -> Unit) {
                     }
                 }
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                
-                
-                FilterChip(
-                    selected = hud,
-                    onClick = { hud = !hud },
-                    label = { Text("HUD") },
-                    modifier = Modifier
-                        .weight(1f)
-                        .touchTarget(),
-                )
+            // Unit first, because it changes what the hero *means*:
+            // an 80 shown in km/h and an 80 shown in mph are different
+            // speeds. HUD is a view preference and sits after it.
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .touchTarget(),
+            ) {
+                ModeChip("km/h", metric) { metric = true }
+                ModeChip("mph", !metric) { metric = false }
+                ModeChip("HUD", hud) { hud = !hud }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(

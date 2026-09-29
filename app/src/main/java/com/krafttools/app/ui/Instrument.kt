@@ -226,7 +226,7 @@ fun TraceGraph(
                     if (minor > floor && minor < ceiling) {
                         val my = size.height * (1f - norm(minor))
                         drawLine(
-                            grid.copy(alpha = 0.4f),
+                            grid.copy(alpha = 0.7f),
                             Offset(0f, my),
                             Offset(size.width, my),
                             1.5f,

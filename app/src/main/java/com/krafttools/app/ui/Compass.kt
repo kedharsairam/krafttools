@@ -212,9 +212,15 @@ private fun CompassBody(onBack: () -> Unit) {
                                 ?: ""
                         }
                             ?: if (sawPermissionDenied) {
-                                " · no location permission, magnetic only"
+                                // The hero already says MAGNETIC and
+                                // the panel below explains why, so this
+                                // line only has to name the cause. It
+                                // used to end "magnetic only" as well,
+                                // which said the same thing three times
+                                // in three type sizes.
+                                " · no location permission"
                             } else {
-                                " · no fix yet, magnetic only"
+                                " · no fix yet"
                             }) +
                         " · %.0f µT".format(Locale.ROOT, strength.toDouble())
                     ),

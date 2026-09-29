@@ -100,8 +100,32 @@ internal fun LevelScale(
                 .fillMaxWidth()
                 .weight(1f),
         ) {
-            val barH = size.height * 0.62f
-            val barTop = (size.height - barH) / 2f
+            // The labels are part of the scale, so the scale has to make
+            // room for them. They used to be drawn at a fixed offset
+            // from the bottom of the bar, which put them *outside* the
+            // canvas entirely: at the default font they landed in the
+            // gap above the stat row by luck, and at a 2x font scale
+            // they landed on top of the MIN / PEAK / LAEQ labels
+            // instead, printing "MIN" through "30" and "LAEQ" through
+            // "120". Reserving the band first is the only arrangement
+            // that holds at any font size.
+            val tickLayouts = SPL_TICKS.map {
+                measurer.measure(it.roundToInt().toString(), labelStyle)
+            }
+            val nameLayout = measurer.measure(
+                zoneFor(db).name,
+                labelStyle.copy(color = zoneFor(db).color, fontSize = 11.sp),
+            )
+            // Two reserved bands, not one. The zone name needs room
+            // above the bar and the tick numbers need room below it;
+            // sharing a single band put "quiet" on top of "30" at a 2x
+            // font, which is the same collision one band lower down,
+            // just moved.
+            val tickBand = tickLayouts.maxOf { it.size.height } + 14.dp.toPx()
+            val nameBand = nameLayout.size.height + 8.dp.toPx()
+            val barArea = (size.height - tickBand - nameBand).coerceAtLeast(1f)
+            val barH = barArea * 0.86f
+            val barTop = nameBand + (barArea - barH) / 2f
             val span = SPL_CEILING_DB - SPL_FLOOR_DB
             fun x(dbValue: Float): Float =
                 (((dbValue - SPL_FLOOR_DB) / span).coerceIn(0f, 1f)) * size.width
@@ -183,35 +207,33 @@ internal fun LevelScale(
                 val tx = x(t)
                 drawLine(
                     color = tickColor,
-                    start = Offset(tx, barTop + barH + 6.dp.toPx()),
-                    end = Offset(tx, barTop + barH + 12.dp.toPx()),
+                    start = Offset(tx, barTop + barH + 3.dp.toPx()),
+                    end = Offset(
+                        tx,
+                        barTop + barH + 3.dp.toPx() + tickLayouts.first()
+                            .size.height * 0.45f,
+                    ),
                     strokeWidth = 2.dp.toPx(),
                 )
-                val text = t.roundToInt().toString()
-                val layout = measurer.measure(text, labelStyle)
+                val layout = tickLayouts[SPL_TICKS.indexOf(t)]
                 drawText(
                     textLayoutResult = layout,
                     topLeft = Offset(
                         (tx - layout.size.width / 2f)
                             .coerceIn(0f, (size.width - layout.size.width).coerceAtLeast(0f)),
-                        barTop + barH + 16.dp.toPx(),
+                        size.height - layout.size.height - 2.dp.toPx(),
                     ),
                 )
             }
             // Zone name for wherever the level currently sits: the one
             // word that turns a number into an answer.
-            val name = level.name
-            val nameLayout = measurer.measure(
-                name,
-                labelStyle.copy(color = level.color, fontSize = 11.sp),
-            )
             val nameX = (x(db) - nameLayout.size.width / 2f).coerceIn(
                 0f,
                 (size.width - nameLayout.size.width).coerceAtLeast(0f),
             )
             drawText(
                 textLayoutResult = nameLayout,
-                topLeft = Offset(nameX, barTop - nameLayout.size.height - 6.dp.toPx()),
+                topLeft = Offset(nameX, nameBand - nameLayout.size.height),
             )
             // Unused: the floor token is read here so the track colour
             // follows the theme rather than a hardcoded grey.

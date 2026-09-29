@@ -28,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 
 /**
  * The frame every tool sits in.
@@ -89,11 +91,27 @@ fun ToolColumn(
     spacing: androidx.compose.ui.unit.Dp = 12.dp,
     content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit,
 ) {
+    // Scrollable, because a non-scrolling column silently truncates.
+    //
+    // Every one of these screens is a fixed Column sized to the phone.
+    // At the default font that happens to fit. At a 2x font — an
+    // ordinary Android accessibility setting, not an edge case — the
+    // content is taller than the viewport and Compose lays the
+    // overflow out *below the screen*. On the sound meter that put
+    // "Reset stats" and "Zero" off the bottom edge: present, laid out,
+    // and completely untappable, with no scroll to reach them and
+    // nothing on screen to say so.
+    //
+    // So the scroll lives here, once, rather than in fourteen screens.
+    // The instrument keeps its weight, and `fillMaxSize` on a
+    // weight(1f) child still fills the viewport exactly as before, so
+    // this changes nothing at the default size.
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(padding)
-            .padding(horizontal),
+            .padding(horizontal)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(spacing),
         content = content,

@@ -386,6 +386,63 @@ class SourceLintTest {
     )
 
     /**
+     * No composable block is empty.
+     *
+     * An empty `Row { }` compiles, renders nothing, and is invisible to
+     * every unit test in the build — which is exactly how the speedometer
+     * lost its km/h and mph chips: a scripted edit blanked the two
+     * `FilterChip` calls and left the `Row` standing. The build stayed
+     * green, all 315 tests passed, and the app shipped a unit toggle
+     * that no longer existed. Only a screenshot showed it.
+     *
+     * There is no legitimate empty layout in this app, so this is a
+     * plain check rather than a judgement call.
+     */
+    @Test
+    fun noLayoutBlockIsEmpty() {
+        val offenders = mutableListOf<String>()
+        for (file in uiSources()) {
+            val src = linesOf(file)
+            src.forEachIndexed { i, line ->
+                val open = Regex("""\b(Row|Column|Box|Surface)\(\s*\{?\s*$""")
+                if (!open.containsMatchIn(line)) return@forEachIndexed
+                // Find the brace that closes this block and see whether
+                // anything but whitespace lives between them.
+                var depth = 0
+                var sawOpen = false
+                var closed = false
+                val body = StringBuilder()
+                outer@ for (k in i until minOf(i + 24, src.size)) {
+                    for (c in src[k]) {
+                        when (c) {
+                            '{' -> { depth++; sawOpen = true }
+                            '}' -> {
+                                depth--
+                                if (sawOpen && depth == 0) {
+                                    closed = true
+                                    break@outer
+                                }
+                            }
+                            else -> if (depth > 0) body.append(c)
+                        }
+                    }
+                    body.append('\n')
+                }
+                if (!closed) return@forEachIndexed
+                if (!sawOpen) return@forEachIndexed
+                if (body.toString().isBlank()) {
+                    offenders += file.name + ":" + (i + 1)
+                }
+            }
+        }
+        assertTrue(
+            "these layout blocks are empty — they compile, render " +
+                "nothing, and no unit test notices: $offenders",
+            offenders.isEmpty(),
+        )
+    }
+
+    /**
      * No interactive control is smaller than the app's touch target.
      *
      * Material's own defaults fall short: a `SegmentedButton` row is
