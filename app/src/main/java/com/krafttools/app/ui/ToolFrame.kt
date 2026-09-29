@@ -91,27 +91,26 @@ fun ToolColumn(
     spacing: androidx.compose.ui.unit.Dp = 12.dp,
     content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit,
 ) {
-    // Scrollable, because a non-scrolling column silently truncates.
+    // NOT scrollable, deliberately.
     //
-    // Every one of these screens is a fixed Column sized to the phone.
-    // At the default font that happens to fit. At a 2x font — an
-    // ordinary Android accessibility setting, not an edge case — the
-    // content is taller than the viewport and Compose lays the
-    // overflow out *below the screen*. On the sound meter that put
-    // "Reset stats" and "Zero" off the bottom edge: present, laid out,
-    // and completely untappable, with no scroll to reach them and
-    // nothing on screen to say so.
+    // Adding `verticalScroll` here looked like the fix for large-font
+    // overflow and it broke four of the fourteen tools. A `weight(1f)`
+    // child inside a scrollable Column is measured against an infinite
+    // constraint and collapses: the WiFi channel chart became a sliver
+    // with all ten channel numbers printed on top of one another, and
+    // the screen below it was nine hundred pixels of dead space. The
+    // same collapse emptied the light meter's trace, the EMF plot and
+    // the protractor.
     //
-    // So the scroll lives here, once, rather than in fourteen screens.
-    // The instrument keeps its weight, and `fillMaxSize` on a
-    // weight(1f) child still fills the viewport exactly as before, so
-    // this changes nothing at the default size.
+    // The overflow itself is real and is fixed per screen, where the
+    // instrument gets a bounded height instead of a weight — see
+    // Decibel.kt. A shared helper that only four tools use is not worth
+    // a fix that damages those four.
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(padding)
-            .padding(horizontal)
-            .verticalScroll(rememberScrollState()),
+            .padding(horizontal),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(spacing),
         content = content,

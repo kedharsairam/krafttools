@@ -12,6 +12,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.AnnotatedString
@@ -33,6 +34,17 @@ fun ReadingHeader(
     value: String,
     unit: String?,
     status: String?,
+    /**
+     * A qualification on the status, in full sentences.
+     *
+     * The status line is the terse answer — "TRY 2.4 CH 3" — and a terse
+     * answer is only honest when there is nothing to qualify. A user
+     * about to go and move a router needs to know whether the number is
+     * a clean channel or the least-bad of an occupied band, and that
+     * distinction does not fit in the all-caps line without becoming
+     * another slogan. So it gets its own paragraph, in words.
+     */
+    caveat: String? = null,
     live: Boolean = true,
     mirror: Boolean = false,
     modifier: Modifier = Modifier,
@@ -60,6 +72,14 @@ fun ReadingHeader(
                 text = status.uppercase(),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (caveat != null) {
+            Text(
+                text = caveat,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
             )
         }
     }

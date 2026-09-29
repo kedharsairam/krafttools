@@ -199,6 +199,7 @@ private fun WifiBody(onBack: () -> Unit) {
         )
     }
     val recommendation = remember(loads) { recommendChannel(loads, band) }
+    val caveat = remember(loads, band) { recommendationCaveat(loads, band) }
     val selectedNets = nets.filter { it.channel?.key == selected }
 
     ToolScaffold("WiFi analyzer", onBack) { padding ->
@@ -223,6 +224,14 @@ private fun WifiBody(onBack: () -> Unit) {
                     } else {
                         "scanning"
                     },
+                    // The caveat is the difference between advice and a
+                    // number. When every channel in the band's
+                    // non-overlapping plan is occupied, the number is
+                    // the quietest of what is left rather than a clean
+                    // channel — and a user about to go and move a
+                    // router is entitled to know which of the two they
+                    // are being handed.
+                    caveat = caveat,
                     live = scanning,
                 )
 

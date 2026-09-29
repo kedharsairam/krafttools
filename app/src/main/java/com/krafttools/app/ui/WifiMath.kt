@@ -136,8 +136,93 @@ data class ChannelLoad(
 fun recommendChannel(loads: List<ChannelLoad>, band: WifiBand): WifiChannel? {
     val inBand = loads.filter { it.channel.band == band }
     val present = inBand.associateBy { it.channel.key }
-    // Prefer a channel nobody is on at all; otherwise the least busy.
-    val empty = nonOverlapping(band).firstOrNull { present[it.key] == null }
+    // Prefer a channel nobody is on at all. This is the documented
+    // 1/6/11 advice for 2.4 GHz and the equivalent plan elsewhere, and
+    // it is what a router's own UI will offer first.
+    val empty = nonOverlapping(band).firstOrNull {
+        (present[it.key]?.count ?: 0) == 0
+    }
     if (empty != null) return empty
-    return inBand.minByOrNull { it.count }?.channel
+    // Every channel in the plan is occupied, so there is no clean
+    // answer — only a least-bad one, and "the channel with the fewest
+    // networks on it" is the wrong measure. A channel's count says
+    // nothing about the channels either side of it, which is the whole
+    // problem in 2.4 GHz: channel 3 can hold two networks and still sit
+    // inside half of channel 1's 20 MHz if channel 1 is the busiest in
+    // the band. Recommending it there moves the user *into* the crowd.
+    //
+    // So score by the networks a choice would land on, weighted by how
+    // much their channels actually overlap. 802.11 channels are 5 MHz
+    // apart and 20 MHz wide, so overlap falls linearly to zero at four
+    // channels of separation and the non-overlapping plan falls out of
+    // the arithmetic rather than being special-cased.
+    return inBand.minByOrNull { load ->
+        inBand.sumOf { other ->
+            overlapFraction(load.channel, other.channel) * other.count
+        }
+    }?.channel
+}
+
+/**
+ * A channel's centre frequency in MHz.
+ *
+ * 2.4 GHz is `2407 + 5n`, 5 GHz is `5000 + 5n`, and 6 GHz is
+ * `5950 + 5n` — the 6 GHz band is offset by 5950, not 2407 or 5000,
+ * which is why treating all three as the same arithmetic gets 6 GHz
+ * wrong.
+ */
+internal fun centreMhz(channel: WifiChannel): Double = when (channel.band) {
+    WifiBand.BAND_2 -> 2407.0 + 5.0 * channel.number
+    WifiBand.BAND_5 -> 5000.0 + 5.0 * channel.number
+    WifiBand.BAND_6 -> 5950.0 + 5.0 * channel.number
+    WifiBand.UNKNOWN -> 0.0
+}
+
+/**
+ * How much of a 20 MHz channel on [a] is occupied by one on [b], 0..1.
+ *
+ * One channel of separation leaves 15 of 20 MHz in common, so half.
+ * Two leave a quarter, three leave a twentieth, four leave nothing —
+ * which is why 1, 6 and 11 are the 2.4 GHz plan and 1, 5 and 9 are not.
+ * Channels in different bands never overlap.
+ */
+internal fun overlapFraction(a: WifiChannel, b: WifiChannel): Double {
+    if (a.band != b.band || a.band == WifiBand.UNKNOWN) return 0.0
+    val separationMhz = kotlin.math.abs(centreMhz(a) - centreMhz(b))
+    return ((20.0 - separationMhz) / 20.0).coerceIn(0.0, 1.0)
+}
+
+/**
+ * Why a recommendation is the recommendation, in words.
+ *
+ * Null when the channel is in the band's own non-overlapping plan,
+ * which is the ordinary case and needs no explanation. When every
+ * channel in that plan is occupied the tool is advising a compromise,
+ * and a user deserves to know that before they go and move their
+ * router rather than being handed a bare channel number.
+ */
+internal fun recommendationCaveat(
+    loads: List<ChannelLoad>,
+    band: WifiBand,
+): String? {
+    val inBand = loads.filter { it.channel.band == band }
+    val plan = nonOverlapping(band)
+    if (plan.isEmpty()) return null
+    // "Occupied" means networks on it, not merely present in the scan
+    // result. A channel the radio reported with a count of zero is
+    // clean, and treating presence as occupancy produced a caveat on
+    // every screen where the plan was in fact available.
+    if (plan.any { ch -> inBand.none { it.channel.key == ch.key && it.count > 0 } }) {
+        return null
+    }
+    val planNumbers = plan.joinToString(", ") { it.number.toString() }
+    return "every clean channel in the ${
+        when (band) {
+            WifiBand.BAND_2 -> "2.4 GHz"
+            WifiBand.BAND_5 -> "5 GHz"
+            WifiBand.BAND_6 -> "6 GHz"
+            WifiBand.UNKNOWN -> "band"
+        }
+    } plan ($planNumbers) is occupied, so this is the quietest of " +
+        "what is left rather than a clean channel"
 }
