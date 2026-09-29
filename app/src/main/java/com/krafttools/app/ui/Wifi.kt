@@ -284,15 +284,39 @@ private fun WifiBody(onBack: () -> Unit) {
                                     overflow = TextOverflow.Ellipsis,
                                     modifier = Modifier.weight(1f),
                                 )
-                                Text(
-                                    text = if (n.level == 0) {
-                                        "— dBm"
-                                    } else {
-                                        "%d dBm".format(Locale.ROOT, n.level)
-                                    },
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
+                                // A bare "-63 dBm" means nothing to a
+                                // person. The tool already knows the
+                                // conventional quality words, and it
+                                // already has a tested function for
+                                // them — they were simply never wired
+                                // to this row.
+                                Column(
+                                    horizontalAlignment =
+                                    Alignment.End,
+                                ) {
+                                    Text(
+                                        text = if (n.level == 0) {
+                                            "—"
+                                        } else {
+                                            "%d dBm".format(Locale.ROOT, n.level)
+                                        },
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme
+                                            .onSurface,
+                                    )
+                                    Text(
+                                        text = signalQuality(
+                                            if (n.level == 0) null else n.level,
+                                        ),
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = if (n.level == 0) {
+                                            MaterialTheme.colorScheme.outline
+                                        } else {
+                                            MaterialTheme.colorScheme
+                                                .onSurfaceVariant
+                                        },
+                                    )
+                                }
                             }
                         }
                     }

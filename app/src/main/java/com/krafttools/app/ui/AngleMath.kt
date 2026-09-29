@@ -48,15 +48,6 @@ fun downhillAzimuth(gravity: FloatArray): Float {
     return ((deg % 360f) + 360f) % 360f
 }
 
-/** True when the device is standing on an edge, within [eps] of level. */
-fun isVertical(gravity: FloatArray, eps: Float = 0.01f): Boolean {
-    val ax = gravity[0].toDouble()
-    val ay = gravity[1].toDouble()
-    val az = gravity[2].toDouble()
-    val magnitude = Math.hypot(ax, Math.hypot(ay, az))
-    return Math.hypot(ax, ay) > 0f && kotlin.math.abs(az) <= eps * magnitude
-}
-
 /**
  * Snap to a multiple of [step] degrees when within [band] of one, and
  * say whether it snapped. Returning the flag rather than only the value

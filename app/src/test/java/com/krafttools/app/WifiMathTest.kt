@@ -1,14 +1,11 @@
 package com.krafttools.app
 
 import com.krafttools.app.ui.ChannelLoad
-import com.krafttools.app.ui.UNKNOWN_SIGNAL_FRACTION
 import com.krafttools.app.ui.WifiBand
 import com.krafttools.app.ui.WifiChannel
-import com.krafttools.app.ui.bandOf
 import com.krafttools.app.ui.channelOf
 import com.krafttools.app.ui.nonOverlapping
 import com.krafttools.app.ui.recommendChannel
-import com.krafttools.app.ui.signalFraction
 import com.krafttools.app.ui.signalQuality
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -122,48 +119,6 @@ class WifiMathTest {
             val ch = channelOf(f)
             assertNull("$f should not resolve to a channel, got $ch", ch)
         }
-    }
-
-    @Test
-    fun bandLookupCoversTheThreeBands() {
-        assertEquals(WifiBand.BAND_2, bandOf(2412))
-        assertEquals(WifiBand.BAND_5, bandOf(5180))
-        assertEquals(WifiBand.BAND_6, bandOf(5955))
-        assertEquals(WifiBand.UNKNOWN, bandOf(1000))
-    }
-
-    // --- signal ---
-
-    @Test
-    fun anUnreportedLevelIsNotAFullBar() {
-        // The bug: level 0 means "not reported", and the old mapping
-        // gave it 100/70 = 1.0, so hidden networks sorted to the top.
-        assertNull("level 0 must not become a reading", signalFraction(0))
-    }
-
-    @Test
-    fun anUnreportedLevelDrawsAStubInsteadOfNothing() {
-        // Zero-height would read as "no network"; a stub reads as
-        // "here, but I cannot say how strong".
-        assertTrue(UNKNOWN_SIGNAL_FRACTION in 0.01f..0.15f)
-    }
-
-    @Test
-    fun knownSignalPointsMapToExpectedFractions() {
-        assertEquals(0f, signalFraction(-100)!!, 1e-5f)
-        assertEquals(0.5f, signalFraction(-65)!!, 1e-5f)
-        assertEquals(1f, signalFraction(-30)!!, 1e-5f)
-    }
-
-    @Test
-    fun theNoiseFloorIsZeroAndBelowItIsNotAReading() {
-        // -127 dBm is the documented worst reportable level, and it
-        // means "nothing". Below that the value cannot have come from
-        // a real ScanResult at all, so it is treated as unreported
-        // rather than clamped into a plausible-looking zero.
-        assertEquals(0f, signalFraction(-127)!!, 1e-5f)
-        assertEquals(0f, signalFraction(-120)!!, 1e-5f)
-        assertNull(signalFraction(-200))
     }
 
     @Test

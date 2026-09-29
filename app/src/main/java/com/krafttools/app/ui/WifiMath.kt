@@ -71,25 +71,6 @@ fun channelOf(frequencyMhz: Int): WifiChannel? {
     }
 }
 
-/** The band a frequency belongs to, for display. */
-fun bandOf(frequencyMhz: Int): WifiBand = when (frequencyMhz) {
-    in 2400..2500 -> WifiBand.BAND_2
-    in 4900..5900 -> WifiBand.BAND_5
-    in 5925..7125 -> WifiBand.BAND_6
-    else -> WifiBand.UNKNOWN
-}
-
-/**
- * A reported RSSI as a 0..1 bar fraction, or null when the access
- * point did not report one. Level 0 means "unknown" in the Android
- * API, not "the strongest possible signal".
- */
-fun signalFraction(levelDbm: Int): Float? {
-    if (levelDbm == 0) return null
-    if (levelDbm < -127) return null
-    return ((levelDbm + 100).coerceIn(0, 70)) / 70f
-}
-
 /** How a signal is described, using the conventional quality points. */
 fun signalQuality(levelDbm: Int?): String = when {
     levelDbm == null -> "strength not reported"
@@ -100,9 +81,6 @@ fun signalQuality(levelDbm: Int?): String = when {
     levelDbm >= -90 -> "weak"
     else -> "very weak"
 }
-
-/** Bar height for an unreported signal: a stub, not a lie. */
-const val UNKNOWN_SIGNAL_FRACTION = 0.06f
 
 /**
  * The non-overlapping channels in a band, so a recommendation can

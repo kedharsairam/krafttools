@@ -201,7 +201,12 @@ private fun SpeedBody(onBack: () -> Unit) {
                     val prevLat = lastLat
                     val prevLon = lastLon
                     if (prevLat != null && prevLon != null) {
-                        val step = haversineKm(
+                        // The tested implementation, not a private
+                        // copy. These were twins: 12 unit tests pinned
+                        // SpeedMath.haversineKm while the odometer ran
+                        // an identical untested function one file over,
+                        // so the odometer was untested.
+                        val step = SpeedMath.haversineKm(
                             prevLat, prevLon,
                             loc.latitude, loc.longitude,
                         )
@@ -214,7 +219,7 @@ private fun SpeedBody(onBack: () -> Unit) {
                         // 1800 km/h teleport still set the trip maximum
                         // and dragged the average — a tunnel exit
                         // reported as your top speed.
-                        if (step < 0.5) {
+                        if (SpeedMath.isPlausibleStep(step)) {
                             tripKm += step.toFloat()
                             if (known && loc.speed > tripMaxMs) {
                                 tripMaxMs = loc.speed
@@ -412,63 +417,5 @@ private fun SpeedBody(onBack: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
             )
         }
-    }
-}
-
-/** Haversine distance in km between two fixes. */
-private fun haversineKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-    val r = 6371.0
-    val dLat = Math.toRadians(lat2 - lat1)
-    val dLon = Math.toRadians(lon2 - lon1)
-    val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2)
-    return 2 * r * Math.asin(kotlin.math.sqrt(a))
-}
-
-/**
- * Arc gauge: 240° sweep with ticks every 1/8 and a needle for the
- * current fraction. The number above owns precision; the gauge owns
- * glanceability — together they read at any distance.
- */
-@Composable
-private fun SpeedGauge(fraction: Float, modifier: Modifier = Modifier) {
-    val track = MaterialTheme.colorScheme.outlineVariant
-    val needle = MaterialTheme.colorScheme.primary
-    androidx.compose.foundation.Canvas(modifier = modifier) {
-        val cx = size.width / 2f
-        val cy = size.height * 0.92f
-        val r = size.minDimension * 0.62f
-        // 240° sweep: 150° .. 30° going through top (-90°).
-        val start = 150f
-        val sweep = 240f
-        drawArc(
-            color = track,
-            startAngle = start,
-            sweepAngle = sweep,
-            useCenter = false,
-            topLeft = Offset(cx - r, cy - r),
-            size = androidx.compose.ui.geometry.Size(r * 2f, r * 2f),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(10.dp.toPx()),
-        )
-        for (i in 0..8) {
-            val a = Math.toRadians((start + sweep * i / 8).toDouble())
-            val x1 = cx + (r * 0.82f * Math.cos(a)).toFloat()
-            val y1 = cy + (r * 0.82f * Math.sin(a)).toFloat()
-            val x2 = cx + (r * 0.98f * Math.cos(a)).toFloat()
-            val y2 = cy + (r * 0.98f * Math.sin(a)).toFloat()
-            drawLine(track, Offset(x1, y1), Offset(x2, y2), 4.dp.toPx())
-        }
-        val na = Math.toRadians((start + sweep * fraction.coerceIn(0f, 1f)).toDouble())
-        drawLine(
-            color = needle,
-            start = Offset(cx, cy),
-            end = Offset(
-                (cx + (r * 0.78f * Math.cos(na))).toFloat(),
-                (cy + (r * 0.78f * Math.sin(na))).toFloat(),
-            ),
-            strokeWidth = 9.dp.toPx(),
-        )
-        drawCircle(color = needle, radius = 12.dp.toPx(), center = Offset(cx, cy))
     }
 }

@@ -282,6 +282,82 @@ class SourceLintTest {
     }
 
     /**
+     * A tested pure function is actually called by the app.
+     *
+     * This one is the most important lint in the file, because it
+     * catches a failure mode that looks like SUCCESS. This codebase
+     * ended up with `SpeedMath.haversineKm` and
+     * `SpeedMath.isPlausibleStep` carrying twelve unit tests between
+     * them while the live odometer ran byte-identical private copies
+     * one file over. The suite was green, the functions were verified
+     * against closed forms, and the code the user actually executes had
+     * none of that coverage. A green test suite and a tested function
+     * are not the same thing.
+     *
+     * The check is: a top-level function in a `*Math.kt` / pure-helper
+     * file, referenced by a test but by no production source. Dead
+     * helpers with no tests at all are a lesser problem (they are
+     * merely clutter) and are reported separately.
+     */
+    @Test
+    fun testedPureFunctionsAreTheOnesTheAppRuns() {
+        val main = uiSources()
+        val mainText = main.joinToString("\n") { it.readText() }
+        val testDir = File("src/test/java/com/krafttools/app")
+        if (!testDir.isDirectory) return
+        val testText = testDir.listFiles()
+            ?.filter { it.extension == "kt" }
+            ?.joinToString("\n") { it.readText() }
+            ?: return
+
+        val orphans = mutableListOf<String>()
+        for (file in main) {
+            if (!file.name.endsWith("Math.kt") && !file.name.endsWith("Scale.kt") &&
+                !file.name.endsWith("Fft.kt") && !file.name.endsWith("AcFilter.kt") &&
+                !file.name.endsWith("AudioKit.kt") && !file.name.endsWith("LumaPlane.kt")
+            ) {
+                continue
+            }
+            // MULTILINE is essential and its absence is why the first
+            // version of this lint passed vacuously: without it `^`
+            // matches only at the start of the whole file, so no
+            // function declaration was ever found and the orphan list
+            // was always empty.
+            val decl = Regex(
+                "^(?:internal |private |public )?fun ([a-zA-Z][A-Za-z0-9_]*)\\(",
+                RegexOption.MULTILINE,
+            )
+                .findAll(file.readText())
+                .map { it.groupValues[1] }
+                .toList()
+            for (name in decl) {
+                if (name in KOTLIN_NOISE) continue
+                // Referenced by a test, and by production code other
+                // than its own declaration.
+                val tested = Regex("\\b$name\\s*\\(").containsMatchIn(testText)
+                if (!tested) continue
+                val uses = Regex("\\b$name\\s*\\(").findAll(mainText).count()
+                // One hit = the declaration itself.
+                if (uses <= 1) orphans += "${file.name}::$name"
+            }
+        }
+        assertTrue(
+            "these functions are covered by tests but never called by the " +
+                "app, so the tested code is not the code that runs: " +
+                "$orphans",
+            orphans.isEmpty(),
+        )
+    }
+
+    /** Names that look like helpers but are language or Compose idioms. */
+    private val KOTLIN_NOISE = setOf(
+        "map", "filter", "forEach", "let", "also", "apply", "run", "with",
+        "maxOf", "minOf", "require", "check", "listOf", "setOf", "buildList",
+        "format", "joinToString", "sortedBy", "associateBy", "distinctBy",
+        "takeLast", "dropLast", "coerceAtLeast", "coerceIn", "let",
+    )
+
+    /**
      * An enum is never held in `rememberSaveable` without a saver.
      *
      * A Kotlin enum is neither `Parcelable` nor `Serializable`, so the

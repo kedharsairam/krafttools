@@ -1,7 +1,6 @@
 package com.krafttools.app
 
 import com.krafttools.app.ui.downhillAzimuth
-import com.krafttools.app.ui.isVertical
 import com.krafttools.app.ui.snapTo
 import com.krafttools.app.ui.tiltFromFlat
 import org.junit.Assert.assertEquals
@@ -164,18 +163,6 @@ class AngleMathTest {
             "pitch and roll drew the same",
             kotlin.math.abs(downhillAzimuth(purePitch) - downhillAzimuth(pureRoll)) > 45f,
         )
-    }
-
-    @Test
-    fun verticalIsDetected() {
-        assertTrue(isVertical(floatArrayOf(g.toFloat(), 0f, 0f)))
-        assertTrue(isVertical(floatArrayOf(0f, g.toFloat(), 0f)))
-        assertFalse(isVertical(floatArrayOf(0f, 0f, g.toFloat())))
-    }
-
-    @Test
-    fun verticalIsNotClaimedForAZeroVector() {
-        assertFalse(isVertical(floatArrayOf(0f, 0f, 0f)))
     }
 
     // --- snapping ---
