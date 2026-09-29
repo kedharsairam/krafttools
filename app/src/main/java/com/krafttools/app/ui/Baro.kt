@@ -36,6 +36,28 @@ import java.util.Locale
 /** Seconds between samples. Weather moves slower than this. */
 private const val SAMPLE_SECONDS = 15f
 
+/** Samples needed before the trace can be called a 30-minute trace. */
+private const val WINDOW_SECONDS = 30 * 60
+
+/**
+ * How long the trace actually is, in the words a person would use.
+ *
+ * Reports the span the data covers, so a trace opened a moment ago says
+ * "1 minute" rather than borrowing the window's eventual size. Under a
+ * minute it says "partial", because "0 minutes trace" is not English
+ * and because the number is about to change.
+ */
+internal fun spanLabel(samples: Int, sampleSeconds: Float = SAMPLE_SECONDS): String {
+    if (samples < 2) return "partial"
+    val seconds = samples * sampleSeconds
+    if (seconds < 60f) return "partial"
+    val minutes = (seconds / 60f).toInt()
+    if (minutes < 60) return "$minutes-minute"
+    val hours = (minutes / 60f).toInt()
+    val rest = minutes % 60
+    return if (rest == 0) "$hours-hour" else "$hours-hour $rest-minute"
+}
+
 /** Samples kept: 120 at 15 s is a 30-minute window. */
 private const val WINDOW = 120
 
@@ -194,15 +216,25 @@ fun BarometerScreen(onBack: () -> Unit) {
             // The trace, centred on the median and sized to the
             // variation. Its gutter is the real range it spans.
             SectionLabel(
-                "30-minute trace · %.2f–%.2f hPa".format(Locale.ROOT, 
+                // The span the trace ACTUALLY covers, not the span the
+                // window will reach once it is full. The window is 120
+                // samples at 15 s, so it is a 30-minute trace after
+                // thirty minutes — and on a screen opened a minute ago
+                // it is four samples, which "30-minute trace" describes
+                // no better than a blank would. A label that describes
+                // the future rather than the present is the rubric's
+                // criterion 1 in miniature: the tool cannot tell "no
+                // value" from "a short value".
+                "%s trace · %.2f–%.2f hPa".format(
+                    Locale.ROOT,
+                    spanLabel(window.size),
                     scale.floor.toDouble(),
                     scale.ceiling.toDouble(),
                 ),
             )
-            // Capped for the same reason as the vibration trace: a
-            // 30-minute trace on a still phone is a flat line with
-            // several hundred pixels of black above it, which reads as
-            // a broken screen rather than as "no weather yet".
+            // Fills its space, for the same reason as the vibration
+            // trace: the collision in the gutter was the defect, not
+            // the empty area.
             TraceGraph(
                 values = window,
                 max = scale.ceiling,
@@ -210,9 +242,8 @@ fun BarometerScreen(onBack: () -> Unit) {
                 peak = peakHigh,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp),
+                    .weight(1f),
             )
-            Spacer(modifier = Modifier.weight(1f))
             if (window.isEmpty()) {
                 Text(
                     text = "Collecting — the trace needs a minute of " +

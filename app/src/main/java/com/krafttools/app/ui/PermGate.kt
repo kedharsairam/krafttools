@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -30,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
@@ -53,6 +53,17 @@ fun PermissionGate(
      *  app that declares only FINE then locks the user out of a
      *  setting they have already granted. */
     alsoAccepts: String? = null,
+    /**
+     * True when the tool works without this permission.
+     *
+     * A gate that locks a tool whose own rationale says the permission
+     * is optional is the app arguing with itself: the compass explains
+     * that a compass needs no location, then refuses to open because
+     * location was denied. With this set the gate still explains and
+     * still offers a way to grant it, but lets the tool run — which is
+     * what the copy promised.
+     */
+    optional: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
@@ -102,6 +113,19 @@ fun PermissionGate(
         content()
         return
     }
+    // An optional permission gets asked for ONCE, with the rationale in
+    // front of the user, and then the gate gets out of the way for good.
+    //
+    // Both halves of that matter. A gate that blocks a tool whose own
+    // rationale calls the permission optional is the app arguing with
+    // itself — the compass explains that a compass needs no location and
+    // then refuses to open. And a gate that never asks is worse: it
+    // nags about something it never offered to ask about, and the tool
+    // silently runs in a degraded mode the user was never told about.
+    if (optional && asked) {
+        content()
+        return
+    }
     val activity = context as? Activity
     val blocked = asked && activity != null &&
         !ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
@@ -122,10 +146,24 @@ fun PermissionGate(
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (optional) {
+                Text(
+                    text = "This tool works without it. You will get " +
+                        "less detail, not less function.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             if (blocked) {
                 Text(
-                    text = "It is turned off in system settings, so this " +
-                        "tool stays locked until you allow it there.",
+                    text = if (optional) {
+                        "It is turned off in system settings, so this " +
+                            "stays off until you allow it there. The " +
+                            "tool works without it either way."
+                    } else {
+                        "It is turned off in system settings, so this " +
+                            "tool stays locked until you allow it there."
+                    },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -133,29 +171,38 @@ fun PermissionGate(
                     onClick = { openAppSettings(context) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 48.dp),
+                        .touchTarget(),
                 ) {
                     Text("Open settings")
                 }
             } else {
                 Button(
-                    onClick = { launcher.launch(toRequest.toTypedArray()) },
+                    onClick = {
+                        asked = true
+                        launcher.launch(toRequest.toTypedArray())
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 48.dp),
+                        .touchTarget(),
                 ) {
                     Text("Allow")
                 }
             }
             // A gate is a door, not a wall. Without this, denying a
             // permission left the user with no way back to the tools
-            // except the system gesture.
-            if (onBack != null) {
+            // except the system gesture. For an optional permission the
+            // same button is also the way past the prompt: it records
+            // that we asked, so the tool opens in its reduced mode and
+            // never asks again.
+            if (onBack != null || optional) {
                 OutlinedButton(
-                    onClick = onBack,
+                    onClick = {
+                        if (optional) asked = true
+                        onBack?.invoke()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 48.dp),
+                        .touchTarget(),
                 ) {
                     Text("Not now")
                 }

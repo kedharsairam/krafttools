@@ -22,6 +22,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +47,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 import java.util.Locale
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 /**
@@ -72,6 +77,7 @@ fun CompassScreen(onBack: () -> Unit) {
             "magnetic north. Your position is used once, is never " +
             "stored, and this app has no network permission, so it " +
             "cannot be sent anywhere.",
+        optional = true,
         onBack = onBack,
     ) {
         CompassBody(onBack)
@@ -80,6 +86,12 @@ fun CompassScreen(onBack: () -> Unit) {
 
 @Composable
 private fun CompassBody(onBack: () -> Unit) {
+    // The launcher must be created in a composable scope, so it is
+    // declared here and only *fired* from the button.
+    val locationLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions(),
+    ) { }
+    var showWhy by rememberSaveable { mutableStateOf(false) }
     val accel = rememberSensor(Sensor.TYPE_ACCELEROMETER).values
     val mag = rememberSensor(Sensor.TYPE_MAGNETIC_FIELD).values
     val context = LocalContext.current
@@ -92,6 +104,12 @@ private fun CompassBody(onBack: () -> Unit) {
     // old copy collapsed both into "no fix, decl 0", which sends a user
     // out to wait for a satellite lock that was never the problem.
     var sawPermissionDenied by remember { mutableStateOf(false) }
+    // How old the fix behind the declination is. A last-known fix can
+    // be thirty seconds old or four years old — the platform will hand
+    // back whatever it has — and declination for a position in 2021
+    // is not declination today. Without this the screen stated a
+    // correction to true north with no indication of its own age.
+    var fixAgeMs by remember { mutableStateOf<Long?>(null) }
     var locked by rememberSaveable { mutableStateOf<Float?>(null) }
     val compassView = LocalView.current
 
@@ -103,6 +121,7 @@ private fun CompassBody(onBack: () -> Unit) {
                 lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
                     ?: lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             declination = fix?.let {
+                fixAgeMs = System.currentTimeMillis() - it.time
                 android.hardware.GeomagneticField(
                     it.latitude.toFloat(),
                     it.longitude.toFloat(),
@@ -187,7 +206,11 @@ private fun CompassBody(onBack: () -> Unit) {
             Text(
                 text = (
                     "%d° magnetic".format(Locale.ROOT, azimuth.roundToInt()) +
-                        (declination?.let { " · decl %+.1f°".format(Locale.ROOT, it) }
+                        (declination?.let {
+                            " · decl %+.1f°".format(Locale.ROOT, it) +
+                                fixAgeMs?.let { " from a fix " + fixAge(it) }
+                                ?: ""
+                        }
                             ?: if (sawPermissionDenied) {
                                 " · no location permission, magnetic only"
                             } else {
@@ -198,6 +221,73 @@ private fun CompassBody(onBack: () -> Unit) {
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            // Only when the user actually said no. With no fix but
+            // permission held, the one-line note above is enough — the
+            // satellites just have not locked yet, and a dialog about
+            // that would be noise.
+            if (sawPermissionDenied) {
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(
+                            text = "Magnetic north only. That is enough " +
+                                "to find north — only a survey-grade " +
+                                "compass needs the correction to true " +
+                                "north, and the difference here is " +
+                                "typically under 10°.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        if (showWhy) {
+                            Text(
+                                text = "Declination is the angle " +
+                                    "between magnetic and true north at " +
+                                    "your position, and it needs your " +
+                                    "coordinates to look up. KraftTools " +
+                                    "reads your last known fix once, never " +
+                                    "stores it, and cannot send it " +
+                                    "anywhere: the app holds no INTERNET " +
+                                    "permission, so the platform forbids " +
+                                    "egress rather than the code merely " +
+                                    "declining to.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            TextButton(
+                                onClick = { showWhy = !showWhy },
+                                modifier = Modifier.touchTarget(),
+                            ) {
+                                Text(if (showWhy) "Less" else "Why?")
+                            }
+                            TextButton(
+                                onClick = {
+                                    locationLauncher.launch(
+                                        arrayOf(
+                                            android.Manifest.permission
+                                                .ACCESS_FINE_LOCATION,
+                                            android.Manifest.permission
+                                                .ACCESS_COARSE_LOCATION,
+                                        ),
+                                    )
+                                },
+                                modifier = Modifier.touchTarget(),
+                            ) {
+                                Text("Allow location")
+                            }
+                        }
+                    }
+                }
+            }
             locked?.let { lock ->
                 val rel = compassBearingError(azimuth, lock)
                 val arrivedNow = onBearing(azimuth, lock)
@@ -532,5 +622,33 @@ private fun Dial(
             center = Offset(cx, cy),
             style = Stroke(width = 2.dp.toPx()),
         )
+    }
+}
+
+
+/**
+ * How old a location fix is, in words.
+ *
+ * Declination drifts by roughly 0.1° per year in most places, so a
+ * decade-old fix is still within a degree of today's value — which is
+ * why the correction is applied at all rather than discarded. But
+ * "decl +4.2°" with no age is a claim the user cannot audit, and a
+ * declination computed for a position the user has not been to is a
+ * different number entirely. So the age is stated, coarsely, because
+ * coarsely is all the platform tells us.
+ */
+internal fun fixAge(ageMs: Long): String {
+    val minutes = ageMs / 60_000
+    val hours = minutes / 60
+    val days = hours / 24
+    val years = days / 365
+    return when {
+        ageMs < 0 -> "from a future fix"
+        minutes < 2 -> "from a fix seconds old"
+        minutes < 60 -> "from a ${minutes}-minute-old fix"
+        hours < 24 -> "from a ${hours}-hour-old fix"
+        days < 60 -> "from a ${days}-day-old fix"
+        years < 1 -> "from a fix ${days / 30} months old"
+        else -> "from a fix ${years} ${if (years == 1L) "year" else "years"} old"
     }
 }

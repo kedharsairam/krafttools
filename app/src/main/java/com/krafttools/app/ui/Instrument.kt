@@ -213,6 +213,9 @@ fun TraceGraph(
         }
         val span = range
         val decimals = decimalsFor(span)
+        // Tracks the last label's y so a crowded axis drops labels
+        // rather than printing the same number over itself.
+        var lastLabelY = Float.MAX_VALUE
         for (f in lines) {
             val y = size.height * (1f - norm(f))
             drawLine(grid, Offset(0f, y), Offset(size.width, y), 2.dp.toPx())
@@ -231,14 +234,26 @@ fun TraceGraph(
                     }
                 }
             }
-            val text = if (f >= 1000f) {
-                "%.0fk".format(Locale.ROOT, f / 1000f)
-            } else if (f >= 1f) {
-                "%.0f".format(Locale.ROOT, f)
-            } else {
-                "%.1f".format(Locale.ROOT, f)
+            // Decimals from the SPAN, not a fixed one. A fixed "%.1f"
+            // is right for a span of 10 and wrong for a span of 0.1,
+            // where the five gridlines at 0, 0.025, 0.05, 0.075 and
+            // 0.1 all print as 0.0, 0.0, 0.1, 0.1, 0.1 — three of
+            // them the same string, stacked on top of each other. That
+            // is what a sleeping vibration meter showed: "0.1" printed
+            // over itself at the top of the panel.
+            val text = when {
+                f >= 1000f -> "%.0fk".format(Locale.ROOT, f / 1000f)
+                span >= 1f -> "%.0f".format(Locale.ROOT, f)
+                else -> "%.${decimals}f".format(Locale.ROOT, f)
             }
             val layout = measurer.measure(text, labelStyle)
+            // And skip any label that would land on top of the last
+            // one drawn, which is the general case the decimals fix
+            // only narrows.
+            if (y - lastLabelY < layout.size.height * 1.2f) {
+                continue
+            }
+            lastLabelY = y
             drawText(
                 textLayoutResult = layout,
                 topLeft = Offset(x0 - 6.dp.toPx() - layout.size.width, y - layout.size.height / 2f),

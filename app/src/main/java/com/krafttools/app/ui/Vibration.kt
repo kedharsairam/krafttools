@@ -179,13 +179,10 @@ fun VibrationScreen(onBack: () -> Unit) {
                 },
             )
 
-            // The waveform is the point of this tool, so it gets the
-            // room — but CAPPED. A phone lying on a desk produces a
-            // flat line at the bottom of the panel and several hundred
-            // pixels of empty black above it, which reads as a broken
-            // screen rather than as a machine that is not running.
-            // A quarter of the height is enough to read a waveform and
-            // leaves the rest to the dock.
+            // The waveform is the point of this tool, so it fills the
+            // space it has. What made an idle panel look broken was
+            // never the empty area — it was the gutter printing "0.1"
+            // over itself, which is fixed in TraceGraph.
             TraceGraph(
                 values = window,
                 max = scale.ceiling,
@@ -193,14 +190,8 @@ fun VibrationScreen(onBack: () -> Unit) {
                 showZero = true,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(190.dp),
+                    .weight(1f),
             )
-            // The slack goes BELOW the dock, so the controls sit where
-            // a thumb expects and the empty space reads as deliberate
-            // margin rather than as a trace that failed to draw. A
-            // `weight(1f)` here put the void between the waveform and
-            // the controls, which is where it looked like a bug.
-            Spacer(modifier = Modifier.weight(1f))
             if (window.isEmpty()) {
                 Text(
                     text = "Waiting for the accelerometer — lay the " +
