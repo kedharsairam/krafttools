@@ -156,10 +156,12 @@ fun CompassScreen(onBack: () -> Unit) {
                 status = confidence.verdict,
             )
             Text(
-                text = "${azimuth.toInt()}° magnetic" +
-                    (declination?.let { " · decl %+.1f°".format(it) }
-                        ?: " · no fix, decl 0°") +
-                    " · %.0f µT".format(strength.toDouble()),
+                text = (
+                    "%d° magnetic".format(azimuth.toInt()) +
+                        (declination?.let { " · decl %+.1f°".format(it) }
+                            ?: " · no fix, decl 0°") +
+                        " · %.0f µT".format(strength.toDouble())
+                    ),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -225,16 +227,17 @@ fun CompassScreen(onBack: () -> Unit) {
             ToolHint(
                 text = when {
                     disturbed ->
-                        "Metal nearby — the field reads %.0f µT, outside the " +
-                            "25–65 µT Earth range. Move away from magnets, " +
-                            "speakers and cases, then wave a figure-8.".format(
-                            strength.toDouble(),
-                        )
+                        (
+                            "Metal nearby — the field reads %.0f µT, outside " +
+                                "the 25–65 µT Earth range. Move away from " +
+                                "magnets, speakers and cases, then wave a " +
+                                "figure-8."
+                            ).format(strength.toDouble())
                     tilted ->
-                        ("Tilted %.0f° — lay the phone flat. Headings " +
-                            "measured this far off level read wrong.").format(
-                            tiltDeg.toDouble(),
-                        )
+                        (
+                            "Tilted %.0f° — lay the phone flat. Headings " +
+                                "measured this far off level read wrong."
+                            ).format(tiltDeg.toDouble())
                     else -> "Wave a figure-8 if the needle feels stuck."
                 },
                 warn = disturbed,

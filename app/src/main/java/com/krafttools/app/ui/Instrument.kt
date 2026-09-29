@@ -143,6 +143,7 @@ fun TraceGraph(
     values: List<Float>,
     modifier: Modifier = Modifier,
     max: Float? = null,
+    min: Float? = null,
     peak: Float? = null,
     showZero: Boolean = false,
 ) {
@@ -156,9 +157,13 @@ fun TraceGraph(
         fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
     )
     Canvas(modifier = modifier) {
-        // Gutter wide enough for the widest label we will print.
+        // A non-zero floor is legitimate: a barometer's signal is a
+        // small variation high up the range, and a zero-based axis
+        // draws it as a flat line against the top edge.
         val ceiling = max ?: (values.maxOrNull() ?: 1f).coerceAtLeast(0.001f)
-        val span0 = ceiling - if (showZero) 0f else ceiling * 0.25f
+        val floor = min ?: if (showZero) 0f else ceiling * 0.25f
+        val range = (ceiling - floor).takeIf { it > 1e-6f } ?: 1f
+        val span0 = range
         val decimals0 = decimalsFor(span0)
         val ceilingText = "%.${decimals0}f".format(ceiling)
         val zeroText = "0"
@@ -168,19 +173,19 @@ fun TraceGraph(
         ) + 10.dp.toPx()
         val x0 = gutter
         val plotW = size.width - x0
-        val norm = { v: Float -> (v / ceiling).coerceIn(0f, 1f) }
+        val norm = { v: Float -> ((v - floor) / range).coerceIn(0f, 1f) }
 
         // Horizontal gridlines: quiet structure, not decoration, each
         // one labelled in the gutter.
-        val lines = if (showZero) listOf(0.25f, 0.5f, 0.75f, 1f) else listOf(0.25f, 0.5f, 0.75f)
+        val lines = listOf(0.25f, 0.5f, 0.75f, 1f)
         // Decimals must suit the span: one decimal printed "0.1" twice
         // on a 0.2 ceiling and told the reader nothing.
-        val span = ceiling - if (showZero) 0f else ceiling * 0.25f
+        val span = range
         val decimals = decimalsFor(span)
         for (f in lines) {
             val y = size.height * (1f - f)
             drawLine(grid, Offset(0f, y), Offset(size.width, y), 2f)
-            val text = "%.${decimals}f".format(ceiling * f)
+            val text = "%.${decimals}f".format(floor + range * f)
             val layout = measurer.measure(text, labelStyle)
             drawText(
                 textLayoutResult = layout,
