@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlin.math.sqrt
+import java.util.Locale
 
 /** Which channel of the accelerometer the meter is watching. */
 enum class VibrationAxis(
@@ -57,12 +58,12 @@ private const val SAMPLE_HZ = 50f
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VibrationScreen(onBack: () -> Unit) {
-    val accel by rememberSensor(
+    val accel = rememberSensor(
         Sensor.TYPE_ACCELEROMETER,
         // GAME rate (≈50 Hz): plenty for a viewer. FASTEST (0 µs)
         // requires HIGH_SAMPLING_RATE_SENSORS and crashes without it.
         SensorManager.SENSOR_DELAY_GAME,
-    )
+    ).values
     val view = LocalView.current
 
     // Per-channel rolling windows, plus the live reading per channel.
@@ -158,13 +159,13 @@ fun VibrationScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             ReadingHeader(
-                value = "%.2f".format(value.toDouble()),
+                value = "%.2f".format(Locale.ROOT, value.toDouble()),
                 unit = axis.unit,
-                status = "peak hold %.2f".format(peak.toDouble()),
+                status = "peak hold %.2f".format(Locale.ROOT, peak.toDouble()),
             )
             Text(
                 text = dominantHz?.let {
-                    "%.1f Hz · %,.0f RPM".format(it, it * 60f)
+                    "%.1f Hz · %,.0f RPM".format(Locale.ROOT, it, it * 60f)
                 } ?: "no dominant rhythm yet",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,

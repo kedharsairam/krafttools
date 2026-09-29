@@ -45,6 +45,16 @@ fun SpeedGauge(
     val ink = MaterialTheme.colorScheme.onSurfaceVariant
     val ring = MaterialTheme.colorScheme.outline
     val hub = MaterialTheme.colorScheme.surface
+    // Hoisted out of the draw lambda: MaterialTheme cannot be read
+    // inside a Canvas draw scope. The house face and tabular figures,
+    // or the dial numerals are the only canvas text in the app that
+    // renders in the system default and sits ragged across the arc.
+    val tickStyle = TextStyle(
+        color = ink,
+        fontSize = 10.sp,
+        fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
+        fontFeatureSettings = "tnum",
+    )
 
     // A real needle has mass. Without the spring the number jitters in
     // its last digit and the needle vibrates with it.
@@ -70,6 +80,8 @@ fun SpeedGauge(
             size.height,
             topInset,
             bottomInset,
+            minStrokePx = 4.dp.toPx(),
+            maxStrokePx = 14.dp.toPx(),
         )
         val radius = dial.radius
         val pivotY = dial.pivotY
@@ -121,14 +133,19 @@ fun SpeedGauge(
                     cx + (r2 * kotlin.math.cos(a)).toFloat(),
                     pivotY + (r2 * kotlin.math.sin(a)).toFloat(),
                 ),
-                strokeWidth = if (major) 3f else 1.5f,
+                strokeWidth = if (major) 3.dp.toPx() else 1.5.dp.toPx(),
             )
             if (major) {
                 val text = v.toInt().toString()
                 val lr = r2 - radius * 0.10f
                 val layout = measurer.measure(
                     text,
-                    TextStyle(color = ink, fontSize = 10.sp),
+                    // The house face, or the dial numerals are the
+                    // only canvas text in the app that renders in the
+                    // system default. "tnum" because these are
+                    // numbers sitting on a fixed tick: a proportional
+                    // face makes them ragged across the arc.
+                    tickStyle,
                 )
                 drawText(
                     textLayoutResult = layout,
@@ -154,11 +171,11 @@ fun SpeedGauge(
                 color = line,
                 start = Offset(cx, pivotY - radius * 0.22f),
                 end = Offset(cx, pivotY - radius * 0.94f),
-                strokeWidth = 5f,
+                strokeWidth = 5.dp.toPx(),
             )
         }
         drawCircle(color = hub, radius = radius * 0.09f, center = Offset(cx, pivotY))
-        drawCircle(color = line, radius = radius * 0.09f, center = Offset(cx, pivotY), style = Stroke(2.5f))
+        drawCircle(color = line, radius = radius * 0.09f, center = Offset(cx, pivotY), style = Stroke(2.5.dp.toPx()))
         drawCircle(color = line, radius = radius * 0.03f, center = Offset(cx, pivotY))
 
     }

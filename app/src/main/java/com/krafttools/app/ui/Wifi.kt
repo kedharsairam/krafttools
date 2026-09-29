@@ -48,6 +48,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.Locale
 
 /**
  * WiFi analyzer.
@@ -111,7 +112,12 @@ private fun WifiBody(onBack: () -> Unit) {
     var everScanned by rememberSaveable { mutableStateOf(false) }
     var rejected by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
-    var band by rememberSaveable { mutableStateOf(WifiBand.BAND_2) }
+    // An enum is not Parcelable, so this needs an explicit saver or the
+    // default one throws on process death — the exact moment
+    // rememberSaveable is for.
+    var band by rememberSaveable(
+        stateSaver = enumSaver(WifiBand.BAND_2),
+    ) { mutableStateOf(WifiBand.BAND_2) }
 
     // The radio being off is a different problem from location being
     // off, and the old empty-state blamed location either way.
@@ -282,7 +288,7 @@ private fun WifiBody(onBack: () -> Unit) {
                                     text = if (n.level == 0) {
                                         "— dBm"
                                     } else {
-                                        "%d dBm".format(n.level)
+                                        "%d dBm".format(Locale.ROOT, n.level)
                                     },
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -411,7 +417,7 @@ private fun ChannelChart(
                         color = if (load.crowded) warnAmber else bar,
                         topLeft = Offset(x, base - h),
                         size = Size(w, h),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(3f, 3f),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(3.dp.toPx(), 3.dp.toPx()),
                     )
                 }
                 if (recommended?.key == load.channel.key) {
@@ -419,7 +425,7 @@ private fun ChannelChart(
                         color = rec,
                         topLeft = Offset(x, base - h - 4.dp.toPx()),
                         size = Size(w, h + 6.dp.toPx()),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(4f, 4f),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx(), 4.dp.toPx()),
                         style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()),
                     )
                 }

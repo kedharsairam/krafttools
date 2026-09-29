@@ -44,6 +44,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -295,7 +296,7 @@ private fun SpeedBody(onBack: () -> Unit) {
                 )
             } else {
                 ReadingHeader(
-                    value = "%.0f".format(shown.toDouble()),
+                    value = "%.0f".format(Locale.ROOT, shown.toDouble()),
                     unit = unit,
                     status = null,
                     mirror = hud,
@@ -323,7 +324,7 @@ private fun SpeedBody(onBack: () -> Unit) {
                     )
                 }
                 Text(
-                    "±%.0f m accuracy".format(accuracy!!.toDouble()),
+                    "±%.0f m accuracy".format(Locale.ROOT, accuracy!!.toDouble()),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -333,7 +334,7 @@ private fun SpeedBody(onBack: () -> Unit) {
                 // to never having started one.
                 if (tripActive || tripStartMs != 0L) {
                     StatRow {
-                        StatChip("trip", "%.2f km".format(tripKm))
+                        StatChip("trip", "%.2f km".format(Locale.ROOT, tripKm))
                         StatChip(
                             "elapsed",
                             formatElapsed(tripElapsedMs() / 1000),
@@ -341,7 +342,7 @@ private fun SpeedBody(onBack: () -> Unit) {
                         StatChip(
                             "max",
                             if (tripMaxMs > 0f) {
-                                "%.0f %s".format(toShown(tripMaxMs), unit)
+                                "%.0f %s".format(Locale.ROOT, toShown(tripMaxMs), unit)
                             } else {
                                 "—"
                             },
@@ -351,7 +352,7 @@ private fun SpeedBody(onBack: () -> Unit) {
                         // different statement from "average 0".
                         StatChip(
                             "avg",
-                            avgShown()?.let { "%.0f %s".format(it, unit) } ?: "—",
+                            avgShown()?.let { "%.0f %s".format(Locale.ROOT, it, unit) } ?: "—",
                         )
                     }
                 }
@@ -448,7 +449,7 @@ private fun SpeedGauge(fraction: Float, modifier: Modifier = Modifier) {
             useCenter = false,
             topLeft = Offset(cx - r, cy - r),
             size = androidx.compose.ui.geometry.Size(r * 2f, r * 2f),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(10f),
+            style = androidx.compose.ui.graphics.drawscope.Stroke(10.dp.toPx()),
         )
         for (i in 0..8) {
             val a = Math.toRadians((start + sweep * i / 8).toDouble())
@@ -456,7 +457,7 @@ private fun SpeedGauge(fraction: Float, modifier: Modifier = Modifier) {
             val y1 = cy + (r * 0.82f * Math.sin(a)).toFloat()
             val x2 = cx + (r * 0.98f * Math.cos(a)).toFloat()
             val y2 = cy + (r * 0.98f * Math.sin(a)).toFloat()
-            drawLine(track, Offset(x1, y1), Offset(x2, y2), 4f)
+            drawLine(track, Offset(x1, y1), Offset(x2, y2), 4.dp.toPx())
         }
         val na = Math.toRadians((start + sweep * fraction.coerceIn(0f, 1f)).toDouble())
         drawLine(
@@ -466,8 +467,8 @@ private fun SpeedGauge(fraction: Float, modifier: Modifier = Modifier) {
                 (cx + (r * 0.78f * Math.cos(na))).toFloat(),
                 (cy + (r * 0.78f * Math.sin(na))).toFloat(),
             ),
-            strokeWidth = 9f,
+            strokeWidth = 9.dp.toPx(),
         )
-        drawCircle(color = needle, radius = 12f, center = Offset(cx, cy))
+        drawCircle(color = needle, radius = 12.dp.toPx(), center = Offset(cx, cy))
     }
 }

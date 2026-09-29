@@ -64,13 +64,24 @@ private val Grotesk = FontFamily(
 )
 
 val ToolboxTypography = Typography(
+    // "tnum" is tabular figures: every digit occupies the same advance
+    // width. Without it a live readout in a proportional face SHIFTS
+    // horizontally as the value changes, because "1" is narrower than
+    // "8", so a speedometer counting 9 -> 10 visibly jitters and a
+    // clocked value appears to crawl. It matters on every style that
+    // ever shows a number that changes, which in this app is most of
+    // them: the speed dial, the bearing, the altitude, the exposure
+    // value, the trigger threshold, the sound offset.
     displayLarge = TextStyle(fontSize = 34.sp, fontWeight = FontWeight.Bold, lineHeight = 40.sp, fontFamily = Grotesk, fontFeatureSettings = "tnum"),
-    headlineMedium = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.SemiBold, lineHeight = 28.sp, fontFamily = Grotesk),
-    titleLarge = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold, lineHeight = 26.sp, fontFamily = Grotesk),
-    titleMedium = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold, lineHeight = 22.sp, fontFamily = Grotesk),
+    headlineMedium = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.SemiBold, lineHeight = 28.sp, fontFamily = Grotesk, fontFeatureSettings = "tnum"),
+    titleLarge = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold, lineHeight = 26.sp, fontFamily = Grotesk, fontFeatureSettings = "tnum"),
+    titleMedium = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold, lineHeight = 22.sp, fontFamily = Grotesk, fontFeatureSettings = "tnum"),
     bodyLarge = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Normal, lineHeight = 26.sp),
     bodyMedium = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Normal, lineHeight = 22.sp),
-    labelMedium = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.8.sp),
+    // The gutter labels on every trace, and the channel numbers on the
+    // WiFi spectrum, are numbers too — and they are measured and drawn
+    // into a canvas, where a width change shifts the bar underneath.
+    labelMedium = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.8.sp, fontFeatureSettings = "tnum"),
 )
 
 @Composable

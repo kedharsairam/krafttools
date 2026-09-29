@@ -5,6 +5,7 @@ import kotlin.math.asin
 import kotlin.math.cos
 import kotlin.math.ln
 import kotlin.math.sin
+import java.util.Locale
 
 /**
  * Speedometer and trip arithmetic.
@@ -142,6 +143,9 @@ object SpeedMath {
         height: Float,
         topInset: Float,
         bottomInset: Float,
+        /** Stroke bounds in PIXELS, so the caller passes dp.toPx(). */
+        minStrokePx: Float = 4f,
+        maxStrokePx: Float = 14f,
     ): Dial {
         // coerceAtLeast(0f) because a panel too small for the insets
         // gives a NEGATIVE radius, and drawArc throws on a negative size
@@ -154,7 +158,7 @@ object SpeedMath {
         return Dial(
             radius = radius,
             pivotY = topInset + radius,
-            strokeWidth = (radius * 0.10f).coerceIn(4f, 14f),
+            strokeWidth = (radius * 0.10f).coerceIn(minStrokePx, maxStrokePx),
         )
     }
 
@@ -226,7 +230,7 @@ object SpeedMath {
         accuracyMetres == null || !accuracyMetres.isFinite() ->
             "No fix yet."
         // The format argument is bound to the WHOLE parenthesised
-        // concatenation. Writing "a" + "b".format(x) applies the format
+        // concatenation. Writing "a" + "b".format(Locale.ROOT, x) applies the format
         // to "b" alone and prints the placeholder literally in the
         // first half — which is exactly what it did here, so the note
         // read "only good to %.0f m". FormatStringTest exists for this.
@@ -235,12 +239,12 @@ object SpeedMath {
                 "about %.0f m. That is fine for speed, but the trip " +
                 "distance needs metre-level fixes and will stay at " +
                 "0.00 km until you turn on precise location."
-            ).format(accuracyMetres)
+            ).format(Locale.ROOT, accuracyMetres)
         !countsTowardsTrip(accuracyMetres) -> (
             "The current fix is only good to %.0f m, so it is too coarse " +
                 "to add to the trip distance. Go outside and wait for a " +
                 "tighter fix."
-            ).format(accuracyMetres)
+            ).format(Locale.ROOT, accuracyMetres)
         else -> null
     }
 
@@ -261,8 +265,8 @@ fun formatElapsed(seconds: Long): String {
     val m = (seconds % 3600) / 60
     val s = seconds % 60
     return if (h > 0) {
-        "%d:%02d:%02d".format(h, m, s)
+        "%d:%02d:%02d".format(Locale.ROOT, h, m, s)
     } else {
-        "%d:%02d".format(m, s)
+        "%d:%02d".format(Locale.ROOT, m, s)
     }
 }

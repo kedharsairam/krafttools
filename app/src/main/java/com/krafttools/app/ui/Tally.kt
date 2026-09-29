@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import java.util.Locale
 
 /**
  * Tally + stopwatch. Full-viewport composition:
@@ -274,13 +275,13 @@ private fun TallyMarks(count: Int, modifier: Modifier = Modifier) {
                 color = rule.copy(alpha = 0.18f),
                 start = Offset(x, baseY - h * 0.1f),
                 end = Offset(x, 0f),
-                strokeWidth = 1.5f,
+                strokeWidth = 1.5.dp.toPx(),
             )
             drawLine(
                 color = rule,
                 start = Offset(x, baseY),
                 end = Offset(x, baseY - h * 0.1f),
-                strokeWidth = 2f,
+                strokeWidth = 2.dp.toPx(),
             )
         }
         // Ceiling at the settled mark height: defines the scale's top.
@@ -288,13 +289,13 @@ private fun TallyMarks(count: Int, modifier: Modifier = Modifier) {
             color = rule.copy(alpha = 0.12f),
             start = Offset(0f, baseY - h),
             end = Offset(size.width, baseY - h),
-            strokeWidth = 1.5f,
+            strokeWidth = 1.5.dp.toPx(),
         )
         drawLine(
             color = rule.copy(alpha = 0.7f),
             start = Offset(0f, baseY),
             end = Offset(size.width, baseY),
-            strokeWidth = 3f,
+            strokeWidth = 3.dp.toPx(),
         )
 
         if (groups == 0) return@Canvas
@@ -302,7 +303,7 @@ private fun TallyMarks(count: Int, modifier: Modifier = Modifier) {
         val gapX = h * 0.15f
         val groupW = gapX * 4f
         val rowPitch = h * ROW_PITCH
-        val sw = (h * 0.07f).coerceAtLeast(2f)
+        val sw = (h * 0.07f).coerceAtLeast(2.dp.toPx())
 
         repeat(groups) { g ->
             val col = g % cols
@@ -419,9 +420,9 @@ private fun formatStopwatch(ms: Long): String {
     val minutes = (totalTenths / 600) % 60
     val hours = totalTenths / 36000
     return if (hours > 0) {
-        "%d:%02d:%02d.%d".format(hours, minutes, seconds, tenths)
+        "%d:%02d:%02d.%d".format(Locale.ROOT, hours, minutes, seconds, tenths)
     } else {
-        "%02d:%02d.%d".format(minutes, seconds, tenths)
+        "%02d:%02d.%d".format(Locale.ROOT, minutes, seconds, tenths)
     }
 }
 

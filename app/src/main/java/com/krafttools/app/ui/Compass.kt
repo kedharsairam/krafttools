@@ -45,12 +45,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompassScreen(onBack: () -> Unit) {
-    val accel by rememberSensor(Sensor.TYPE_ACCELEROMETER)
-    val mag by rememberSensor(Sensor.TYPE_MAGNETIC_FIELD)
+    val accel = rememberSensor(Sensor.TYPE_ACCELEROMETER).values
+    val mag = rememberSensor(Sensor.TYPE_MAGNETIC_FIELD).values
     val context = LocalContext.current
     // True north needs magnetic declination, which needs position.
     // Last-known fix only (no tracking, no storage): FINE_LOCATION is
@@ -157,10 +158,10 @@ fun CompassScreen(onBack: () -> Unit) {
             )
             Text(
                 text = (
-                    "%d° magnetic".format(azimuth.toInt()) +
-                        (declination?.let { " · decl %+.1f°".format(it) }
+                    "%d° magnetic".format(Locale.ROOT, azimuth.toInt()) +
+                        (declination?.let { " · decl %+.1f°".format(Locale.ROOT, it) }
                             ?: " · no fix, decl 0°") +
-                        " · %.0f µT".format(strength.toDouble())
+                        " · %.0f µT".format(Locale.ROOT, strength.toDouble())
                     ),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -169,7 +170,7 @@ fun CompassScreen(onBack: () -> Unit) {
                 val rel = compassBearingError(azimuth, lock)
                 val arrivedNow = onBearing(azimuth, lock)
                 Text(
-                    text = "Bearing %d° · %+.0f° %s".format(
+                    text = "Bearing %d° · %+.0f° %s".format(Locale.ROOT, 
                         lock.toInt(),
                         kotlin.math.abs(rel),
                         if (arrivedNow) "· on bearing" else if (rel >= 0) "right" else "left",
@@ -205,12 +206,12 @@ fun CompassScreen(onBack: () -> Unit) {
             StatRow {
                 StatChip(
                     "tilt",
-                    "%.0f°".format(tiltDeg.toDouble()),
+                    "%.0f°".format(Locale.ROOT, tiltDeg.toDouble()),
                     emphasise = tilted,
                 )
                 StatChip(
                     "field",
-                    "%.0f µT".format(strength.toDouble()),
+                    "%.0f µT".format(Locale.ROOT, strength.toDouble()),
                     emphasise = disturbed,
                 )
             }
@@ -232,12 +233,12 @@ fun CompassScreen(onBack: () -> Unit) {
                                 "the 25–65 µT Earth range. Move away from " +
                                 "magnets, speakers and cases, then wave a " +
                                 "figure-8."
-                            ).format(strength.toDouble())
+                            ).format(Locale.ROOT, strength.toDouble())
                     tilted ->
                         (
                             "Tilted %.0f° — lay the phone flat. Headings " +
                                 "measured this far off level read wrong."
-                            ).format(tiltDeg.toDouble())
+                            ).format(Locale.ROOT, tiltDeg.toDouble())
                     else -> "Wave a figure-8 if the needle feels stuck."
                 },
                 warn = disturbed,
@@ -340,7 +341,7 @@ private fun Dial(
         val cx = size.width / 2f
         val cy = size.height / 2f
         val r = size.minDimension / 2f * 0.92f
-        drawCircle(color = ring, radius = r, style = Stroke(4f))
+        drawCircle(color = ring, radius = r, style = Stroke(4.dp.toPx()))
         // Cardinal ticks + letters rotate with the world (needle stays up).
         val cardSize = r * 0.155f
         val northSize = r * 0.185f
@@ -398,7 +399,7 @@ private fun Dial(
             // From the locked bearing to the needle, the short way.
             val startDeg = lock - sweep / 2f
             val arcR = r * 0.86f
-            val thickness = 18f
+            val thickness = 18.dp.toPx()
             drawArc(
                 color = devColor.copy(alpha = 0.28f),
                 startAngle = startDeg - 90f,
@@ -421,7 +422,7 @@ private fun Dial(
                     cx + ((arcR + thickness * 0.9f) * Math.sin(targetRad)).toFloat(),
                     cy - ((arcR + thickness * 0.9f) * Math.cos(targetRad)).toFloat(),
                 ),
-                strokeWidth = 5f,
+                strokeWidth = 5.dp.toPx(),
             )
         }
         // North needle, always up. The north half is solid and the
@@ -439,7 +440,7 @@ private fun Dial(
             color = needle.copy(alpha = 0.5f),
             start = Offset(cx, cy + r * 0.02f),
             end = Offset(cx, cy + r * 0.5f),
-            strokeWidth = 4f,
+            strokeWidth = 4.dp.toPx(),
         )
         // Hub: a lit dome, not a hole. A flat fill in the surface color
         // read as a puncture in the dial.
@@ -461,7 +462,7 @@ private fun Dial(
             color = needle.copy(alpha = 0.35f),
             radius = r * 0.085f,
             center = Offset(cx, cy),
-            style = Stroke(width = 2f),
+            style = Stroke(width = 2.dp.toPx()),
         )
     }
 }

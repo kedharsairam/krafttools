@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import kotlin.math.roundToInt
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -194,7 +195,7 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                 )
                 Column {
                     Text(
-                        text = "#%02X%02X%02X".format(
+                        text = "#%02X%02X%02X".format(Locale.ROOT, 
                             rgb.first,
                             rgb.second,
                             rgb.third,
@@ -247,7 +248,7 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                     },
                 )
                 Text(
-                    text = "%.1f:1 on %s".format(
+                    text = "%.1f:1 on %s".format(Locale.ROOT, 
                         best,
                         if (onWhite >= onBlack) "white" else "black",
                     ),
@@ -256,7 +257,7 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                 )
             }
             Text(
-                text = "Also %.1f:1 on %s. %s".format(
+                text = "Also %.1f:1 on %s. %s".format(Locale.ROOT, 
                     minOf(onWhite, onBlack),
                     if (onWhite >= onBlack) "black" else "white",
                     verdict.detail,
@@ -289,7 +290,7 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                                 RoundedCornerShape(10.dp),
                             )
                             .clickable {
-                                val hex = "#%02X%02X%02X".format(pr, pg, pb)
+                                val hex = "#%02X%02X%02X".format(Locale.ROOT, pr, pg, pb)
                                 val clip = ClipData.newPlainText("hex", hex)
                                 (context.getSystemService(Context.CLIPBOARD_SERVICE)
                                     as ClipboardManager).setPrimaryClip(clip)

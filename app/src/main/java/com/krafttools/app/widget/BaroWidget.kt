@@ -70,7 +70,7 @@ private fun WidgetBody(hpa: Float?, trend: String?, atMillis: Long) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = if (hpa != null) "%.1f hPa".format(hpa) else "— hPa",
+            text = if (hpa != null) "%.1f hPa".format(Locale.ROOT, hpa) else "— hPa",
             style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
         )
         Spacer(GlanceModifier.height(2.dp))

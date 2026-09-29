@@ -38,6 +38,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.Locale
 
 /**
  * The angle ruler: "by how many degrees", for mitres and shelves.
@@ -58,7 +59,7 @@ import androidx.compose.ui.unit.sp
  */
 @Composable
 fun AngleScreen(onBack: () -> Unit) {
-    val gravity by rememberSensor(Sensor.TYPE_ACCELEROMETER)
+    val gravity = rememberSensor(Sensor.TYPE_ACCELEROMETER).values
     // Held readings survive awkward positions: prop the phone against
     // a shelf, tap hold, carry it to the other end to read.
     var held by rememberSaveable(saver = floatTripleSaver) {
@@ -109,11 +110,11 @@ fun AngleScreen(onBack: () -> Unit) {
         ToolColumn(padding) {
             Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
-                value = "%.1f".format(shownTilt.toDouble()),
+                value = "%.1f".format(Locale.ROOT, shownTilt.toDouble()),
                 unit = "°",
                 status = when {
                     heldReading != null ->
-                        "held · live %.1f° underneath".format(liveTilt.toDouble())
+                        "held · live %.1f° underneath".format(Locale.ROOT, liveTilt.toDouble())
                     snapResult.snapped -> "snapped to a graduation"
                     else -> "from flat"
                 },
@@ -133,8 +134,8 @@ fun AngleScreen(onBack: () -> Unit) {
             )
 
             StatRow {
-                StatChip("pitch", "%+.1f°".format(shownPitch.toDouble()))
-                StatChip("roll", "%+.1f°".format(shownRoll.toDouble()))
+                StatChip("pitch", "%+.1f°".format(Locale.ROOT, shownPitch.toDouble()))
+                StatChip("roll", "%+.1f°".format(Locale.ROOT, shownRoll.toDouble()))
                 StatChip(
                     "downhill",
                     compassPoint(shownAzimuth),

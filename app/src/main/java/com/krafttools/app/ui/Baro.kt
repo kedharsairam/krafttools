@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 /** Seconds between samples. Weather moves slower than this. */
 private const val SAMPLE_SECONDS = 15f
@@ -63,7 +64,7 @@ private val PLAUSIBLE_HPA = 300f..1100f
  */
 @Composable
 fun BarometerScreen(onBack: () -> Unit) {
-    val reading by rememberSensor(Sensor.TYPE_PRESSURE)
+    val reading = rememberSensor(Sensor.TYPE_PRESSURE).values
     val context = LocalContext.current
     val view = LocalView.current
     val baroStore = remember { com.krafttools.app.data.BaroStore(context) }
@@ -94,7 +95,7 @@ fun BarometerScreen(onBack: () -> Unit) {
             if (pressure !in PLAUSIBLE_HPA) {
                 // A 0 hPa reading would otherwise print "44 330 m".
                 fault = "Sensor reported %.0f hPa, which is not a pressure."
-                    .format(pressure.toDouble())
+                    .format(Locale.ROOT, pressure.toDouble())
                 return@collect
             }
             fault = null
@@ -163,7 +164,7 @@ fun BarometerScreen(onBack: () -> Unit) {
         ToolColumn(padding) {
             Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
-                value = "%.2f".format(pressure.toDouble()),
+                value = "%.2f".format(Locale.ROOT, pressure.toDouble()),
                 unit = "hPa",
                 status = when {
                     fault != null -> "sensor fault"
@@ -180,7 +181,7 @@ fun BarometerScreen(onBack: () -> Unit) {
             // The trace, centred on the median and sized to the
             // variation. Its gutter is the real range it spans.
             SectionLabel(
-                "30-minute trace · %.2f–%.2f hPa".format(
+                "30-minute trace · %.2f–%.2f hPa".format(Locale.ROOT, 
                     scale.floor.toDouble(),
                     scale.ceiling.toDouble(),
                 ),
@@ -196,12 +197,12 @@ fun BarometerScreen(onBack: () -> Unit) {
             )
 
             StatRow {
-                StatChip("mean", if (window.isEmpty()) "—" else "%.2f".format(smooth.toDouble()))
-                StatChip("low", "%.2f".format(peakLow.toDouble()))
-                StatChip("high", "%.2f".format(peakHigh.toDouble()))
+                StatChip("mean", if (window.isEmpty()) "—" else "%.2f".format(Locale.ROOT, smooth.toDouble()))
+                StatChip("low", "%.2f".format(Locale.ROOT, peakLow.toDouble()))
+                StatChip("high", "%.2f".format(Locale.ROOT, peakHigh.toDouble()))
                 StatChip(
                     "trend",
-                    tendency?.let { "%+.2f".format(it.toDouble()) } ?: "—",
+                    tendency?.let { "%+.2f".format(Locale.ROOT, it.toDouble()) } ?: "—",
                     emphasise = trend != null && trend != BaroTrend.STEADY,
                 )
             }
@@ -258,7 +259,7 @@ fun BarometerScreen(onBack: () -> Unit) {
                         "trace can mean weather or climbing stairs; doors " +
                         "and HVAC gust the sensor, so trust the mean over " +
                         "a spike."
-                    ).format(errorM, errorM * 0.012),
+                    ).format(Locale.ROOT, errorM, errorM * 0.012),
             )
         }
     }
@@ -283,7 +284,7 @@ private fun AltitudeCard(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            text = if (metres == null) "—" else "%.0f m".format(metres.toDouble()),
+            text = if (metres == null) "—" else "%.0f m".format(Locale.ROOT, metres.toDouble()),
             style = MaterialTheme.typography.headlineMedium,
             color = if (metres == null) {
                 MaterialTheme.colorScheme.onSurfaceVariant

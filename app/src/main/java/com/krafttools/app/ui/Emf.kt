@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import java.util.Locale
 
 /**
  * Metal and electromagnetic field meter.
@@ -97,6 +98,22 @@ fun EmfScreen(onBack: () -> Unit) {
                     haveSample = true
                     window.addLast(m)
                     while (window.size > 90) window.removeFirst()
+                    // Peak hold and the Schmitt trigger are accumulated
+                    // HERE, in the callback, not in a
+                    // LaunchedEffect(tick) below. Compose cancels and
+                    // relaunches an effect whenever its key changes, and
+                    // at 50 Hz the key changes several times per frame,
+                    // so the effect body ran at the DISPLAY rate while
+                    // the decay it applies is per-SAMPLE. The peak
+                    // would have decayed at a fraction of the intended
+                    // rate and the trigger would have seen a fraction of
+                    // the samples. Reading baseline and threshold here
+                    // reads the current value from the state object,
+                    // which is correct even outside composition.
+                    peakHold.update(m, 1f / 50f)
+                    val base = baseline
+                    val dev = if (base == null) 0f else deviationFrom(base, m)
+                    alert = schmitt.update(dev, threshold)
                     tick++
                 }
 
@@ -112,15 +129,9 @@ fun EmfScreen(onBack: () -> Unit) {
         }
     }
 
-    // Peak hold and the alarm both run off the sample, not off the
-    // frame, so neither depends on how often the screen redraws.
-    LaunchedEffect(tick) {
-        if (!haveSample) return@LaunchedEffect
-        peakHold.update(total, 1f / 50f)
-        val base = baseline
-        val dev = if (base == null) 0f else deviationFrom(base, total)
-        alert = schmitt.update(dev, threshold)
-    }
+    // A change of threshold or baseline invalidates the trigger's
+    // latched state, but neither is a per-sample accumulation, so an
+    // effect keyed on them is the right shape here.
     LaunchedEffect(threshold) { schmitt.reset() }
     LaunchedEffect(baseline) { schmitt.reset() }
     // Referencing the tick keeps the collection loop's writes live.
@@ -150,9 +161,9 @@ fun EmfScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
                 value = if (base == null) {
-                    "%.1f".format(total.toDouble())
+                    "%.1f".format(Locale.ROOT, total.toDouble())
                 } else {
-                    "%+.1f".format(dev.toDouble())
+                    "%+.1f".format(Locale.ROOT, dev.toDouble())
                 },
                 unit = "µT",
                 // The alarm is the most important state on this screen,
@@ -178,14 +189,14 @@ fun EmfScreen(onBack: () -> Unit) {
             )
 
             StatRow {
-                StatChip("ambient", "%.1f".format(total.toDouble()))
+                StatChip("ambient", "%.1f".format(Locale.ROOT, total.toDouble()))
                 StatChip(
                     "baseline",
-                    base?.let { "%.1f".format(it) } ?: "—",
+                    base?.let { "%.1f".format(Locale.ROOT, it) } ?: "—",
                     emphasise = base == null,
                 )
-                StatChip("peak", "%.1f".format(peakHold.value.toDouble()))
-                StatChip("trigger", "±%.0f".format(threshold.toDouble()))
+                StatChip("peak", "%.1f".format(Locale.ROOT, peakHold.value.toDouble()))
+                StatChip("trigger", "±%.0f".format(Locale.ROOT, threshold.toDouble()))
             }
 
             // Magnetometer accuracy is the cheapest metal indicator
@@ -244,7 +255,7 @@ fun EmfScreen(onBack: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "±%.0f µT".format(threshold.toDouble()),
+                    text = "±%.0f µT".format(Locale.ROOT, threshold.toDouble()),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )

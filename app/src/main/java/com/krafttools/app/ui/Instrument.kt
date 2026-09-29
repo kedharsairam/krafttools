@@ -21,6 +21,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import java.util.Locale
 
 /**
  * The shared reading header: every measurement tool speaks here.
@@ -106,7 +107,7 @@ class AutoScale(
 
 /**
  * How many decimals a scale of this span can afford. Returned as a
- * ready-made format string because `"%.*f".format(n, v)` is a trap:
+ * ready-made format string because `"%.*f".format(Locale.ROOT, n, v)` is a trap:
  * Kotlin's format takes Any?, so the Int lands in the value slot and
  * the precision star then reads it as a precision.
  */
@@ -166,7 +167,7 @@ fun TraceGraph(
         val range = (ceiling - floor).takeIf { it > 1e-6f } ?: 1f
         val span0 = range
         val decimals0 = decimalsFor(span0)
-        val ceilingText = "%.${decimals0}f".format(ceiling)
+        val ceilingText = "%.${decimals0}f".format(Locale.ROOT, ceiling)
         val zeroText = "0"
         val gutter = maxOf(
             measurer.measure(ceilingText, labelStyle).size.width.toFloat(),
@@ -214,7 +215,7 @@ fun TraceGraph(
         val decimals = decimalsFor(span)
         for (f in lines) {
             val y = size.height * (1f - norm(f))
-            drawLine(grid, Offset(0f, y), Offset(size.width, y), 2f)
+            drawLine(grid, Offset(0f, y), Offset(size.width, y), 2.dp.toPx())
             // Minor marks at 2x and 5x each decade, unlabelled.
             if (logScale) {
                 for (m in listOf(2f, 5f)) {
@@ -231,11 +232,11 @@ fun TraceGraph(
                 }
             }
             val text = if (f >= 1000f) {
-                "%.0fk".format(f / 1000f)
+                "%.0fk".format(Locale.ROOT, f / 1000f)
             } else if (f >= 1f) {
-                "%.0f".format(f)
+                "%.0f".format(Locale.ROOT, f)
             } else {
-                "%.1f".format(f)
+                "%.1f".format(Locale.ROOT, f)
             }
             val layout = measurer.measure(text, labelStyle)
             drawText(
@@ -270,7 +271,7 @@ fun TraceGraph(
             ),
         )
         for (i in 1 until pts.size) {
-            drawLine(line, pts[i - 1], pts[i], 5f)
+            drawLine(line, pts[i - 1], pts[i], 5.dp.toPx())
         }
         // Peak dot: the one number that matters in a trace.
         if (peak != null) {
@@ -278,14 +279,14 @@ fun TraceGraph(
             if (idx >= 0) {
                 drawCircle(
                     color = line,
-                    radius = 9f,
+                    radius = 9.dp.toPx(),
                     center = Offset(x0 + idx * stepX, size.height * (1f - norm(values[idx]))),
                 )
                 drawCircle(
                     color = Color.Black.copy(alpha = 0.55f),
-                    radius = 9f,
+                    radius = 9.dp.toPx(),
                     center = Offset(x0 + idx * stepX, size.height * (1f - norm(values[idx]))),
-                    style = Stroke(3f),
+                    style = Stroke(3.dp.toPx()),
                 )
             }
         }

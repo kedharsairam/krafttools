@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import java.util.Locale
 
 /**
  * Light meter.
@@ -96,6 +97,12 @@ fun LuxScreen(onBack: () -> Unit) {
                     if (maxLux.isNaN() || v > maxLux) maxLux = v
                     window.addLast(v)
                     while (window.size > 120) window.removeFirst()
+                    // The peak-hold decay is per-SAMPLE, so it belongs
+                    // in the callback. In a LaunchedEffect(tick) it
+                    // advanced at the display rate instead, and at
+                    // SENSOR_DELAY_UI the key changes several times per
+                    // frame.
+                    peak.update(v, 1f / 15f)
                     tick++
                 }
 
@@ -106,7 +113,8 @@ fun LuxScreen(onBack: () -> Unit) {
         }
     }
 
-    LaunchedEffect(tick) { if (haveSample) peak.update(lux, 1f / 15f) }
+    // tick is read here purely to subscribe this composable to sample
+    // arrivals; every accumulator is updated in the callback itself.
     val liveTick = tick
     require(liveTick >= 0)
 
@@ -125,9 +133,9 @@ fun LuxScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
                 value = if (shown >= 100f) {
-                    "%.0f".format(shown.toDouble())
+                    "%.0f".format(Locale.ROOT, shown.toDouble())
                 } else {
-                    "%.1f".format(shown.toDouble())
+                    "%.1f".format(Locale.ROOT, shown.toDouble())
                 },
                 unit = "lx",
                 status = band.label,
@@ -158,7 +166,7 @@ fun LuxScreen(onBack: () -> Unit) {
                 StatChip("min", if (minLux.isNaN()) "—" else fmt(minLux))
                 StatChip("max", if (maxLux.isNaN()) "—" else fmt(maxLux))
                 StatChip("peak", fmt(peak.value))
-                StatChip("ev", ev?.let { "%.1f".format(it) } ?: "—")
+                StatChip("ev", ev?.let { "%.1f".format(Locale.ROOT, it) } ?: "—")
             }
 
             // A lux number is only useful as an exposure, so give the
@@ -263,7 +271,7 @@ fun LuxScreen(onBack: () -> Unit) {
 }
 
 private fun fmt(v: Float): String =
-    if (v >= 100f) "%.0f".format(v.toDouble()) else "%.1f".format(v.toDouble())
+    if (v >= 100f) "%.0f".format(Locale.ROOT, v.toDouble()) else "%.1f".format(Locale.ROOT, v.toDouble())
 
 @Composable
 private fun ExposureStat(label: String, value: String) {

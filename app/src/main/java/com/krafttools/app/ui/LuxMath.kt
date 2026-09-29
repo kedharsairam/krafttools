@@ -1,6 +1,7 @@
 package com.krafttools.app.ui
 
 import kotlin.math.pow
+import java.util.Locale
 
 /**
  * Illuminance arithmetic.
@@ -37,9 +38,9 @@ fun saturationNote(maximumRange: Float): String = when {
             "This sensor reports a raw count, not lux: its full scale is " +
                 "%.0f, which is below daylight. The reading is therefore " +
                 "approximate."
-            ).format(maximumRange)
+            ).format(Locale.ROOT, maximumRange)
     else ->
-        "Reads to about %,.0f lux before it saturates.".format(maximumRange)
+        "Reads to about %,.0f lux before it saturates.".format(Locale.ROOT, maximumRange)
 }
 
 /** A named band, with the value the reading came from. */
@@ -80,9 +81,9 @@ private val F_STOPS = listOf(1.4, 2.0, 2.8, 4.0, 5.6, 8.0, 11.0, 16.0, 22.0)
 
 /** Format a shutter duration the way a camera does. */
 fun formatShutter(seconds: Double): String = if (seconds >= 1.0) {
-    "%.0fs".format(seconds)
+    "%.0fs".format(Locale.ROOT, seconds)
 } else {
-    "1/%.0f".format(1.0 / seconds)
+    "1/%.0f".format(Locale.ROOT, 1.0 / seconds)
 }
 
 /**
@@ -110,5 +111,5 @@ fun apertureFor(ev: Double, shutter: Double = 1.0 / 60.0): String {
     val best = F_STOPS.minByOrNull {
         kotlin.math.abs(kotlin.math.ln(it / exact))
     }!!
-    return "f/%.1f".format(best)
+    return "f/%.1f".format(Locale.ROOT, best)
 }

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
+import java.util.Locale
 
 /**
  * The sound-pressure scale every acoustic meter is built from, in the
@@ -136,7 +137,7 @@ internal fun LevelScale(
                         color = zone.color.copy(alpha = 0.45f),
                         start = Offset(right, barTop + barH * 0.18f),
                         end = Offset(right, barTop + barH * 0.82f),
-                        strokeWidth = 1.5f,
+                        strokeWidth = 1.5.dp.toPx(),
                     )
                 }
             }
@@ -157,12 +158,12 @@ internal fun LevelScale(
                     topRightCornerRadius = if (right >= size.width - 1f) {
                         CornerRadius(cap, cap)
                     } else {
-                        CornerRadius(3f, 3f)
+                        CornerRadius(3.dp.toPx(), 3.dp.toPx())
                     },
                     bottomRightCornerRadius = if (right >= size.width - 1f) {
                         CornerRadius(cap, cap)
                     } else {
-                        CornerRadius(3f, 3f)
+                        CornerRadius(3.dp.toPx(), 3.dp.toPx())
                     },
                 )
                 drawPath(Path().apply { addRoundRect(fill) }, level.color)
@@ -174,7 +175,7 @@ internal fun LevelScale(
                     color = Color.White.copy(alpha = 0.85f),
                     start = Offset(px, barTop - barH * 0.1f),
                     end = Offset(px, barTop + barH * 1.1f),
-                    strokeWidth = 3f,
+                    strokeWidth = 3.dp.toPx(),
                 )
             }
             // Zone boundaries, ticked, and the numbers under them.
@@ -182,9 +183,9 @@ internal fun LevelScale(
                 val tx = x(t)
                 drawLine(
                     color = tickColor,
-                    start = Offset(tx, barTop + barH + 6f),
-                    end = Offset(tx, barTop + barH + 12f),
-                    strokeWidth = 2f,
+                    start = Offset(tx, barTop + barH + 6.dp.toPx()),
+                    end = Offset(tx, barTop + barH + 12.dp.toPx()),
+                    strokeWidth = 2.dp.toPx(),
                 )
                 val text = t.roundToInt().toString()
                 val layout = measurer.measure(text, labelStyle)
@@ -193,7 +194,7 @@ internal fun LevelScale(
                     topLeft = Offset(
                         (tx - layout.size.width / 2f)
                             .coerceIn(0f, (size.width - layout.size.width).coerceAtLeast(0f)),
-                        barTop + barH + 16f,
+                        barTop + barH + 16.dp.toPx(),
                     ),
                 )
             }
@@ -210,7 +211,7 @@ internal fun LevelScale(
             )
             drawText(
                 textLayoutResult = nameLayout,
-                topLeft = Offset(nameX, barTop - nameLayout.size.height - 6f),
+                topLeft = Offset(nameX, barTop - nameLayout.size.height - 6.dp.toPx()),
             )
             // Unused: the floor token is read here so the track colour
             // follows the theme rather than a hardcoded grey.
@@ -250,7 +251,7 @@ internal fun SpectrumPlot(
         // the loudest band, so this is relative loudness, not dB.
         for (f in listOf(1f / 3f, 2f / 3f, 1f)) {
             val y = plotH * (1f - f)
-            drawLine(grid, Offset(0f, y), Offset(size.width, y), 1.5f)
+            drawLine(grid, Offset(0f, y), Offset(size.width, y), 1.5.dp.toPx())
         }
         drawLine(
             grid,
@@ -259,7 +260,7 @@ internal fun SpectrumPlot(
             2f,
         )
 
-        val gap = 6f
+        val gap = 6.dp.toPx()
         val w = (size.width - gap * (values.size - 1)) / values.size
         values.forEachIndexed { i, v ->
             val x = i * (w + gap)
@@ -267,14 +268,14 @@ internal fun SpectrumPlot(
                 color = track,
                 topLeft = Offset(x, 0f),
                 size = Size(w, plotH),
-                cornerRadius = CornerRadius(4f, 4f),
+                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx()),
             )
-            val h = (plotH * v).coerceAtLeast(3f)
+            val h = (plotH * v).coerceAtLeast(3.dp.toPx())
             drawRoundRect(
                 color = bar,
                 topLeft = Offset(x, plotH - h),
                 size = Size(w, h),
-                cornerRadius = CornerRadius(4f, 4f),
+                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx()),
             )
             // Frequency name under each band: 63, 125, 250, 500, 1k...
             if (i < centers.size) {
@@ -285,7 +286,7 @@ internal fun SpectrumPlot(
                     topLeft = Offset(
                         (x + w / 2f - layout.size.width / 2f)
                             .coerceIn(0f, (size.width - layout.size.width).coerceAtLeast(0f)),
-                        plotH + 2f,
+                        plotH + 2.dp.toPx(),
                     ),
                 )
             }
@@ -297,7 +298,7 @@ internal fun SpectrumPlot(
 internal fun formatBand(hz: Float): String = when {
     hz >= 1000f -> {
         val k = hz / 1000f
-        if (k == k.roundToInt().toFloat()) "${k.roundToInt()}k" else "%.1fk".format(k)
+        if (k == k.roundToInt().toFloat()) "${k.roundToInt()}k" else "%.1fk".format(Locale.ROOT, k)
     }
     else -> hz.roundToInt().toString()
 }
@@ -308,6 +309,6 @@ internal fun DrawScope.drawPeakTick(x: Float, top: Float, bottom: Float) {
         color = Color.White.copy(alpha = 0.85f),
         start = Offset(x, top),
         end = Offset(x, bottom),
-        strokeWidth = 3f,
+        strokeWidth = 3.dp.toPx(),
     )
 }

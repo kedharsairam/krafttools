@@ -46,6 +46,7 @@ import kotlin.math.sqrt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 @Composable
 fun DecibelScreen(onBack: () -> Unit) {
@@ -215,9 +216,9 @@ private fun DecibelBody(onBack: () -> Unit) {
                 return@Column
             }
             ReadingHeader(
-                value = "%.0f".format(instantDb),
+                value = "%.0f".format(Locale.ROOT, instantDb),
                 unit = "dB",
-                status = "LAeq %.0f dB · 1 s".format(leqDb),
+                status = "LAeq %.0f dB · 1 s".format(Locale.ROOT, leqDb),
                 live = instantDb > 0f,
             )
 
@@ -236,9 +237,9 @@ private fun DecibelBody(onBack: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                StatChip("min", minDb?.let { "%.0f".format(it) } ?: "—")
-                StatChip("peak", maxDb?.let { "%.0f".format(it) } ?: "—")
-                StatChip("laeq", "%.0f".format(leqDb))
+                StatChip("min", minDb?.let { "%.0f".format(Locale.ROOT, it) } ?: "—")
+                StatChip("peak", maxDb?.let { "%.0f".format(Locale.ROOT, it) } ?: "—")
+                StatChip("laeq", "%.0f".format(Locale.ROOT, leqDb))
             }
 
             Spacer(modifier = Modifier.weight(0.2f))
@@ -276,7 +277,7 @@ private fun DecibelBody(onBack: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "%+.0f dB".format(offset),
+                    text = "%+.0f dB".format(Locale.ROOT, offset),
                     style = MaterialTheme.typography.titleMedium,
                     color = if (offset == 0f) {
                         MaterialTheme.colorScheme.onSurfaceVariant

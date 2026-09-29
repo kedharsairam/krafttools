@@ -55,6 +55,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -310,7 +311,7 @@ private fun TorchBody(onBack: () -> Unit) {
             if (strobe) {
                 Text(
                     text = ("%.1f Hz — photosensitive epilepsy warning: " +
-                        "look away from the flash.").format(rateHz.toDouble()),
+                        "look away from the flash.").format(Locale.ROOT, rateHz.toDouble()),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -428,13 +429,13 @@ private fun LampDisc(
             center = c,
         )
         // Machined bezel + concentric rings: the instrument language.
-        drawCircle(color = ring, radius = r * 0.97f, center = c, style = Stroke(width = 4f))
+        drawCircle(color = ring, radius = r * 0.97f, center = c, style = Stroke(width = 4.dp.toPx()))
         for (i in 1..3) {
             drawCircle(
                 color = ring.copy(alpha = 0.5f),
                 radius = r * (0.97f - i * 0.055f),
                 center = c,
-                style = Stroke(width = 1.5f),
+                style = Stroke(width = 1.5.dp.toPx()),
             )
         }
         // Dial ticks every 30 degrees: the bezel is calibrated.
@@ -447,7 +448,7 @@ private fun LampDisc(
                 color = ring.copy(alpha = if (long) 0.9f else 0.5f),
                 start = Offset(c.x + (r0 * kotlin.math.cos(a)).toFloat(), c.y + (r0 * kotlin.math.sin(a)).toFloat()),
                 end = Offset(c.x + (r1 * kotlin.math.cos(a)).toFloat(), c.y + (r1 * kotlin.math.sin(a)).toFloat()),
-                strokeWidth = if (long) 3f else 1.5f,
+                strokeWidth = if (long) 3.dp.toPx() else 1.5.dp.toPx(),
             )
         }
         // Off state keeps a lit-looking pilot so the control never reads dead.
@@ -467,7 +468,7 @@ private fun AutoOffBar(leftSec: Long, totalSec: Int) {
     val accent = MaterialTheme.colorScheme.primary
     val track = MaterialTheme.colorScheme.outline
     val fraction = (leftSec.toFloat() / totalSec.coerceAtLeast(1)).coerceIn(0f, 1f)
-    val label = "Auto-off in %d:%02d".format(leftSec / 60, leftSec % 60)
+    val label = "Auto-off in %d:%02d".format(Locale.ROOT, leftSec / 60, leftSec % 60)
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,

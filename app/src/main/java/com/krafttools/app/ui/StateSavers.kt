@@ -91,3 +91,26 @@ val intTripleListSaver: Saver<SnapshotStateList<Triple<Int, Int, Int>>, ArrayLis
             }
         },
     )
+
+/**
+ * A saver for a plain enum, keyed by its NAME.
+ *
+ * The band selector holds a `WifiBand` in `rememberSaveable`. A Kotlin
+ * enum is neither `Parcelable` nor `Serializable`, so the default
+ * autoSaver throws when the process is killed and recreated — which is
+ * the one moment `rememberSaveable` exists to handle.
+ *
+ * It is keyed by name, never by ordinal. An ordinal is an
+ * implementation detail: reordering the enum would silently remap every
+ * saved selection, so a user who had chosen 6 GHz would come back to
+ * 2.4 GHz after an unrelated edit. That is the enum-ordinal trap this
+ * file exists to keep out of the codebase.
+ */
+inline fun <reified E : Enum<E>> enumSaver(default: E): Saver<E, String> = Saver(
+    save = { it.name },
+    restore = { saved ->
+        // A name from an older build may no longer exist. Falling back
+        // is right: a crash on launch is not.
+        runCatching { enumValueOf<E>(saved) }.getOrDefault(default)
+    },
+)

@@ -70,6 +70,7 @@ import androidx.compose.animation.slideOut
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import java.util.Locale
 
 private data class Tool(
     val route: String,
@@ -231,7 +232,7 @@ private fun ToolGrid(onOpen: (String) -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LevelScreen(onBack: () -> Unit) {
-    val gravity by rememberSensor(Sensor.TYPE_ACCELEROMETER)
+    val gravity = rememberSensor(Sensor.TYPE_ACCELEROMETER).values
     var zero by rememberSaveable(saver = floatPairSaver) { mutableStateOf<Pair<Float, Float>?>(null) }
     var sound by rememberSaveable { mutableStateOf(true) }
     val context = LocalContext.current
@@ -315,7 +316,7 @@ private fun LevelScreen(onBack: () -> Unit) {
         ) {
             Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
-                value = "%.1f".format(level.toDouble()),
+                value = "%.1f".format(Locale.ROOT, level.toDouble()),
                 unit = "°",
                 status = when {
                     tilt.isUseless -> "turn over"
@@ -407,7 +408,7 @@ private fun AngleStat(label: String, degrees: Float?) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            text = if (degrees == null) "—" else "%+.1f°".format(degrees),
+            text = if (degrees == null) "—" else "%+.1f°".format(Locale.ROOT, degrees),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -473,8 +474,8 @@ private fun Bubble(
         val cy = size.height / 2f
         // Machined bezel: outer ring + cardinal ticks give the vial
         // a physical housing instead of floating lines.
-        drawCircle(color = ring, radius = r, style = androidx.compose.ui.graphics.drawscope.Stroke(4f))
-        drawCircle(color = ring, radius = r * 0.97f, style = androidx.compose.ui.graphics.drawscope.Stroke(10f))
+        drawCircle(color = ring, radius = r, style = androidx.compose.ui.graphics.drawscope.Stroke(4.dp.toPx()))
+        drawCircle(color = ring, radius = r * 0.97f, style = androidx.compose.ui.graphics.drawscope.Stroke(10.dp.toPx()))
         // Success wash, inside the housing.
         if (flash > 0.01f) {
             drawCircle(
@@ -504,23 +505,23 @@ private fun Bubble(
                     cx + (r * 0.97f * Math.sin(rad)).toFloat(),
                     cy - (r * 0.97f * Math.cos(rad)).toFloat(),
                 ),
-                strokeWidth = if (major) 5f else 2f,
+                strokeWidth = if (major) 5.dp.toPx() else 2.dp.toPx(),
             )
         }
         // Target cross: what "level" looks like, drawn even when empty.
         val targetR = r * 0.25f
-        drawCircle(color = ring, radius = targetR, center = Offset(cx, cy), style = androidx.compose.ui.graphics.drawscope.Stroke(3f))
+        drawCircle(color = ring, radius = targetR, center = Offset(cx, cy), style = androidx.compose.ui.graphics.drawscope.Stroke(3.dp.toPx()))
         drawLine(
             color = ring.copy(alpha = 0.7f),
             start = Offset(cx - targetR * 1.5f, cy),
             end = Offset(cx + targetR * 1.5f, cy),
-            strokeWidth = 2f,
+            strokeWidth = 2.dp.toPx(),
         )
         drawLine(
             color = ring.copy(alpha = 0.7f),
             start = Offset(cx, cy - targetR * 1.5f),
             end = Offset(cx, cy + targetR * 1.5f),
-            strokeWidth = 2f,
+            strokeWidth = 2.dp.toPx(),
         )
         // The bubble: a body with a highlight, not a flat dot.
         val bR = r * 0.16f
@@ -569,17 +570,17 @@ private fun Bubble(dx: Float, dy: Float, level: Boolean, modifier: Modifier = Mo
         val r = size.minDimension / 2f
         // Machined bezel: outer ring + cardinal ticks give the vial
         // a physical housing instead of floating lines.
-        drawCircle(color = ring, radius = r, style = androidx.compose.ui.graphics.drawscope.Stroke(4f))
-        drawCircle(color = ring, radius = r * 0.97f, style = androidx.compose.ui.graphics.drawscope.Stroke(10f))
+        drawCircle(color = ring, radius = r, style = androidx.compose.ui.graphics.drawscope.Stroke(4.dp.toPx()))
+        drawCircle(color = ring, radius = r * 0.97f, style = androidx.compose.ui.graphics.drawscope.Stroke(10.dp.toPx()))
         for (deg in listOf(0f, 90f, 180f, 270f)) {
             val rad = Math.toRadians(deg.toDouble())
             val x1 = size.width / 2f + (r * 0.88f * Math.sin(rad)).toFloat()
             val y1 = size.height / 2f - (r * 0.88f * Math.cos(rad)).toFloat()
             val x2 = size.width / 2f + (r * 0.97f * Math.sin(rad)).toFloat()
             val y2 = size.height / 2f - (r * 0.97f * Math.cos(rad)).toFloat()
-            drawLine(ring, Offset(x1, y1), Offset(x2, y2), 5f)
+            drawLine(ring, Offset(x1, y1), Offset(x2, y2), 5.dp.toPx())
         }
-        drawCircle(color = ring, radius = r * 0.25f, style = androidx.compose.ui.graphics.drawscope.Stroke(3f))
+        drawCircle(color = ring, radius = r * 0.25f, style = androidx.compose.ui.graphics.drawscope.Stroke(3.dp.toPx()))
         drawCircle(
             color = bubble,
             radius = r * 0.16f,
