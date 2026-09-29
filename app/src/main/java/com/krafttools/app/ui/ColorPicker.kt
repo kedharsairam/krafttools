@@ -1,5 +1,8 @@
 package com.krafttools.app.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -9,6 +12,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,9 +36,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,6 +71,10 @@ private fun ColorPickerBody(onBack: () -> Unit) {
     val lifecycle = LocalLifecycleOwner.current
     var rgb by remember { mutableStateOf(Triple(0, 0, 0)) }
     var frozen by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    // Palette: frozen captures kept for the session, newest first.
+    // Designers collect candidates; each row copies its HEX on tap.
+    val palette = remember { mutableStateListOf<Triple<Int, Int, Int>>() }
     // Analyzer closure captures these; int array survives recomposition
     // without triggering it (color state alone drives redraws).
     val frameCount = remember { mutableIntStateOf(0) }
@@ -200,6 +210,64 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                 Button(onClick = { frozen = false }) { Text("Resume") }
             } else {
                 OutlinedButton(onClick = { frozen = true }) { Text("Freeze") }
+            }
+            OutlinedButton(
+                onClick = {
+                    if (palette.none { it == rgb }) {
+                        palette.add(0, rgb)
+                        if (palette.size > 12) palette.removeLast()
+                    }
+                },
+            ) {
+                Text("Save swatch")
+            }
+            // Contrast ratio (WCAG): text-legibility check for designers.
+            // Computed live against black and white.
+            val (r, g, b) = rgb
+            val lum = { c: Int ->
+                val v = c / 255.0
+                if (v <= 0.03928) v / 12.92 else Math.pow((v + 0.055) / 1.055, 2.4)
+            }
+            val l = 0.2126 * lum(r) + 0.7152 * lum(g) + 0.0722 * lum(b)
+            val onBlack = (l + 0.05) / 0.05
+            val onWhite = 1.05 / (l + 0.05)
+            Text(
+                text = "Contrast %.1f on black · %.1f on white".format(onBlack, onWhite),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            if (palette.isNotEmpty()) {
+                Text(
+                    text = "Palette (${palette.size}) — tap a swatch to copy its HEX.",
+                    style = MaterialTheme.typography.titleSmall,
+                )
+            }
+            androidx.compose.foundation.lazy.LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(
+                    count = palette.size,
+                    key = { palette[it].toString() + it },
+                ) { i ->
+                    val (pr, pg, pb) = palette[i]
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color(android.graphics.Color.rgb(pr, pg, pb)))
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.outlineVariant,
+                                RoundedCornerShape(10.dp),
+                            )
+                            .clickable {
+                                val hex = "#%02X%02X%02X".format(pr, pg, pb)
+                                val clip = ClipData.newPlainText("hex", hex)
+                                (context.getSystemService(Context.CLIPBOARD_SERVICE)
+                                    as ClipboardManager).setPrimaryClip(clip)
+                            },
+                    )
+                }
             }
             Text(
                 text = "Approximate only — auto white-balance shifts hues, " +

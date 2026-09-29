@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,6 +40,9 @@ fun EmfScreen(onBack: () -> Unit) {
     val mag by rememberSensor(Sensor.TYPE_MAGNETIC_FIELD)
     var threshold by remember { mutableFloatStateOf(60f) }
     var peak by remember { mutableFloatStateOf(0f) }
+    // Alert history: timestamped crossings, newest first, capped.
+    // Answers "was that spike the fridge or the microwave?" later.
+    val crossings = remember { mutableStateListOf<String>() }
     val context = LocalContext.current
 
     Scaffold(
@@ -72,6 +76,12 @@ fun EmfScreen(onBack: () -> Unit) {
         val alert = total >= threshold
         LaunchedEffect(alert) {
             if (!alert) return@LaunchedEffect
+            val stamp = java.text.SimpleDateFormat(
+                "HH:mm:ss",
+                java.util.Locale.getDefault(),
+            ).format(java.util.Date())
+            crossings.add(0, "$stamp · %.1f µT".format(total.toDouble()))
+            if (crossings.size > 20) crossings.removeLast()
             val vib = context.getSystemService(Vibrator::class.java) ?: return@LaunchedEffect
             if (!vib.hasVibrator()) return@LaunchedEffect
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -123,6 +133,30 @@ fun EmfScreen(onBack: () -> Unit) {
                 )
                 OutlinedButton(onClick = { peak = total }) {
                     Text("Reset peak")
+                }
+            }
+            if (crossings.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "Crossings (${crossings.size})",
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    OutlinedButton(onClick = { crossings.clear() }) {
+                        Text("Clear")
+                    }
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    crossings.take(5).forEach { entry ->
+                        Text(
+                            text = entry,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
             }
             Text(

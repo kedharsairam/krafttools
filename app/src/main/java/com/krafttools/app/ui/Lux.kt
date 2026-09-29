@@ -35,6 +35,10 @@ fun LuxScreen(onBack: () -> Unit) {
     val light by rememberSensor(Sensor.TYPE_LIGHT)
     var minLux by remember { mutableStateOf<Float?>(null) }
     var maxLux by remember { mutableStateOf<Float?>(null) }
+    // Hold freezes the headline for reading in awkward positions
+    // (behind furniture); min/max keep tracking live underneath.
+    var held by remember { mutableStateOf(false) }
+    var heldLux by remember { mutableStateOf<Float?>(null) }
 
     Scaffold(
         topBar = {
@@ -57,6 +61,9 @@ fun LuxScreen(onBack: () -> Unit) {
             return@Scaffold
         }
         val lux = values[0]
+        if (held && heldLux == null) heldLux = lux
+        if (!held) heldLux = null
+        val shown = heldLux ?: lux
 
         // Hold extremes only on real readings; reset restores both to current.
         LaunchedEffect(lux) {
@@ -70,12 +77,12 @@ fun LuxScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = "%.1f lux".format(lux),
+                text = "%.1f lux".format(shown) + if (held) " (held)" else "",
                 style = MaterialTheme.typography.displayLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = luxLabel(lux),
+                text = luxLabel(shown),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -89,6 +96,20 @@ fun LuxScreen(onBack: () -> Unit) {
             }
             Button(onClick = { minLux = lux; maxLux = lux }) {
                 Text("Reset min/max")
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = "Hold reading",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                androidx.compose.material3.Switch(
+                    checked = held,
+                    onCheckedChange = { held = it },
+                )
             }
             Text(
                 text = "Relative, not lab: phone sensors saturate (~5–30k lux) " +

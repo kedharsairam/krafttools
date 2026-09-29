@@ -78,6 +78,29 @@ fun BarometerScreen(onBack: () -> Unit) {
         // Rolling mean rides on the trace data so spikes (doors, HVAC)
         // stay visible in the graph while the headline stays readable.
         val smooth = if (history.isEmpty()) pressure else history.average().toFloat()
+        // Tendency: first-half vs second-half mean, scaled to hPa/hour.
+        // Needs ~10 min of data before it says anything (below that it
+        // would just narrate noise). Zambretti-lite: direction + rate
+        // only, no letter dial — the full forecaster lives in the
+        // future Weather app with wind input and 3 h windows.
+        val tendency = if (history.size >= 40) {
+            val half = history.size / 2
+            val first = history.take(half).average()
+            val second = history.drop(half).average()
+            val spanHours = (half * 15.0) / 3600.0
+            (second - first) / spanHours
+        } else {
+            null
+        }
+        val forecast = tendency?.let { t ->
+            when {
+                t <= -2.0 -> "Falling fast — rain likely within hours"
+                t < -0.5 -> "Falling — change coming"
+                t <= 0.5 -> "Steady — no change ahead"
+                t < 2.0 -> "Rising — improving"
+                else -> "Rising fast — fair spell coming"
+            }
+        }
         val rawAlt = SensorManager.getAltitude(
             SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure,
         )
@@ -101,6 +124,17 @@ fun BarometerScreen(onBack: () -> Unit) {
                 text = "station pressure (30-min average)",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = forecast
+                    ?: "Trend appears after ~10 min of readings.",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = if (forecast != null) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
             )
             PressureTrace(
                 values = history.toList(),

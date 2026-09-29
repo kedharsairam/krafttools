@@ -39,6 +39,15 @@ fun AngleScreen(onBack: () -> Unit) {
     val gravity by rememberSensor(Sensor.TYPE_ACCELEROMETER)
     // Frozen triple held for reading in awkward positions; live keeps flowing underneath.
     var held by remember { mutableStateOf<Triple<Float, Float, Float>?>(null) }
+    // Snap: within 2° of a 45° multiple the display locks onto it.
+    // Picture frames and shelves live at these angles; the toggle
+    // admits the tool is rounding, not that the phone got better.
+    var snap by remember { mutableStateOf(false) }
+    fun snap45(v: Float): Float {
+        if (!snap) return v
+        val q = Math.round(v / 45f) * 45f
+        return if (kotlin.math.abs(v - q) <= 2f) q.toFloat() else v
+    }
 
     Scaffold(
         topBar = {
@@ -60,7 +69,9 @@ fun AngleScreen(onBack: () -> Unit) {
         val (pitch, roll) = pitchRoll(g)
         // Magnitude from flat combines both axes; max() would hide diagonal tilt.
         val live = Math.hypot(pitch.toDouble(), roll.toDouble()).toFloat()
-        val shown = held ?: Triple(pitch, roll, live)
+        val shown = (held ?: Triple(pitch, roll, live)).let { (p, r, m) ->
+            Triple(snap45(p), snap45(r), snap45(m))
+        }
 
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(24.dp),
@@ -92,6 +103,20 @@ fun AngleScreen(onBack: () -> Unit) {
                 Button(onClick = { held = Triple(pitch, roll, live) }) { Text("Hold") }
             } else {
                 OutlinedButton(onClick = { held = null }) { Text("Resume") }
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = "Snap to 45°",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                androidx.compose.material3.Switch(
+                    checked = snap,
+                    onCheckedChange = { snap = it },
+                )
             }
             // Honest limits up front: uncalibrated MEMS drifts, so trust relative, not absolute.
             Text(
