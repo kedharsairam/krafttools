@@ -78,6 +78,16 @@ private data class Net(
     val ssid: String,
     val level: Int,
     val channel: WifiChannel?,
+    /**
+     * The access point's hardware address, carried so the list can key
+     * on it. `ssid + level` is NOT unique: the two radios of a mesh
+     * node broadcast the same name at the same power, and two
+     * neighbours can sit at the same RSSI. Duplicate keys in a
+     * LazyColumn throw IllegalArgumentException, and the list is fed
+     * from `distinctBy { it.BSSID }` — so uniqueness was already
+     * guaranteed and then thrown away on the way into the model.
+     */
+    val bssid: String,
 )
 
 @Composable
@@ -128,7 +138,7 @@ private fun WifiBody(onBack: () -> Unit) {
             nets = manager.scanResults
                 .filter { it.SSID.isNotBlank() }
                 .distinctBy { it.BSSID }
-                .map { r -> Net(r.SSID, r.level, channelOf(r.frequency)) }
+                .map { r -> Net(r.SSID, r.level, channelOf(r.frequency), r.BSSID) }
                 .sortedByDescending { it.level }
         } catch (_: SecurityException) {
             nets = emptyList()
@@ -266,7 +276,7 @@ private fun WifiBody(onBack: () -> Unit) {
                             .weight(1f),
                         verticalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        items(selectedNets, key = { it.ssid + it.level }) { n ->
+                        items(selectedNets, key = { it.bssid }) { n ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()

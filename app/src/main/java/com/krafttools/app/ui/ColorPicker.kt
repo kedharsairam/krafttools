@@ -73,9 +73,16 @@ fun ColorPickerScreen(onBack: () -> Unit) {
 @Composable
 private fun ColorPickerBody(onBack: () -> Unit) {
     val lifecycle = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val executor = rememberAnalysisExecutor()
+    // The camera can be unavailable for reasons that are not "this
+    // phone has no camera": the service can be down and the driver can
+    // refuse to bind. Both are reported now instead of throwing from
+    // inside a view factory.
+    var cameraError by remember { mutableStateOf<String?>(null) }
+    val hasCamera = remember(context) { hasAnyCamera(context) }
     var rgb by rememberSaveable(saver = intTripleSaver) { mutableStateOf(Triple(0, 0, 0)) }
     var frozen by rememberSaveable { mutableStateOf(false) }
-    val context = LocalContext.current
     // Palette: frozen captures kept for the session, newest first.
     // Designers collect candidates; each row copies its HEX on tap.
     val palette = rememberSaveable(saver = intTripleListSaver) { mutableStateListOf<Triple<Int, Int, Int>>() }
@@ -113,51 +120,42 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                     .clip(RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center,
             ) {
-                AndroidView(
-                    factory = { ctx ->
-                        PreviewView(ctx).also { view ->
-                            val provider =
-                                ProcessCameraProvider.getInstance(ctx).get()
-                            val preview = Preview.Builder().build().also {
-                                it.setSurfaceProvider(view.surfaceProvider)
-                            }
-                            val analysis = ImageAnalysis.Builder()
-                                .setBackpressureStrategy(
-                                    ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST,
-                                )
-                                .build()
-                                .also { ia ->
-                                    ia.setAnalyzer(
-                                        ContextCompat.getMainExecutor(ctx),
-                                    ) { image ->
-                                        try {
-                                            // 30fps analysis redraws constantly; every
-                                            // 3rd frame is still ~10Hz, plenty live.
-                                            frameCount.intValue++
-                                            if (!frozen &&
-                                                frameCount.intValue % 3 == 0
-                                            ) {
-                                                sampleCenter(image)?.let { rgb = it }
-                                            }
-                                        } catch (_: Exception) {
-                                        } finally {
-                                            image.close()
-                                        }
-                                    }
+                if (!hasCamera) {
+                    NoSensor(modifier = Modifier.padding(12.dp), name = "camera")
+                } else if (cameraError != null) {
+                    ToolHint(cameraError!!, warn = true)
+                } else {
+                    // The shared camera helper, which is where the
+                    // crash fixes already live: a background executor
+                    // (the old stack used getMainExecutor, so the
+                    // buffer walk ran on the UI thread at 10 Hz), a
+                    // hardware gate, a back-or-front fallback, and a
+                    // reported error instead of an exception thrown
+                    // from inside an AndroidView factory.
+                    CameraPreview(
+                        lifecycleOwner = lifecycle,
+                        analysisExecutor = executor,
+                        modifier = Modifier.fillMaxSize(),
+                        onError = { why -> cameraError = why },
+                        onFrame = { image ->
+                            // On the analysis executor, never the main
+                            // thread.
+                            try {
+                                // 30fps analysis redraws constantly;
+                                // every 3rd frame is ~10Hz, plenty live.
+                                frameCount.intValue++
+                                if (!frozen &&
+                                    frameCount.intValue % 3 == 0
+                                ) {
+                                    sampleCenter(image)?.let { rgb = it }
                                 }
-                            provider.unbindAll()
-                            provider.bindToLifecycle(
-                                lifecycle,
-                                CameraSelector.DEFAULT_BACK_CAMERA,
-                                preview,
-                                analysis,
-                            )
-                            // No manual release: bindToLifecycle ties the camera
-                            // to the lifecycle, unbinding automatically on dispose.
-                        }
-                    },
-                    modifier = Modifier.fillMaxSize(),
-                )
+                            } catch (_: Exception) {
+                            } finally {
+                                image.close()
+                            }
+                        },
+                    )
+                }
                 // Center-spot reticle so users know exactly what is sampled.
                 Box(
                     modifier = Modifier

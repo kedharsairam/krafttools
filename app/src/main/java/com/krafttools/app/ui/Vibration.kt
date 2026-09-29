@@ -103,12 +103,21 @@ fun VibrationScreen(onBack: () -> Unit) {
                     if (component == null) mag else g[component],
                     dt,
                 )
-                // Keep the signed waveform for the trace; the headline
-                // number is an amplitude and must never read negative.
-                val magnitude = kotlin.math.abs(raw)
-                live.getValue(ch).value = magnitude
+                // The headline number is an amplitude and must never
+                // read negative, so `live` gets the rectified value.
+                live.getValue(ch).value = kotlin.math.abs(raw)
+                // The ANALYSIS window gets the SIGNED sample. This was
+                // the rectified one, and a rectified sine has no energy
+                // at its own frequency: |sin x| = 2/pi - (4/pi)SUM
+                // cos(2nx)/(4n^2 - 1), so every component sits at 2f, 4f,
+                // 6f. After DC removal nothing remains at f, and the
+                // dominant-frequency search duly reported exactly
+                // DOUBLE the truth — 5 Hz read as 10, 300 RPM as 600.
+                // The unit test passed because it fed the function a
+                // signed sine directly, so the only call site in the app
+                // was the one that was wrong.
                 val w = windows.getValue(ch)
-                w.addLast(magnitude)
+                w.addLast(raw)
                 while (w.size > WINDOW) w.removeFirst()
             }
             if (++sinceAnalysis >= 4) {

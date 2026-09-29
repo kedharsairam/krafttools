@@ -24,6 +24,33 @@ fun aWeightDb(freqHz: Float): Float {
 fun hann(i: Int, n: Int): Double =
     0.5 * (1.0 - Math.cos(2.0 * Math.PI * i / n))
 
-/** Linear (not dB) A-weight factor for an energy term. */
+/**
+ * Linear A-weight factor for an AMPLITUDE term: 10^(A/20).
+ *
+ * This is the amplitude (pressure) ratio, and it is the square root of
+ * the energy (power) ratio. It was documented as being "for an energy
+ * term" and was then applied to `mags[k] * mags[k]` — which made the
+ * sound meter weight every bin's POWER by the amplitude factor, so
+ * bass came out up to 50 dB too loud: 100 Hz was +19.1 dB high, 63 Hz
+ * +26.2 dB. The module's own note said "phone-mic LAeq without this
+ * over-reads bass", and the mistake was in the factor rather than in a
+ * missing one.
+ *
+ * Use [aWeightPower] when the term being weighted is a square.
+ */
 fun aWeightLinear(freqHz: Float): Double =
     Math.pow(10.0, (aWeightDb(freqHz) / 20.0).toDouble())
+
+/**
+ * Linear A-weight factor for an ENERGY (power) term: 10^(A/10).
+ *
+ * Decibels are a power ratio, so the linear factor matching a dB
+ * figure is 10^(dB/10). Weighting `mags[k]^2` needs this, not
+ * [aWeightLinear]. The two differ by exactly the A-weighting curve in
+ * dB, so using the wrong one is a large systematic error rather than a
+ * rounding difference.
+ */
+fun aWeightPower(freqHz: Float): Double {
+    val a = aWeightLinear(freqHz)
+    return a * a
+}

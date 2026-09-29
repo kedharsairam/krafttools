@@ -144,7 +144,12 @@ private fun DecibelBody(onBack: () -> Unit) {
                     }
                     instantDb = (blockDb + offset).coerceIn(0f, 120f)
                     if (energyFill < energyWin.size) energyFill++
-                    if (energyFill == energyWin.size) {
+                    // `>=`, not `==`. energyFill is incremented in TWO
+                    // places in this block, so it overshoots the window size on
+                    // the first pass and `==` is never true again: LAeq was
+                    // frozen at 0 dB for the whole session, and the header
+                    // read "LAeq 0 dB" permanently.
+                    if (energyFill >= energyWin.size) {
                         var e = 0f
                         for (v in energyWin) e += v
                         e /= energyWin.size
@@ -368,7 +373,9 @@ private fun spectrumBands(ring: FloatArray, ringPos: Int): Spectrum {
     for (k in 1..n / 2) {
         val freq = k * SAMPLE_RATE.toFloat() / n
         if (freq in 20f..16000f) {
-            energy += magsAll[k] * magsAll[k] * aWeightLinear(freq)
+            // aWeightPower, not aWeightLinear: the term being weighted is a
+            // square, and decibels are a power ratio.
+            energy += magsAll[k] * magsAll[k] * aWeightPower(freq)
         }
     }
     // Display bands read straight off the same transform.

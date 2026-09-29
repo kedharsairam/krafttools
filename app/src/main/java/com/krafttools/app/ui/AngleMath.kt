@@ -31,20 +31,36 @@ fun tiltFromFlat(gravity: FloatArray): Float {
 /**
  * Which way downhill is, in the phone's own screen plane, in degrees
  * clockwise from the right edge. This is the one number a protractor
- * needle can show: a single direction that folds pitch and roll
- * together, which the old horizontal edge could not — a pure 45°
- * *pitch* drew dead flat while the header read 45°.
+ * needle can show: a single direction that folds both tilt axes
+ * together, which a plain horizontal edge could not — a pure 45° tilt
+ * drew dead flat while the header read 45°.
  *
- *   gravity +X (right edge down) -> 0°,    needle points right
- *   gravity +Y (top edge down)   -> 90°,   needle points down
- *   gravity -X (left edge down)  -> 180°,  needle points left
- *   gravity -Y (top edge up)     -> 270°,  needle points up
+ * The argument is an ACCELEROMETER reading, which is the specific
+ * force `a = −g`, not the gravity vector itself. This is the whole
+ * subtlety: because the accelerometer reports the reaction to gravity
+ * rather than gravity, its horizontal component always points UPHILL.
+ * For a surface descending in unit direction `d`, `g·d > 0`, so
+ * `a·d = −g·d < 0` — the measured horizontal vector is `−d`.
+ *
+ * The old code returned `atan2(ay, ax)`, which is the uphill bearing,
+ * so every reading was 180° out. A slope descending to the right was
+ * reported as descending to the left. Negating both components is the
+ * whole fix.
+ *
+ *   a = (−1.70, 0, 9.66)  (right edge low)  ->   0°,  downhill is right
+ *   a = (0, +1.70, 9.66)  (top edge down)   ->  90°,  downhill is down
+ *   a = (+1.70, 0, 9.66)  (left edge low)   -> 180°,  downhill is left
+ *   a = (0, −1.70, 9.66)  (top edge up)     -> 270°,  downhill is up
+ *
+ * Note the second column above: `a_y > 0` means the TOP edge is DOWN,
+ * because the device's +Y axis points up the screen and the reaction
+ * pushes it up when the top end drops.
  */
 fun downhillAzimuth(gravity: FloatArray): Float {
     val ax = gravity[0].toDouble()
     val ay = gravity[1].toDouble()
     if (hypot(ax, ay) < 1e-6) return 0f
-    val deg = Math.toDegrees(atan2(ay, ax)).toFloat()
+    val deg = Math.toDegrees(atan2(-ay, -ax)).toFloat()
     return ((deg % 360f) + 360f) % 360f
 }
 

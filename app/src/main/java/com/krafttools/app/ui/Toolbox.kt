@@ -233,7 +233,13 @@ private fun ToolGrid(onOpen: (String) -> Unit) {
 @Composable
 private fun LevelScreen(onBack: () -> Unit) {
     val gravity = rememberSensor(Sensor.TYPE_ACCELEROMETER).values
-    var zero by rememberSaveable(saver = floatPairSaver) { mutableStateOf<Pair<Float, Float>?>(null) }
+    // The raw vector, not a pitch/roll pair. De-rotating by the two
+    // angles does not reproduce the rotation that actually maps this
+    // vector onto vertical — it leaves several degrees of residual even
+    // on a diagonal zero. Storing the vector makes it exact.
+    var zero by rememberSaveable(saver = floatTripleSaver) {
+        mutableStateOf<Triple<Float, Float, Float>?>(null)
+    }
     var sound by rememberSaveable { mutableStateOf(true) }
     val context = LocalContext.current
     val view = LocalView.current
@@ -278,11 +284,22 @@ private fun LevelScreen(onBack: () -> Unit) {
             return@Scaffold
         }
         val orientation = orientationOf(g)
-        val (zp, zr) = zero ?: (0f to 0f)
+        val zeroVec = zero?.let { floatArrayOf(it.first, it.second, it.third) }
+        val zeroOrient = zeroVec?.let { orientationOf(it) }
+        val zp = zeroOrient?.pitchDeg ?: 0f
+        val zr = zeroOrient?.rollDeg ?: 0f
         val tilt = Tilt(
             orientation.pitchDeg - zp,
             orientation.rollDeg - zr,
             isUseless = orientation.isUseless,
+            // From the sample, not from the two axis angles: those are
+            // rotations about different axes and the total is not
+            // recoverable from them.
+            // With no zero captured the reference is VERTICAL, not the
+            // current sample: passing the sample as its own zero made
+            // the residual identically zero, so an uncalibrated spirit
+            // level read 0.00 degrees and "level" forever.
+            totalDeg = residualTilt(g, zeroVec ?: floatArrayOf(0f, 0f, g[2])),
         )
         val level = tilt.magnitude
         val isLevel = tilt.isLevel && !tilt.isUseless
@@ -386,7 +403,7 @@ private fun LevelScreen(onBack: () -> Unit) {
             androidx.compose.material3.OutlinedButton(
                 onClick = {
                     Haptics.confirm(view)
-                    zero = orientation.pitchDeg to orientation.rollDeg
+                    zero = Triple(g[0], g[1], g[2])
                 },
                 modifier = Modifier
                     .fillMaxWidth()

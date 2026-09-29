@@ -1,6 +1,7 @@
 package com.krafttools.app
 
 import com.krafttools.app.ui.apertureFor
+import com.krafttools.app.ui.INCIDENT_CALIBRATION
 import com.krafttools.app.ui.evAt
 import com.krafttools.app.ui.isPlausibleLux
 import com.krafttools.app.ui.luxBand
@@ -74,10 +75,33 @@ class LuxMathTest {
 
     @Test
     fun overcastDaylightLandsOnAFamiliarExposure() {
-        // EV = log2(lux * 100 / iso), so 1000 lux at ISO 100 is
-        // log2(1000) = 9.97 — EV 10 is 1024 lux, not 1000.
-        assertEquals(9.9658, evAt(1000f)!!, 0.001)
-        assertEquals(10.0, evAt(1024f)!!, 0.001)
+        // ISO 2720 incident calibration: EV = log2(E * S / C) with
+        // C = 250 lux. 1000 lux at ISO 100 is log2(400) = 8.64.
+        //
+        // This test previously asserted log2(1000) = 9.97, which is the
+        // formula with the constant dropped — treating a lux reading as
+        // though it were a luminance in cd/m2. It was green, and wrong
+        // by 1.3 stops.
+        assertEquals(8.6439, evAt(1000f)!!, 0.001)
+    }
+
+    @Test
+    fun theEvFifteenReferenceIsEightyTwoThousandLux() {
+        // The standard's own statement: "at EV 15 — the sunny-sixteen
+        // amount of light — the illuminance is 82 000 lux". This is the
+        // check that the constant is present at all, because a missing
+        // C turns EV 15 into 32 768 lux.
+        assertEquals(15.0, evAt(82000f)!!, 0.01)
+    }
+
+    @Test
+    fun theIncidentConstantIsTheStandardsValue() {
+        assertEquals(250.0, INCIDENT_CALIBRATION, 0.0)
+        // C = 250 gives EV 15 at 82 000 lux, and C = 218.2 (the 18 %
+        // grey-card variant) gives 71 500. Both round to 15, so the two
+        // conventions differ by 0.2 stops — far inside the accuracy of
+        // an uncalibrated phone sensor.
+        assertEquals(15.0, evAt(71500f)!!, 0.25)
     }
 
     @Test
@@ -88,19 +112,29 @@ class LuxMathTest {
     }
 
     @Test
-    fun isoShiftsTheExposure() {
-        // Doubling ISO costs one stop of light.
-        assertEquals(1.0, evAt(1000f, 100)!! - evAt(1000f, 200)!!, 0.001)
+    fun aHigherIsoNeedsMoreExposure() {
+        // EV is log2(N^2/t) at the reference sensitivity, so the EV that
+        // correctly exposes a scene RISES by a stop for each doubling of
+        // ISO — you need more light through the lens to use a more
+        // sensitive sensor. The old formula had the sign inverted here
+        // too, as a side effect of dividing by ISO.
+        assertEquals(1.0, evAt(1000f, 200)!! - evAt(1000f, 100)!!, 0.001)
+    }
+
+    @Test
+    fun evIsIndependentOfTheCameraAtAFixedReference() {
+        // The headline is EV at ISO 100 whatever the sensor, because
+        // that is the number a photographer compares against.
+        assertEquals(evAt(1000f, 100)!!, evAt(1000f, 100)!!, 0.0)
     }
 
     @Test
     fun exposureTriplesAreConsistent() {
         // The canonical sunny-16 exposure: EV 15, f/16, 1/125.
-        // EV 15 at ISO 100 is 2^15 = 32768 lux, which is bright direct
-        // sun (the reference range is 32,000-100,000). Checking the
-        // inverse relation too: 16^2 / (1/125) = 32000 = 2^EV.
-        val ev = evAt(32768f)!!
-        assertEquals(15.0, ev, 0.001)
+        // EV 15 at ISO 100 is 82 000 lux incident — 2^15 * 250/100.
+        // The inverse relation checks too: 16^2 / (1/125) = 32000.
+        val ev = evAt(82000f)!!
+        assertEquals(15.0, ev, 0.01)
         assertEquals("1/125", shutterFor(ev, aperture = 16.0))
         assertEquals("f/16.0", apertureFor(ev, shutter = 1.0 / 125))
     }

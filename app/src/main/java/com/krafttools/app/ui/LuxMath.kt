@@ -62,12 +62,34 @@ fun luxBand(lux: Float): LuxBand = when {
     else -> LuxBand("Direct sun", "bright sun on a surface")
 }
 
-/** Photo exposure equivalents, which is what a number in lux is for. */
+/**
+ * Photo exposure equivalents, which is what a number in lux is for.
+ *
+ * The calibration constant was missing. ISO 2720 / ANSI PH2.7 define
+ * exposure value from INCIDENT light as `N²/t = E/C` with **C = 250
+ * lux**, so `EV = log2(E·S/C)`. The old code had `log2(E·100/S)`,
+ * which for ISO 100 reduces to `log2(E)` — treating a lux reading as
+ * though it were already a luminance in cd/m², and so silently dropping
+ * both the constant and the 1/π of a lambertian surface.
+ *
+ * The error is a constant +1.61 stops, which is invisible in a
+ * formula and enormous in practice: the tool claimed EV 15 was 32,768
+ * lux, where the standard puts it at 82,000. Every exposure it
+ * recommended was more than a stop underexposed — at f/5.6 it said
+ * 1/250 where a photographer would use 1/125.
+ *
+ * A phone's ambient-light sensor measures INCIDENT illuminance, so C is
+ * the right model and the reflected-light variant (K = 12.5 with 18 %
+ * grey) does not apply. The two differ by only 0.2 stops, which is
+ * well inside the accuracy of an uncalibrated phone sensor.
+ */
 fun evAt(lux: Float, iso: Int = 100): Double? {
     if (lux <= 0f) return null
-    // EV100 = log2(lux * 100 / iso) for a reflectance of ~18%.
-    return kotlin.math.log2(lux.toDouble() * 100.0 / iso)
+    return kotlin.math.log2(lux.toDouble() * iso / INCIDENT_CALIBRATION)
 }
+
+/** ISO 2720 / ANSI PH2.7 incident-light calibration constant, lux. */
+const val INCIDENT_CALIBRATION = 250.0
 
 /** Standard shutter speeds, in seconds. */
 private val SHUTTERS = listOf(
