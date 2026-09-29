@@ -118,9 +118,15 @@ fun LevelScreen(onBack: () -> Unit) {
             if (isLevel && !wasLevel) Haptics.confirm(view)
             wasLevel = isLevel
         }
-        LaunchedEffect(isLevel, sound) {
-            if (!sound) return@LaunchedEffect
-            while (isLevel) {
+        // Keyed on the foreground flag as well. A phone lying flat and
+        // level kept beeping every 600 ms behind a locked screen:
+        // 80.7% CPU in the foreground, still 6.6% with the app in the
+        // background. The beep is the one thing on this screen the user
+        // cannot see, and it is the one thing that has to stop.
+        val foreground = rememberIsForeground()
+        LaunchedEffect(isLevel, sound, foreground) {
+            if (!sound || !foreground) return@LaunchedEffect
+            while (isLevel && foreground) {
                 try {
                     tone?.startTone(android.media.ToneGenerator.TONE_PROP_BEEP, 120)
                 } catch (_: Exception) {
