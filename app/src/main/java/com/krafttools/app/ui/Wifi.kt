@@ -36,6 +36,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,9 +76,9 @@ private fun WifiBody(onBack: () -> Unit) {
         context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
     }
     var nets by remember { mutableStateOf<List<Net>>(emptyList()) }
-    var scanning by remember { mutableStateOf(false) }
-    var everScanned by remember { mutableStateOf(false) }
-    var rejected by remember { mutableStateOf(false) }
+    var scanning by rememberSaveable { mutableStateOf(false) }
+    var everScanned by rememberSaveable { mutableStateOf(false) }
+    var rejected by rememberSaveable { mutableStateOf(false) }
 
     fun readCached(): Boolean {
         return try {

@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,11 +39,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun EmfScreen(onBack: () -> Unit) {
     val mag by rememberSensor(Sensor.TYPE_MAGNETIC_FIELD)
-    var threshold by remember { mutableFloatStateOf(60f) }
-    var peak by remember { mutableFloatStateOf(0f) }
+    var threshold by rememberSaveable { mutableFloatStateOf(60f) }
+    var peak by rememberSaveable { mutableFloatStateOf(0f) }
     // Alert history: timestamped crossings, newest first, capped.
     // Answers "was that spike the fridge or the microwave?" later.
-    val crossings = remember { mutableStateListOf<String>() }
+    val crossings = rememberSaveable(saver = stringListSaver) { mutableStateListOf<String>() }
     val context = LocalContext.current
 
     Scaffold(

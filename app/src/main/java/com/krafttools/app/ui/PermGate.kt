@@ -21,6 +21,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +46,7 @@ fun PermissionGate(
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
-    var asked by remember { mutableStateOf(false) }
+    var asked by rememberSaveable { mutableStateOf(false) }
     var granted by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(

@@ -26,6 +26,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +54,7 @@ fun CompassScreen(onBack: () -> Unit) {
     // Last-known fix only (no tracking, no storage): FINE_LOCATION is
     // already declared for wifi/speed. No fix -> 0° + honest note.
     var declination by remember { mutableStateOf<Float?>(null) }
-    var locked by remember { mutableStateOf<Float?>(null) }
+    var locked by rememberSaveable { mutableStateOf<Float?>(null) }
 
     androidx.compose.runtime.DisposableEffect(Unit) {
         try {

@@ -29,6 +29,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -79,20 +80,20 @@ private fun SpeedBody(onBack: () -> Unit) {
         return
     }
 
-    var speedMs by remember { mutableStateOf(0f) }
+    var speedMs by rememberSaveable { mutableStateOf(0f) }
     var accuracy by remember { mutableStateOf<Float?>(null) }
-    var gpsOn by remember { mutableStateOf(manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) }
-    var metric by remember { mutableStateOf(true) }
-    var hud by remember { mutableStateOf(false) }
+    var gpsOn by rememberSaveable { mutableStateOf(manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) }
+    var metric by rememberSaveable { mutableStateOf(true) }
+    var hud by rememberSaveable { mutableStateOf(false) }
     // Trip computer: distance accumulates by haversine between fixes
     // while active. Positions live in RAM only, die with the screen.
-    var tripActive by remember { mutableStateOf(false) }
-    var tripKm by remember { mutableStateOf(0f) }
-    var tripMaxMs by remember { mutableStateOf(0f) }
-    var tripSum by remember { mutableStateOf(0.0) }
-    var tripN by remember { mutableStateOf(0) }
-    var lastLat by remember { mutableStateOf<Double?>(null) }
-    var lastLon by remember { mutableStateOf<Double?>(null) }
+    var tripActive by rememberSaveable { mutableStateOf(false) }
+    var tripKm by rememberSaveable { mutableStateOf(0f) }
+    var tripMaxMs by rememberSaveable { mutableStateOf(0f) }
+    var tripSum by rememberSaveable { mutableStateOf(0.0) }
+    var tripN by rememberSaveable { mutableStateOf(0) }
+    var lastLat by rememberSaveable { mutableStateOf<Double?>(null) }
+    var lastLon by rememberSaveable { mutableStateOf<Double?>(null) }
     fun startTrip() {
         if (tripActive) {
             tripActive = false

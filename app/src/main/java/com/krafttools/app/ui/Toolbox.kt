@@ -46,6 +46,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -185,8 +186,8 @@ private fun ToolGrid(onOpen: (String) -> Unit) {
 @Composable
 private fun LevelScreen(onBack: () -> Unit) {
     val gravity by rememberSensor(Sensor.TYPE_ACCELEROMETER)
-    var zero by remember { mutableStateOf<Pair<Float, Float>?>(null) }
-    var sound by remember { mutableStateOf(true) }
+    var zero by rememberSaveable(saver = floatPairSaver) { mutableStateOf<Pair<Float, Float>?>(null) }
+    var sound by rememberSaveable { mutableStateOf(true) }
     val context = LocalContext.current
     // Beep engine: ToneGenerator needs no permission. A short tick
     // quickens as level approaches, going solid inside 1° — level
@@ -203,7 +204,7 @@ private fun LevelScreen(onBack: () -> Unit) {
     DisposableEffect(Unit) {
         onDispose { try { tone?.release() } catch (_: Exception) { } }
     }
-    var wasLevel by remember { mutableStateOf(false) }
+    var wasLevel by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {

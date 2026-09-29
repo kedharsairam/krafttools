@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,10 +36,10 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TallyScreen(onBack: () -> Unit) {
-    var count by remember { mutableStateOf(0) }
-    var running by remember { mutableStateOf(false) }
-    var elapsedMs by remember { mutableLongStateOf(0L) }
-    val laps = remember { mutableStateListOf<String>() }
+    var count by rememberSaveable { mutableStateOf(0) }
+    var running by rememberSaveable { mutableStateOf(false) }
+    var elapsedMs by rememberSaveable { mutableLongStateOf(0L) }
+    val laps = rememberSaveable(saver = stringListSaver) { mutableStateListOf<String>() }
 
     // Volume keys count while this screen is up (installed here,
     // cleared below — MainActivity only forwards when installed).

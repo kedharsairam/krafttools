@@ -37,8 +37,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
@@ -69,15 +71,15 @@ fun ColorPickerScreen(onBack: () -> Unit) {
 @Composable
 private fun ColorPickerBody(onBack: () -> Unit) {
     val lifecycle = LocalLifecycleOwner.current
-    var rgb by remember { mutableStateOf(Triple(0, 0, 0)) }
-    var frozen by remember { mutableStateOf(false) }
+    var rgb by rememberSaveable(saver = intTripleSaver) { mutableStateOf(Triple(0, 0, 0)) }
+    var frozen by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     // Palette: frozen captures kept for the session, newest first.
     // Designers collect candidates; each row copies its HEX on tap.
-    val palette = remember { mutableStateListOf<Triple<Int, Int, Int>>() }
+    val palette = rememberSaveable(saver = intTripleListSaver) { mutableStateListOf<Triple<Int, Int, Int>>() }
     // Analyzer closure captures these; int array survives recomposition
     // without triggering it (color state alone drives redraws).
-    val frameCount = remember { mutableIntStateOf(0) }
+    val frameCount = rememberSaveable { mutableIntStateOf(0) }
 
     Scaffold(
         topBar = {

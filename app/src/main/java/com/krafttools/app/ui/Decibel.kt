@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,11 +67,11 @@ private const val SAMPLE_RATE = 16000
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DecibelBody(onBack: () -> Unit) {
-    var instantDb by remember { mutableFloatStateOf(0f) }
-    var leqDb by remember { mutableFloatStateOf(0f) }
-    var minDb by remember { mutableStateOf<Float?>(null) }
-    var maxDb by remember { mutableStateOf<Float?>(null) }
-    var offset by remember { mutableFloatStateOf(0f) }
+    var instantDb by rememberSaveable { mutableFloatStateOf(0f) }
+    var leqDb by rememberSaveable { mutableFloatStateOf(0f) }
+    var minDb by rememberSaveable { mutableStateOf<Float?>(null) }
+    var maxDb by rememberSaveable { mutableStateOf<Float?>(null) }
+    var offset by rememberSaveable { mutableFloatStateOf(0f) }
     var error by remember { mutableStateOf<String?>(null) }
     val spectrum = remember { mutableStateListOf<Float>() }
 

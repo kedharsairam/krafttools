@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,9 +44,9 @@ fun BarometerScreen(onBack: () -> Unit) {
     val reading by rememberSensor(Sensor.TYPE_PRESSURE)
     // 120 slots x one sample per ~15 s = ~30 min window. Time-gated below
     // because SENSOR_DELAY_UI fires far faster than weather moves.
-    val history = remember { mutableStateListOf<Float>() }
-    var lastSample by remember { mutableStateOf(0L) }
-    var seaLevelInput by remember { mutableStateOf("1013.25") }
+    val history = rememberSaveable(saver = floatListSaver) { mutableStateListOf<Float>() }
+    var lastSample by rememberSaveable { mutableStateOf(0L) }
+    var seaLevelInput by rememberSaveable { mutableStateOf("1013.25") }
 
     Scaffold(
         topBar = {

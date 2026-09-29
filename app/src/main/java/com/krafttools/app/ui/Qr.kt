@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,7 +64,7 @@ private fun QrBody(onBack: () -> Unit) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
     var result by remember { mutableStateOf<String?>(null) }
-    var paused by remember { mutableStateOf(false) }
+    var paused by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {

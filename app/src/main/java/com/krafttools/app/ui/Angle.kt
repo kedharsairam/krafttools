@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,11 +39,11 @@ import androidx.compose.ui.unit.dp
 fun AngleScreen(onBack: () -> Unit) {
     val gravity by rememberSensor(Sensor.TYPE_ACCELEROMETER)
     // Frozen triple held for reading in awkward positions; live keeps flowing underneath.
-    var held by remember { mutableStateOf<Triple<Float, Float, Float>?>(null) }
+    var held by rememberSaveable(saver = floatTripleSaver) { mutableStateOf<Triple<Float, Float, Float>?>(null) }
     // Snap: within 2° of a 45° multiple the display locks onto it.
     // Picture frames and shelves live at these angles; the toggle
     // admits the tool is rounding, not that the phone got better.
-    var snap by remember { mutableStateOf(false) }
+    var snap by rememberSaveable { mutableStateOf(false) }
     fun snap45(v: Float): Float {
         if (!snap) return v
         val q = Math.round(v / 45f) * 45f
