@@ -108,7 +108,22 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .clip(RoundedCornerShape(12.dp)),
+                    .clip(RoundedCornerShape(12.dp))
+                    // On the Box, NOT on the CameraPreview below. A
+                    // native PreviewView swallows Compose semantics, so
+                    // a label attached to it never reaches the
+                    // accessibility tree at all — which is exactly what
+                    // a screen reader would have found here before.
+                    .instrumentSemantics(
+                        label = "Colour sampler",
+                        value = buildString {
+                            append("centre patch, approximate")
+                            if (frozen) append(", frozen")
+                        },
+                        hint = "point the centre square at a surface to " +
+                            "sample its colour",
+                        live = false,
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
                 if (!hasCamera) {
@@ -200,9 +215,15 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                 }
             }
             if (frozen) {
-                Button(onClick = { frozen = false }) { Text("Resume") }
+                Button(
+                    onClick = { frozen = false },
+                    modifier = Modifier.touchTarget(),
+                ) { Text("Resume") }
             } else {
-                OutlinedButton(onClick = { frozen = true }) { Text("Freeze") }
+                OutlinedButton(
+                    onClick = { frozen = true },
+                    modifier = Modifier.touchTarget(),
+                ) { Text("Freeze") }
             }
             OutlinedButton(
                 onClick = {

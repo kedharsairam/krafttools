@@ -199,6 +199,10 @@ fun BarometerScreen(onBack: () -> Unit) {
                     scale.ceiling.toDouble(),
                 ),
             )
+            // Capped for the same reason as the vibration trace: a
+            // 30-minute trace on a still phone is a flat line with
+            // several hundred pixels of black above it, which reads as
+            // a broken screen rather than as "no weather yet".
             TraceGraph(
                 values = window,
                 max = scale.ceiling,
@@ -206,8 +210,18 @@ fun BarometerScreen(onBack: () -> Unit) {
                 peak = peakHigh,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .height(180.dp),
             )
+            Spacer(modifier = Modifier.weight(1f))
+            if (window.isEmpty()) {
+                Text(
+                    text = "Collecting — the trace needs a minute of " +
+                        "samples before it means anything.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(vertical = 4.dp),
+                )
+            }
 
             StatRow {
                 StatChip("mean", if (window.isEmpty()) "—" else "%.2f".format(Locale.ROOT, smooth.toDouble()))

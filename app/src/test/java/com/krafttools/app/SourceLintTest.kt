@@ -39,7 +39,8 @@ class SourceLintTest {
     fun everyStringFormatNamesItsLocale() {
         val offenders = mutableListOf<String>()
         for (file in uiSources()) {
-            linesOf(file).forEachIndexed { i, line ->
+            val src = linesOf(file)
+            src.forEachIndexed { i, line ->
                 val at = line.indexOf(".format(")
                 if (at < 0) return@forEachIndexed
                 // A date or number formatter, not a String format.
@@ -54,8 +55,23 @@ class SourceLintTest {
                 ) {
                     return@forEachIndexed
                 }
-                val rest = line.substring(at)
-                if (!rest.contains("Locale.")) {
+                // The arguments can be on the following lines, which
+                // is how Kotlin formats a call with three of them. The
+                // first version of this lint looked only at the rest of
+                // the current line and reported a false positive on
+                // every multi-line format in the app.
+                var depth = 1
+                var j = at + ".format(".length - 1
+                while (j < src.size && depth > 0) {
+                    for (c in src[j]) {
+                        if (c == '(') depth++
+                        if (c == ')') depth--
+                    }
+                    j++
+                }
+                val call = src.subList(i, maxOf(i + 1, minOf(j, src.size)))
+                    .joinToString(" ")
+                if (!call.contains("Locale.")) {
                     offenders += "${file.name}:${i + 1}"
                 }
             }
@@ -368,6 +384,83 @@ class SourceLintTest {
         "format", "joinToString", "sortedBy", "associateBy", "distinctBy",
         "takeLast", "dropLast", "coerceAtLeast", "coerceIn", "let",
     )
+
+    /**
+     * No interactive control is smaller than the app's touch target.
+     *
+     * Material's own defaults fall short: a `SegmentedButton` row is
+     * 40dp and a `FilterChip` is 32dp, both under the 48dp that
+     * accessibility guidance asks for. `Modifier.touchTarget()` is the
+     * house way to fix it, so a control with neither that nor an
+     * explicit 48dp floor is a finding.
+     */
+    @Test
+    fun interactiveControlsReachTheMinimumTouchTarget() {
+        val control = Regex(
+            "\\b(Button|SegmentedButton|FilterChip|Slider|Switch)\\(",
+        )
+        val hasTarget = Regex("touchTarget\\(\\)|heightIn\\(min = 4[8-9]|" +
+            "height\\(4[8-9]\\.dp\\)|size\\(4[8-9]\\.dp\\)")
+        val offenders = mutableListOf<String>()
+        for (file in uiSources()) {
+            val lines = codeOnly(linesOf(file))
+            lines.forEachIndexed { i, line ->
+                if (!control.containsMatchIn(line)) return@forEachIndexed
+                // A declaration is not an instance.
+                if (line.trimStart().startsWith("private fun") ||
+                    line.trimStart().startsWith("fun ")
+                ) {
+                    return@forEachIndexed
+                }
+                // The window has to reach an ENCLOSING row as well as
+                // the control's own modifier: a SegmentedButton inside a
+                // 48dp row inherits the row's height and needs nothing
+                // of its own, and a 12-line window reported all four of
+                // those as missing a floor.
+                val window = lines.drop(i).take(30).joinToString("\n")
+                if (!hasTarget.containsMatchIn(window)) {
+                    offenders += "${file.name}:${i + 1}"
+                }
+            }
+        }
+        assertTrue(
+            "these controls have no 48dp floor; Material defaults are " +
+                "40dp for a segmented row and 32dp for a chip: $offenders",
+            offenders.isEmpty(),
+        )
+    }
+
+    /**
+     * Every Canvas that represents an instrument carries semantics.
+     *
+     * A Canvas has no accessible content by construction, so a screen
+     * reader announced *nothing at all* on six of the fourteen tools —
+     * not a poor description, none. A blind user could not tell that
+     * the spirit level was working, let alone what it read.
+     */
+    @Test
+    fun everyInstrumentCanvasCarriesSemantics() {
+        val offenders = mutableListOf<String>()
+        for (file in uiSources()) {
+            val text = codeOnly(linesOf(file))
+            if (!text.any { it.contains("Canvas(") }) continue
+            // A decorative canvas (a trace background, a reticle) is
+            // fine without one; what must not happen is a canvas that
+            // is the whole screen and has no name.
+            val isInstrument = text.any {
+                it.contains("Canvas(") && it.contains(".fillMaxWidth()")
+            }
+            if (!isInstrument) continue
+            if (!text.any { it.contains("instrumentSemantics(") }) {
+                offenders += file.name
+            }
+        }
+        assertTrue(
+            "these files draw an instrument with no spoken label or " +
+                "value: $offenders",
+            offenders.isEmpty(),
+        )
+    }
 
     /**
      * An enum is never held in `rememberSaveable` without a saver.

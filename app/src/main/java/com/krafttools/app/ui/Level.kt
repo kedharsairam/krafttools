@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -167,6 +168,12 @@ fun LevelScreen(onBack: () -> Unit) {
             )
 
             val (bx, by) = bubbleOffset(tilt)
+            // The vial is a Canvas: without this a screen reader
+            // announces nothing at all on this screen, and the whole
+            // point of a spirit level is knowing you got there without
+            // looking. The spoken value is the same verdict the hero
+            // shows, plus the instruction, because the instruction is
+            // the actionable part.
             Bubble(
                 dx = bx,
                 dy = by,
@@ -175,7 +182,22 @@ fun LevelScreen(onBack: () -> Unit) {
                 useless = tilt.isUseless,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    .instrumentSemantics(
+                        label = "Spirit level vial",
+                        value = when {
+                            tilt.isUseless ->
+                                "phone is face down, reading is meaningless"
+                            isLevel -> "level, within 1 degree"
+                            else -> buildString {
+                                append("%.1f degrees off level".format(Locale.ROOT, level))
+                                tiltInstruction(tilt)?.let {
+                                    append(", ").append(it)
+                                }
+                                if (near) append(", nearly level")
+                            }
+                        },
+                    ),
             )
 
             // Raw pitch and roll: the numbers behind the bubble, so a
@@ -198,13 +220,14 @@ fun LevelScreen(onBack: () -> Unit) {
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                 )
-                androidx.compose.material3.Switch(
+                Switch(
                     checked = sound,
                     onCheckedChange = {
                         Haptics.tick(view)
                         sound = it
                     },
-                )
+    modifier = Modifier.touchTarget(),
+)
             }
             Text(
                 text = "Lay flat, then Calibrate to zero this surface. " +

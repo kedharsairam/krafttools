@@ -5,7 +5,10 @@ import android.hardware.SensorManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -176,8 +179,13 @@ fun VibrationScreen(onBack: () -> Unit) {
                 },
             )
 
-            // The trace takes every pixel the dock does not need: the
-            // waveform IS this tool, so it gets the room.
+            // The waveform is the point of this tool, so it gets the
+            // room — but CAPPED. A phone lying on a desk produces a
+            // flat line at the bottom of the panel and several hundred
+            // pixels of empty black above it, which reads as a broken
+            // screen rather than as a machine that is not running.
+            // A quarter of the height is enough to read a waveform and
+            // leaves the rest to the dock.
             TraceGraph(
                 values = window,
                 max = scale.ceiling,
@@ -185,8 +193,23 @@ fun VibrationScreen(onBack: () -> Unit) {
                 showZero = true,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .height(190.dp),
             )
+            // The slack goes BELOW the dock, so the controls sit where
+            // a thumb expects and the empty space reads as deliberate
+            // margin rather than as a trace that failed to draw. A
+            // `weight(1f)` here put the void between the waveform and
+            // the controls, which is where it looked like a bug.
+            Spacer(modifier = Modifier.weight(1f))
+            if (window.isEmpty()) {
+                Text(
+                    text = "Waiting for the accelerometer — lay the " +
+                        "phone on the machine you want to measure.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(vertical = 4.dp),
+                )
+            }
 
             // Axis selector, phyphox style: which channel the trace and
             // the number are talking about, stated explicitly.
@@ -209,6 +232,7 @@ fun VibrationScreen(onBack: () -> Unit) {
                             VibrationAxis.entries.size,
                         ),
                         colors = instrumentSegmentedColors(),
+                        modifier = Modifier.touchTarget(),
                     ) {
                         Text(ch.label)
                     }

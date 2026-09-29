@@ -130,7 +130,15 @@ fun AngleScreen(onBack: () -> Unit) {
                 snapped = snap && heldReading == null && snapResult.snapped,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    .instrumentSemantics(
+                        label = "Protractor",
+                        value = "%.1f degrees of tilt, downhill toward %s".format(
+                            Locale.ROOT,
+                            shownTilt.toDouble(),
+                            compassWord(shownAzimuth),
+                        ),
+                    ),
             )
 
             StatRow {
@@ -183,7 +191,8 @@ fun AngleScreen(onBack: () -> Unit) {
                         Haptics.tick(view)
                         snap = it
                     },
-                )
+    modifier = Modifier.touchTarget(),
+)
             }
 
             ToolHint(
@@ -362,4 +371,24 @@ private fun Protractor(
         }
 
     }
+}
+
+
+/**
+ * The downhill direction in words, for the protractor's spoken value.
+ *
+ * A Canvas cannot be read, so this is the only way a screen-reader
+ * user learns which way is down. Compass points use the ordinary
+ * 16-point names rather than degrees, because "180 degrees" is a
+ * number nobody can act on while "south" is.
+ */
+private fun compassWord(azimuth: Float): String = when {
+    azimuth < 22.5f || azimuth >= 337.5f -> "the right"
+    azimuth < 67.5f -> "the lower right"
+    azimuth < 112.5f -> "the bottom"
+    azimuth < 157.5f -> "the lower left"
+    azimuth < 202.5f -> "the left"
+    azimuth < 247.5f -> "the upper left"
+    azimuth < 292.5f -> "the top"
+    else -> "the upper right"
 }

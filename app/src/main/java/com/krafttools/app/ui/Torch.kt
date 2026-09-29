@@ -246,7 +246,28 @@ private fun TorchBody(onBack: () -> Unit) {
                         .clickable {
                             Haptics.confirm(view)
                             if (on || strobe || sos) stopAll() else applyMode(mode)
-                        },
+                        }
+                        .instrumentSemantics(
+                            label = "Torch lamp",
+                            value = when {
+                                sos -> "on, SOS signal"
+                                strobe -> "on, strobing at %.0f hertz".format(
+                                    Locale.ROOT,
+                                    rateHz.toDouble(),
+                                )
+                                on -> "on"
+                                else -> "off"
+                            },
+                            hint = if (on || strobe || sos) {
+                                "double tap to switch off"
+                            } else {
+                                "double tap to switch on"
+                            },
+                            onClickAction = {
+                                Haptics.confirm(view)
+                                if (on || strobe || sos) stopAll() else applyMode(mode)
+                            },
+                        ),
                 )
             }
 
@@ -287,7 +308,9 @@ private fun TorchBody(onBack: () -> Unit) {
             // One segmented control for the mode (was two switches):
             // exactly one is ever active, and switching restarts live.
             SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .touchTarget(),
             ) {
                 val labels = listOf("Steady", "Strobe", "SOS")
                 labels.forEachIndexed { i, label ->
@@ -302,6 +325,7 @@ private fun TorchBody(onBack: () -> Unit) {
                         },
                         shape = SegmentedButtonDefaults.itemShape(i, labels.size),
                         colors = instrumentSegmentedColors(),
+                        modifier = Modifier.touchTarget(),
                     ) {
                         Text(label)
                     }
@@ -320,6 +344,7 @@ private fun TorchBody(onBack: () -> Unit) {
                     onValueChange = { rateHz = it },
                     valueRange = 1f..12f,
                     steps = 10,
+                    modifier = Modifier.touchTarget(),
                 )
             }
             if (sos) {
@@ -509,16 +534,19 @@ private fun sosPattern(): List<Pair<Long, Long>> {
 @Composable
 private fun AutoOffSegmented(minutes: Int, onPick: (Int) -> Unit) {
     SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+                    .fillMaxWidth()
+                    .touchTarget(),
     ) {
         val options = listOf(0 to "Off", 1 to "1 min", 5 to "5 min", 15 to "15 min")
         options.forEachIndexed { i, (mins, label) ->
             SegmentedButton(
                 selected = mins == minutes,
                 onClick = { onPick(mins) },
+                modifier = Modifier.touchTarget(),
                 shape = SegmentedButtonDefaults.itemShape(i, options.size),
-                colors = instrumentSegmentedColors(),
-            ) {
+                colors = instrumentSegmentedColors()
+                    ) {
                 Text(label)
             }
         }

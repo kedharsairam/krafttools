@@ -174,7 +174,21 @@ private fun QrBody(onBack: () -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    // On the Box, not the CameraPreview: a native
+                    // PreviewView swallows Compose semantics, so a
+                    // label on it never reaches the accessibility
+                    // tree. The scan result is the single most
+                    // important thing this screen can tell anyone.
+                    .instrumentSemantics(
+                        label = "QR scanner",
+                        value = when {
+                            text != null -> "decoded: $text"
+                            paused -> "paused"
+                            else -> "scanning, nothing decoded yet"
+                        },
+                        live = false,
+                    ),
             ) {
                 CameraPreview(
                     lifecycleOwner = lifecycle,

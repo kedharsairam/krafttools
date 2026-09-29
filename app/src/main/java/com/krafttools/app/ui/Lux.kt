@@ -265,7 +265,8 @@ fun LuxScreen(onBack: () -> Unit) {
                         Haptics.tick(view)
                         peakHold = it
                     },
-                )
+    modifier = Modifier.touchTarget(),
+)
             }
 
             ToolHint(saturationNote(maxRange))

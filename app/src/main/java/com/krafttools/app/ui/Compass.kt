@@ -47,8 +47,39 @@ import kotlin.math.roundToInt
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Compass.
+ *
+ * Location is OPTIONAL here, and the screen is built so that it is
+ * genuinely optional: without it the compass works in magnetic mode and
+ * says so, rather than silently pretending magnetic north is true
+ * north. That was the real defect — the tool read
+ * `getLastKnownLocation` with no gate and no disclosure, and a fresh
+ * install showed "no fix, decl 0 degrees", which reads as "the
+ * satellites have not locked" rather than "you never gave this app
+ * location".
+ */
 @Composable
 fun CompassScreen(onBack: () -> Unit) {
+    PermissionGate(
+        permission = android.Manifest.permission.ACCESS_FINE_LOCATION,
+        alsoAccepts = android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        tool = "Compass",
+        reason = "Optional. A compass needs no permission at all — this " +
+            "one only uses your position to work out magnetic " +
+            "declination, so the heading can be corrected to true " +
+            "north. Without it the dial still works and reads " +
+            "magnetic north. Your position is used once, is never " +
+            "stored, and this app has no network permission, so it " +
+            "cannot be sent anywhere.",
+        onBack = onBack,
+    ) {
+        CompassBody(onBack)
+    }
+}
+
+@Composable
+private fun CompassBody(onBack: () -> Unit) {
     val accel = rememberSensor(Sensor.TYPE_ACCELEROMETER).values
     val mag = rememberSensor(Sensor.TYPE_MAGNETIC_FIELD).values
     val context = LocalContext.current
@@ -56,6 +87,11 @@ fun CompassScreen(onBack: () -> Unit) {
     // Last-known fix only (no tracking, no storage): FINE_LOCATION is
     // already declared for wifi/speed. No fix -> 0° + honest note.
     var declination by remember { mutableStateOf<Float?>(null) }
+    // Null declination has two causes that need different words: the
+    // user never granted location, or the provider has no fix yet. The
+    // old copy collapsed both into "no fix, decl 0", which sends a user
+    // out to wait for a satellite lock that was never the problem.
+    var sawPermissionDenied by remember { mutableStateOf(false) }
     var locked by rememberSaveable { mutableStateOf<Float?>(null) }
     val compassView = LocalView.current
 
@@ -76,6 +112,7 @@ fun CompassScreen(onBack: () -> Unit) {
             }
         } catch (_: SecurityException) {
             declination = null
+            sawPermissionDenied = true
         }
         onDispose { }
     }
@@ -151,7 +188,11 @@ fun CompassScreen(onBack: () -> Unit) {
                 text = (
                     "%d° magnetic".format(Locale.ROOT, azimuth.roundToInt()) +
                         (declination?.let { " · decl %+.1f°".format(Locale.ROOT, it) }
-                            ?: " · no fix, decl 0°") +
+                            ?: if (sawPermissionDenied) {
+                                " · no location permission, magnetic only"
+                            } else {
+                                " · no fix yet, magnetic only"
+                            }) +
                         " · %.0f µT".format(Locale.ROOT, strength.toDouble())
                     ),
                 style = MaterialTheme.typography.titleMedium,
@@ -187,7 +228,30 @@ fun CompassScreen(onBack: () -> Unit) {
                     .clickable {
                         Haptics.confirm(compassView)
                         locked = if (locked == null) azimuth else null
-                    },
+                    }
+                    .instrumentSemantics(
+                        label = "Compass dial",
+                        value = "%.0f degrees %s, %s".format(
+                            Locale.ROOT,
+                            trueNorth.toDouble(),
+                            cardinal(trueNorth),
+                            if (declination == null) {
+                                "magnetic north, no position fix so " +
+                                    "declination is zero"
+                            } else {
+                                "true north"
+                            },
+                        ),
+                        hint = if (locked == null) {
+                            "double tap to lock this bearing"
+                        } else {
+                            "double tap to release the lock"
+                        },
+                        onClickAction = {
+                            Haptics.confirm(compassView)
+                            locked = if (locked == null) azimuth else null
+                        },
+                    ),
             )
             Spacer(modifier = Modifier.height(8.dp))
 

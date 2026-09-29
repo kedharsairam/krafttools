@@ -241,7 +241,16 @@ private fun DecibelBody(onBack: () -> Unit) {
                 peakDb = maxDb ?: 0f,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(96.dp),
+                    .height(96.dp)
+                    .instrumentSemantics(
+                        label = "Sound level scale",
+                        value = "%.0f decibels, %s, peak %.0f".format(
+                            Locale.ROOT,
+                            instantDb.toDouble(),
+                            zoneFor(instantDb)?.name ?: "—",
+                            (maxDb ?: 0f).toDouble(),
+                        ),
+                    ),
             )
 
             Row(

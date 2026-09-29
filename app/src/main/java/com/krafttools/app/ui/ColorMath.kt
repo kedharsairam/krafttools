@@ -83,3 +83,44 @@ object ColorMath {
         else -> ContrastVerdict.FAIL
     }
 }
+
+/**
+ * A plain-language description of a colour, for a screen reader.
+ *
+ * A hex code is a name only to someone who can see the swatch. This
+ * gives the rough hue family and, where it is decisive, whether the
+ * colour is dark or light, so "copied #5C605E" becomes something a
+ * blind user can actually judge.
+ */
+fun describeColour(r: Int, g: Int, b: Int): String {
+    val max = maxOf(r, g, b)
+    val min = minOf(r, g, b)
+    val lightness = (max + min) / 2.0 / 255.0
+    val tone = when {
+        lightness < 0.12 -> "near black"
+        lightness > 0.92 -> "near white"
+        lightness < 0.35 -> "dark"
+        lightness > 0.72 -> "light"
+        else -> "mid tone"
+    }
+    if (max == min) {
+        return if (tone == "dark") "a dark grey" else "a light grey"
+    }
+    val delta = (max - min).toDouble()
+    val hue = when (max) {
+        r -> 60.0 * (((g - b) / delta) % 6.0)
+        g -> 60.0 * (((b - r) / delta) + 2.0)
+        else -> 60.0 * (((r - g) / delta) + 4.0)
+    }.let { if (it < 0) it + 360.0 else it }
+    val family = when {
+        hue < 15 || hue >= 345 -> "red"
+        hue < 45 -> "orange"
+        hue < 70 -> "yellow"
+        hue < 160 -> "green"
+        hue < 200 -> "teal"
+        hue < 250 -> "blue"
+        hue < 290 -> "purple"
+        else -> "pink"
+    }
+    return "a $tone $family"
+}

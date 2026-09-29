@@ -20,6 +20,29 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+    <!-- Four permissions this app never asked for and does not use are
+         merged in by androidx.work, which arrives transitively through
+         Glance. They show up in Android's "other permissions" list and
+         in every privacy scanner, and two of them (a network-state and
+         a boot-completed permission) directly contradict the manifest's
+         own comment above and the README's "no background work of any
+         kind". Nothing here is exploited — WorkManager is never
+         initialised — but a privacy claim that a user cannot verify
+         from the permission list is not a claim worth making.
+         tools:node="remove" deletes them from the merged manifest. -->
+    <uses-permission
+        android:name="android.permission.WAKE_LOCK"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.RECEIVE_BOOT_COMPLETED"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"
+        tools:node="remove" />
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"

@@ -362,7 +362,8 @@ private fun WifiBody(onBack: () -> Unit) {
                 enabled = !scanning,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 48.dp),
+                    .heightIn(min = 48.dp)
+                    .touchTarget(),
             ) {
                 Text(if (scanning) "Scanning…" else "Scan now")
             }
@@ -376,16 +377,19 @@ private fun SingleChoiceBandRow(
     onPick: (WifiBand) -> Unit,
 ) {
     SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+                    .fillMaxWidth()
+                    .touchTarget(),
     ) {
         val bands = listOf(WifiBand.BAND_2, WifiBand.BAND_5, WifiBand.BAND_6)
         bands.forEachIndexed { i, b ->
             SegmentedButton(
                 selected = b == selected,
                 onClick = { onPick(b) },
+                modifier = Modifier.touchTarget(),
                 shape = SegmentedButtonDefaults.itemShape(i, bands.size),
-                colors = instrumentSegmentedColors(),
-            ) {
+                colors = instrumentSegmentedColors()
+                    ) {
                 Text(b.short)
             }
         }
@@ -422,7 +426,22 @@ private fun ChannelChart(
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
+                .weight(1f)
+                .instrumentSemantics(
+                    label = "WiFi channel occupancy",
+                    value = buildString {
+                        val busy = loads.count { it.count > 0 }
+                        append("$busy of ${loads.size} channels in use")
+                        recommended?.let {
+                            append(", recommended channel ${it.number}")
+                        }
+                        loads.filter { it.crowded }.take(2).forEach {
+                            append(", channel ${it.channel.number} is busy")
+                        }
+                    },
+                    hint = "bar heights show how many networks share " +
+                        "each channel",
+                ),
         ) {
             if (loads.isEmpty()) return@Canvas
             val gap = 2.dp.toPx()

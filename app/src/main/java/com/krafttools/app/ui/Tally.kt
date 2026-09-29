@@ -112,7 +112,16 @@ fun TallyScreen(onBack: () -> Unit) {
                     .clickable {
                         Haptics.tick(view)
                         count++
-                    },
+                    }
+                    .instrumentSemantics(
+                        label = "Tally marks",
+                        value = "$count of ${count + 1} in this group of five",
+                        hint = "double tap to add one mark",
+                        onClickAction = {
+                            Haptics.tick(view)
+                            count++
+                        },
+                    ),
                 contentAlignment = Alignment.BottomCenter,
             ) {
                 TallyMarks(count = count, modifier = Modifier.fillMaxSize())
@@ -185,7 +194,7 @@ fun TallyScreen(onBack: () -> Unit) {
                         if (count > 0) count--
                     },
                     enabled = count > 0,
-                    modifier = Modifier.heightIn(min = 44.dp),
+                    modifier = Modifier.touchTarget(),
                 ) {
                     Text("−1")
                 }
@@ -195,7 +204,7 @@ fun TallyScreen(onBack: () -> Unit) {
                         count = 0
                     },
                     enabled = count > 0,
-                    modifier = Modifier.heightIn(min = 44.dp),
+                    modifier = Modifier.touchTarget(),
                 ) {
                     Text("Reset")
                 }

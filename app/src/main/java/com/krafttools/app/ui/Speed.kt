@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -312,7 +313,27 @@ private fun SpeedBody(onBack: () -> Unit) {
                         unit = unit,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(SpeedMath.DIAL_WIDTH_OVER_HEIGHT),
+                            .aspectRatio(SpeedMath.DIAL_WIDTH_OVER_HEIGHT)
+                            .instrumentSemantics(
+                                label = "Speedometer dial",
+                                value = "%.0f %s, full scale %d %s".format(
+                                    Locale.ROOT,
+                                    shown.toDouble(),
+                                    unit,
+                                    SpeedMath.fullScale(metric).toInt(),
+                                    unit,
+                                ) + (
+                                    if (tripActive) {
+                                        ", trip %.2f kilometres over %s".format(
+                                            Locale.ROOT,
+                                            tripKm.toDouble(),
+                                            formatElapsed(tripElapsedMs() / 1000),
+                                        )
+                                    } else {
+                                        ""
+                                    }
+                                    ),
+                            ),
                     )
                 }
                 Text(
@@ -350,27 +371,27 @@ private fun SpeedBody(onBack: () -> Unit) {
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(
-                    selected = metric,
-                    onClick = { metric = true },
-                    label = { Text("km/h") },
-                )
-                FilterChip(
-                    selected = !metric,
-                    onClick = { metric = false },
-                    label = { Text("mph") },
-                )
+                
+                
                 FilterChip(
                     selected = hud,
                     onClick = { hud = !hud },
                     label = { Text("HUD") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .touchTarget(),
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = {
-                    Haptics.confirm(speedView)
-                    startTrip()
-                }) {
+                Button(
+                    onClick = {
+                        Haptics.confirm(speedView)
+                        startTrip()
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .touchTarget(),
+                ) {
                     Text(if (tripActive) "Stop trip" else "Start trip")
                 }
                 OutlinedButton(
@@ -382,6 +403,9 @@ private fun SpeedBody(onBack: () -> Unit) {
                         tripEndMs = 0L
                         lastLat = null
                     },
+                    modifier = Modifier
+                        .weight(1f)
+                        .touchTarget(),
                 ) {
                     Text("Clear trip")
                 }
@@ -405,4 +429,29 @@ private fun SpeedBody(onBack: () -> Unit) {
             )
         }
     }
+}
+
+
+/**
+ * A selectable chip for a mode, at the app's minimum touch target.
+ *
+ * Material's `FilterChip` is 32dp tall, which is the smallest target
+ * in this build and well below the 48dp that accessibility guidance
+ * asks for. This keeps the chip's look and brings it up to the same
+ * size as every other control in the app.
+ */
+@Composable
+private fun RowScope.ModeChip(
+    label: String,
+    selected: Boolean,
+    onPick: () -> Unit,
+) {
+    FilterChip(
+        selected = selected,
+        onClick = onPick,
+        label = { Text(label) },
+        modifier = Modifier
+            .weight(1f)
+            .touchTarget(),
+    )
 }
