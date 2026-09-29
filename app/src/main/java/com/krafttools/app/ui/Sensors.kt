@@ -86,6 +86,21 @@ class SensorReading {
     /** Increments once per sensor event. Read this to await data. */
     val version: Int get() = eventCount.intValue
 
+    /**
+     * True when this sensor will never produce a reading.
+     *
+     * Six screens used to test `values == null` to decide a sensor was
+     * missing, which is the wrong question: `values` is null until the
+     * *first event arrives*, and on a cold screen that took long enough
+     * that every tool flashed "No accelerometer here" at the user for a
+     * fraction of a second before the tool appeared. The sensor was
+     * there the whole time; the app had not heard from it yet.
+     *
+     * Asking whether the sensor is absent, or whether the driver
+     * refused it, answers the question actually being asked.
+     */
+    val unusable: Boolean get() = absent || failed
+
     var values: FloatArray? = null
         private set
 

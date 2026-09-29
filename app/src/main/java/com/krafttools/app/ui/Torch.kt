@@ -34,6 +34,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -56,6 +57,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.Locale
+import androidx.compose.foundation.shape.CircleShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -235,18 +237,34 @@ private fun TorchBody(onBack: () -> Unit) {
                     .weight(1f),
                 contentAlignment = Alignment.Center,
             ) {
+                // A Surface, not a bare `clickable`.
+                //
+                // The ripple belongs to the clickable's own node, drawn
+                // across the whole layout box — and this box is square.
+                // So tapping a *circular* lamp lit up a square patch of
+                // it. `Modifier.clip(CircleShape)` before the clickable
+                // does not fix it, because the indication is drawn
+                // above that clip. A Surface carries its own shape into
+                // the ripple, which is the one arrangement that makes
+                // the highlight follow the bezel.
+                Surface(
+                    onClick = {
+                        Haptics.confirm(view)
+                        if (on || strobe || sos) stopAll() else applyMode(mode)
+                    },
+                    shape = CircleShape,
+                    color = Color.Transparent,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(1f),
+                ) {
                 LampDisc(
                     lit = on || strobe || sos,
                     strobe = strobe,
                     sos = sos,
                     rateHz = rateHz,
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .aspectRatio(1f)
-                        .clickable {
-                            Haptics.confirm(view)
-                            if (on || strobe || sos) stopAll() else applyMode(mode)
-                        }
+                        .fillMaxSize()
                         .instrumentSemantics(
                             label = "Torch lamp",
                             value = when {
@@ -269,6 +287,7 @@ private fun TorchBody(onBack: () -> Unit) {
                             },
                         ),
                 )
+                }
             }
 
             Text(

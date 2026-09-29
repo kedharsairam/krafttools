@@ -55,7 +55,8 @@ import androidx.compose.ui.text.style.TextAlign
  */
 @Composable
 fun LevelScreen(onBack: () -> Unit) {
-    val gravity = rememberSensor(Sensor.TYPE_ACCELEROMETER).values
+    val gravityReading = rememberSensor(Sensor.TYPE_ACCELEROMETER)
+    val gravity = gravityReading.values
     // The raw vector, not a pitch/roll pair. De-rotating by the two
     // angles does not reproduce the rotation that actually maps this
     // vector onto vertical — it leaves several degrees of residual even
@@ -86,9 +87,9 @@ fun LevelScreen(onBack: () -> Unit) {
     ToolScaffold(title = "Spirit level", onBack = onBack) { padding ->
         val g = gravity
         if (g == null) {
-            NoSensor(
+            ToolStarting(
+                tool = "accelerometer",
                 modifier = Modifier.padding(padding),
-                name = "accelerometer",
             )
             return@ToolScaffold
         }

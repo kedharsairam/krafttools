@@ -149,9 +149,9 @@ fun VibrationScreen(onBack: () -> Unit) {
 
     ) { padding ->
         if (accel == null) {
-            NoSensor(
+            ToolStarting(
+                tool = "accelerometer",
                 modifier = Modifier.padding(padding),
-                name = "accelerometer",
             )
             return@ToolScaffold
         }

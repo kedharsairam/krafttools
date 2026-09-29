@@ -71,29 +71,33 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import java.util.Locale
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.foundation.layout.size
 
 private data class Tool(
     val route: String,
     val name: String,
     val icon: ImageVector,
-    val live: Boolean,
 )
 
 private val TOOLS = listOf(
-    Tool("level", "Spirit level", Icons.Filled.Balance, live = true),
-    Tool("compass", "Compass", Icons.Filled.Explore, live = true),
-    Tool("torch", "Torch + strobe", Icons.Filled.FlashlightOn, live = true),
-    Tool("vibration", "Vibration meter", Icons.Filled.Vibration, live = true),
-    Tool("tally", "Tally + stopwatch", Icons.Filled.Timer, live = true),
-    Tool("qr", "QR scanner", Icons.Filled.QrCode2, live = true),
-    Tool("wifi", "WiFi analyzer", Icons.Filled.Wifi, live = true),
-    Tool("lux", "Light meter", Icons.Filled.Lightbulb, live = true),
-    Tool("emf", "Metal + EMF", Icons.Filled.SafetyCheck, live = true),
-    Tool("db", "Sound meter", Icons.Filled.Mic, live = true),
-    Tool("color", "Color picker", Icons.Filled.Palette, live = true),
-    Tool("angle", "Angle ruler", Icons.Filled.AspectRatio, live = true),
-    Tool("speed", "Speedometer", Icons.Filled.Speed, live = true),
-    Tool("pressure", "Barometer", Icons.Filled.Thermostat, live = true),
+    Tool("level", "Spirit level", Icons.Filled.Balance),
+    Tool("compass", "Compass", Icons.Filled.Explore),
+    Tool("torch", "Torch + strobe", Icons.Filled.FlashlightOn),
+    Tool("vibration", "Vibration meter", Icons.Filled.Vibration),
+    Tool("tally", "Tally + stopwatch", Icons.Filled.Timer),
+    Tool("qr", "QR scanner", Icons.Filled.QrCode2),
+    Tool("wifi", "WiFi analyzer", Icons.Filled.Wifi),
+    Tool("lux", "Light meter", Icons.Filled.Lightbulb),
+    Tool("emf", "Metal + EMF", Icons.Filled.SafetyCheck),
+    Tool("db", "Sound meter", Icons.Filled.Mic),
+    Tool("color", "Color picker", Icons.Filled.Palette),
+    Tool("angle", "Angle ruler", Icons.Filled.AspectRatio),
+    Tool("speed", "Speedometer", Icons.Filled.Speed),
+    Tool("pressure", "Barometer", Icons.Filled.Thermostat),
 )
 
 @Composable
@@ -135,11 +139,9 @@ fun ToolboxNav(startRoute: String? = null) {
         },
     ) {
         composable("grid") {
-            ToolGrid(onOpen = { route ->
-                if (TOOLS.any { it.route == route && it.live }) {
-                    nav.navigate(route)
-                }
-            })
+            // Every tool is live, so the grid used to re-check the
+            // flag on every tap before navigating. The flag is gone.
+            ToolGrid(onOpen = { route -> nav.navigate(route) })
         }
         composable("level") { LevelScreen(onBack = { nav.popBackStack() }) }
         composable("compass") { CompassScreen(onBack = { nav.popBackStack() }) }
@@ -182,45 +184,53 @@ private fun ToolGrid(onOpen: (String) -> Unit) {
             items(TOOLS, key = { it.route }) { tool ->
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = if (tool.live) {
-                            MaterialTheme.colorScheme.surface
-                        } else {
-                            MaterialTheme.colorScheme.surfaceVariant
-                        },
+                        containerColor = MaterialTheme.colorScheme.surface,
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1.4f)
-                        .clickable { onOpen(tool.route) },
+                        .aspectRatio(1.15f)
+                        .clickable { onOpen(tool.route) }
+                        .semantics {
+                            contentDescription = tool.name
+                        },
                 ) {
+                    // A tile is a picture of the tool and its name. The
+                    // icon is the picture, so it is centred and large
+                    // enough to be recognised at a glance; the name sits
+                    // on the bottom edge, which is where a label belongs
+                    // when the thing it labels is above it.
+                    //
+                    // It used to carry a "Ready" line under the name.
+                    // All fourteen tools said "Ready", so it was a
+                    // constant wearing a status label's clothes — and
+                    // the `live` flag behind it had no false value left
+                    // in the app. Both are gone.
+                    // The icon and its name are one group, centred.
+                    // Pinning the icon to the top edge and the name to
+                    // the bottom left a band of empty card between them
+                    // that read as a layout mistake rather than as
+                    // breathing room.
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.SpaceBetween,
+                            .padding(horizontal = 10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
                     ) {
                         Icon(
                             imageVector = tool.icon,
                             contentDescription = null,
-                            tint = if (tool.live) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            },
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(38.dp),
                         )
+                        Spacer(modifier = Modifier.height(14.dp))
                         Text(
                             text = tool.name,
-                            style = MaterialTheme.typography.titleMedium,
+                            style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold,
-                        )
-                        Text(
-                            text = if (tool.live) "Ready" else "Soon",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = if (tool.live) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            },
+                            textAlign = TextAlign.Center,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }

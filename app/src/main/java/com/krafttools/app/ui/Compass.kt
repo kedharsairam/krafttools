@@ -92,8 +92,10 @@ private fun CompassBody(onBack: () -> Unit) {
         ActivityResultContracts.RequestMultiplePermissions(),
     ) { }
     var showWhy by rememberSaveable { mutableStateOf(false) }
-    val accel = rememberSensor(Sensor.TYPE_ACCELEROMETER).values
-    val mag = rememberSensor(Sensor.TYPE_MAGNETIC_FIELD).values
+    val accelReading = rememberSensor(Sensor.TYPE_ACCELEROMETER)
+    val magReading = rememberSensor(Sensor.TYPE_MAGNETIC_FIELD)
+    val accel = accelReading.values
+    val mag = magReading.values
     val context = LocalContext.current
     // True north needs magnetic declination, which needs position.
     // Last-known fix only (no tracking, no storage): FINE_LOCATION is
@@ -144,9 +146,9 @@ private fun CompassBody(onBack: () -> Unit) {
 
     ) { padding ->
         if (accel == null || mag == null) {
-            NoSensor(
+            ToolStarting(
+                tool = "accelerometer",
                 modifier = Modifier.padding(padding),
-                name = "compass (accelerometer + magnetometer)",
             )
             return@ToolScaffold
         }

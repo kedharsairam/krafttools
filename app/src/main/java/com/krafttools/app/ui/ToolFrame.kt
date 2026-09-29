@@ -315,3 +315,47 @@ private fun captionAlpha(text: String): Float {
     LaunchedEffect(text) { alpha.animateTo(1f, tween(200)) }
     return alpha.value
 }
+
+/**
+ * The state a tool is in for the fraction of a second before its sensor
+ * delivers its first sample.
+ *
+ * Six screens decided "this phone has no accelerometer" by testing
+ * whether a sample had arrived yet. On a cold screen that test was
+ * false long enough to flash "No accelerometer here" at the user every
+ * single time a tool opened — the sensor was there the whole time, the
+ * app had simply not heard from it yet. A tool that tells you your
+ * hardware is broken for 200 ms on every visit will be believed the
+ * first time, and the truth will look like a fault report.
+ *
+ * So the brief state says what is true: starting. No number, no claim
+ * about the hardware, and it costs one frame.
+ */
+@Composable
+fun ToolStarting(
+    tool: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.padding(28.dp),
+        ) {
+            Text(
+                text = "Starting…",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = "Waiting for the $tool's first reading.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}

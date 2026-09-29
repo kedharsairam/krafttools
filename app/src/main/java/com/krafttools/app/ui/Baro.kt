@@ -187,12 +187,38 @@ fun BarometerScreen(onBack: () -> Unit) {
 
     ToolScaffold("Barometer", onBack) { padding ->
         val pressure = reading?.getOrNull(0)
-        if (pressure == null) {
+        if (baroReading.unusable) {
             // Most phones ship no barometer. Gate before touching state.
             NoSensor(
                 modifier = Modifier.padding(padding),
                 name = "barometer",
             )
+            return@ToolScaffold
+        }
+
+        // The sensor is present but has not delivered yet. That is not
+        // the same as the sensor being missing, and it is not the same
+        // as a reading of zero, so it gets its own state: the tool
+        // renders, and the number says it is still starting.
+        if (pressure == null) {
+            ToolScaffold(
+                title = "Barometer",
+                onBack = onBack,
+            ) { padding ->
+                ToolColumn(padding) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    ReadingHeader(
+                        value = "—",
+                        unit = "hPa",
+                        status = "starting the sensor",
+                        live = false,
+                    )
+                    ToolCaption(
+                        "The barometer is waking up. The reading appears " +
+                            "as soon as it delivers one.",
+                    )
+                }
+            }
             return@ToolScaffold
         }
 

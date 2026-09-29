@@ -36,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
@@ -246,40 +247,60 @@ private fun TallyMarks(count: Int, modifier: Modifier = Modifier) {
         )
     }
 
-    Canvas(modifier = modifier) {
+    // A Canvas does not clip its own drawing. Every overflow bug in
+    // this tool was invisible as a bug and visible as the count being
+    // painted over by marks, because the marks simply kept going past
+    // the top of the panel. Clipping turns any future fit mistake into
+    // a truncated block rather than a broken screen.
+    Canvas(modifier = modifier.clipToBounds()) {
         val baseY = size.height * 0.9f
         val maxH = size.height * 0.74f
-        val groups = (count + 4) / 5
 
-        // Fit: the tallest mark height that still lays every gate out
-        // on the wall.
+        // Fit.
         //
-        // The old code coupled height, column count and row count and
-        // iterated four times hoping to settle. It does not settle: each
-        // answer changes the question, and the loop ended wherever it
-        // happened to be on the fourth pass. Past about forty marks that
-        // landed on a single row of ever-shorter bars marching off the
-        // right-hand edge — technically a fit, visually a smear, and a
-        // waste of the space above the baseline.
+        // The geometry is two inequalities, not a negotiation. A gate
+        // is 0.9h wide including its gap and a row is 1.12h tall, so
+        // for `cols` columns and `rows` rows the mark height has to
+        // satisfy both
         //
-        // So the row count is decided first and the height follows from
-        // it, which is a one-way dependency that cannot oscillate. The
-        // block also stays roughly as wide as it is tall rather than
-        // stretching into a ribbon.
-        val targetRows = if (groups <= 1) {
-            1
-        } else {
-            ceil(groups / MAX_COLUMNS.toFloat()).toInt().coerceAtLeast(1)
+        //     rows * 1.12h  <=  available height
+        //     cols * 0.90h  <=  panel width
+        //
+        // and whichever binds harder wins. Everything before this
+        // coupled height, columns and rows and iterated hoping to
+        // settle; it never settled, and each version failed differently
+        // — first a ribbon of shrinking bars, then a block so tall that
+        // the top row ran off the top of the canvas and painted over
+        // the count.
+        //
+        // So: try every column count, keep the tallest mark each one
+        // allows, and take the best. That is an exhaustive search over
+        // at most eight options, which is exact and cannot oscillate.
+        val groups = (count + 4) / 5
+        val availH = baseY
+        val fit = { c: Int ->
+            val r = (groups + c - 1) / c
+            min(
+                availH / (ROW_PITCH * r - (ROW_PITCH - 1f)),
+                size.width / (c * SLOT_RATIO),
+            )
         }
-        var h = min(maxH, baseY / (targetRows * ROW_PITCH))
-        var cols = columnsFor(size.width, h)
-        // If the height that fits those rows leaves the block narrow,
-        // spend the spare width on more columns and re-fit once.
-        repeat(2) {
-            val wanted = (groups + targetRows - 1) / targetRows
-            if (cols >= wanted) return@repeat
-            cols = wanted.coerceAtMost(columnsFor(size.width, h))
+        var cols = 1
+        var h = fit(1)
+        for (c in 1..min(groups, MAX_COLUMNS)) {
+            val candidate = fit(c)
+            if (candidate > h) {
+                h = candidate
+                cols = c
+            }
         }
+        h = h.coerceAtMost(maxH)
+        val rows = if (groups == 0) 1 else (groups + cols - 1) / cols
+        // The top of the block, which is where the first row sits. The
+        // block is laid out from the TOP DOWN: filling upward from the
+        // baseline put the newest gate in the top-right corner and made
+        // the wall appear to grow out of the screen.
+        val topY = baseY - (rows - 1) * h * ROW_PITCH
         val groupGap = h * 0.3f
         val slotW = h * 0.6f + groupGap
 
@@ -292,8 +313,8 @@ private fun TallyMarks(count: Int, modifier: Modifier = Modifier) {
             // the slot exists before it is ever filled.
             drawLine(
                 color = rule.copy(alpha = 0.18f),
-                start = Offset(x, baseY - h * 0.1f),
-                end = Offset(x, 0f),
+                start = Offset(x, topY - h * 0.1f),
+                end = Offset(x, baseY),
                 strokeWidth = 1.5.dp.toPx(),
             )
             drawLine(
@@ -306,8 +327,8 @@ private fun TallyMarks(count: Int, modifier: Modifier = Modifier) {
         // Ceiling at the settled mark height: defines the scale's top.
         drawLine(
             color = rule.copy(alpha = 0.12f),
-            start = Offset(0f, baseY - h),
-            end = Offset(size.width, baseY - h),
+            start = Offset(0f, topY - h),
+            end = Offset(size.width, topY - h),
             strokeWidth = 1.5.dp.toPx(),
         )
         drawLine(
@@ -328,7 +349,7 @@ private fun TallyMarks(count: Int, modifier: Modifier = Modifier) {
             val col = g % cols
             val row = g / cols
             val x0 = col * (groupW + groupGap)
-            val y0 = baseY - row * rowPitch
+            val y0 = topY + (rows - 1 - row) * rowPitch
             val marks = (count - g * 5).coerceIn(0, 5)
             val isLive = g == groups - 1
             val color = if (isLive) accent else ink
@@ -369,6 +390,10 @@ private const val ROW_PITCH = 1.12f
  * the thing this tool exists not to be.
  */
 private const val MAX_COLUMNS = 8
+
+/** A gate's slot width as a fraction of the mark height: 0.6h of ink
+ *  plus 0.3h of air. The fit and the drawing both depend on it. */
+private const val SLOT_RATIO = 0.9f
 
 /** Gate language: five to a gate, the way the marks are actually drawn. */
 private fun gateReadout(count: Int): String {

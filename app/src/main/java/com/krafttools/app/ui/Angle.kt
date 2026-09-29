@@ -59,7 +59,8 @@ import java.util.Locale
  */
 @Composable
 fun AngleScreen(onBack: () -> Unit) {
-    val gravity = rememberSensor(Sensor.TYPE_ACCELEROMETER).values
+    val gravityReading = rememberSensor(Sensor.TYPE_ACCELEROMETER)
+    val gravity = gravityReading.values
     // Held readings survive awkward positions: prop the phone against
     // a shelf, tap hold, carry it to the other end to read.
     var held by rememberSaveable(saver = floatTripleSaver) {
@@ -90,9 +91,9 @@ fun AngleScreen(onBack: () -> Unit) {
     ToolScaffold("Angle ruler", onBack) { padding ->
         val g = gravity
         if (g == null) {
-            NoSensor(
+            ToolStarting(
+                tool = "accelerometer",
                 modifier = Modifier.padding(padding),
-                name = "accelerometer",
             )
             return@ToolScaffold
         }
