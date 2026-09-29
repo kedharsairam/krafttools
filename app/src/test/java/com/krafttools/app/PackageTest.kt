@@ -1,6 +1,7 @@
 package com.krafttools.app
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
@@ -11,6 +12,15 @@ class PackageTest {
     @Test
     fun packagesMatchPaths() {
         val root = File("src/main/java")
+        // Without this the test passes vacuously: walkTopDown on a
+        // path that does not exist yields just the root, `isFile` is
+        // false, `bad` stays empty and the assertion is green having
+        // checked nothing. Delete the source tree and the guard for the
+        // package rename still "passes".
+        assertTrue(
+            "no sources found at ${root.absolutePath}",
+            root.isDirectory,
+        )
         val bad = mutableListOf<String>()
         root.walkTopDown()
             .filter { it.isFile && it.extension == "kt" }

@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -78,6 +79,7 @@ fun BarometerScreen(onBack: () -> Unit) {
     val times = remember { ArrayDeque<Long>(WINDOW) }
     var lastSampleAt by remember { mutableStateOf(0L) }
     var lastWidgetArrow by remember { mutableStateOf<String?>(null) }
+    var lastWidgetHpa by remember { mutableFloatStateOf(0f) }
     var fault by remember { mutableStateOf<String?>(null) }
 
     var seaLevelInput by rememberSaveable { mutableStateOf("1013.25") }
@@ -129,13 +131,24 @@ fun BarometerScreen(onBack: () -> Unit) {
     // written twice per cycle — the instantaneous value, then the
     // 30-minute mean — from two independent coroutines, so the number
     // on the home screen was whichever won.
-    LaunchedEffect(trend) {
+    //
+    // And it is the LIVE reading, not the mean. A 30-minute mean
+    // rendered as "%.1f hPa" beside a clock is a number that looks
+    // current and is not: the screen was fixed to show the live value
+    // for exactly this reason, and the widget was left behind. A mean
+    // is a mean; if it is what you want, it has to say so.
+    val livePressure = reading?.getOrNull(0)
+    LaunchedEffect(trend, livePressure) {
         val arrow = trend?.arrow
-        if (arrow != null && arrow != lastWidgetArrow && samples.isNotEmpty()) {
+        val live = livePressure
+        if (arrow != null && live != null &&
+            (arrow != lastWidgetArrow || kotlin.math.abs(live - lastWidgetHpa) > 0.05f)
+        ) {
             lastWidgetArrow = arrow
+            lastWidgetHpa = live
             scope.launch {
                 try {
-                    baroStore.save(smooth, arrow)
+                    baroStore.save(live, arrow)
                 } catch (_: Exception) {
                 }
             }
@@ -198,8 +211,19 @@ fun BarometerScreen(onBack: () -> Unit) {
 
             StatRow {
                 StatChip("mean", if (window.isEmpty()) "—" else "%.2f".format(Locale.ROOT, smooth.toDouble()))
-                StatChip("low", "%.2f".format(Locale.ROOT, peakLow.toDouble()))
-                StatChip("high", "%.2f".format(Locale.ROOT, peakHigh.toDouble()))
+                // Not 0.00 hPa. A low of zero is not a measurement, it
+                // is the initial value of an accumulator that has not
+                // been written yet, and beside a live 1009.39 hPa it
+                // reads as a real one. The other two chips on this row
+                // already say "—".
+                StatChip(
+                    "low",
+                    if (window.isEmpty()) "—" else "%.2f".format(Locale.ROOT, peakLow.toDouble()),
+                )
+                StatChip(
+                    "high",
+                    if (window.isEmpty()) "—" else "%.2f".format(Locale.ROOT, peakHigh.toDouble()),
+                )
                 StatChip(
                     "trend",
                     tendency?.let { "%+.2f".format(Locale.ROOT, it.toDouble()) } ?: "—",

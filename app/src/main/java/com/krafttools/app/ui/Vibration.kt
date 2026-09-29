@@ -18,7 +18,6 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -132,27 +131,19 @@ fun VibrationScreen(onBack: () -> Unit) {
     val liveTick = tick
     require(liveTick >= 0)
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Vibration meter") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back to tools",
-                        )
-                    }
-                },
-            )
-        },
+    ToolScaffold(
+
+        title = "Vibration meter",
+
+        onBack = onBack,
+
     ) { padding ->
         if (accel == null) {
             NoSensor(
                 modifier = Modifier.padding(padding),
                 name = "accelerometer",
             )
-            return@Scaffold
+            return@ToolScaffold
         }
         val value = live.getValue(axis).value
         val dt = 1f / SAMPLE_HZ
@@ -231,6 +222,7 @@ fun VibrationScreen(onBack: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+
     }
 }
 

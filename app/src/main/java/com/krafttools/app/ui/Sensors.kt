@@ -8,7 +8,9 @@ import android.hardware.SensorManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 
@@ -187,4 +189,100 @@ fun rememberSensorReading(
         }
     }
     return reading
+}
+
+/**
+ * Run [block] only while the screen is actually in front of the user,
+ * and tear it down on dispose.
+ *
+ * The app's README says "no background work of any kind — sensors run
+ * only while their screen is open", and for a long time that was true
+ * only of the four tools that went through [rememberSensor]. The
+ * sound meter held the microphone open, the speedometer kept the GPS
+ * radio hot at 1 Hz, the magnetometer streamed at 50 Hz and the light
+ * sensor never stopped — all of them after the user pressed Home, and
+ * all of them cancelled only on navigation, which is a different thing
+ * entirely.
+ *
+ * `DisposableEffect` cancels on dispose, which is the wrong boundary.
+ * `LifecycleEventObserver` gives the right one. If the lifecycle is
+ * already RESUMED when this runs — which it is, for a screen entered
+ * from the grid — ON_RESUME has already been delivered and will not
+ * fire again, so the block is started immediately and the observer
+ * only governs everything after that.
+ */
+@Composable
+fun ForegroundEffect(
+    onStop: () -> Unit = {},
+    block: () -> Unit,
+) {
+    val owner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(owner) {
+        var started = false
+        fun start() {
+            if (started) return
+            started = true
+            block()
+        }
+        fun stop() {
+            if (!started) return
+            started = false
+            onStop()
+        }
+        val obs = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            when (event) {
+                androidx.lifecycle.Lifecycle.Event.ON_RESUME -> start()
+                androidx.lifecycle.Lifecycle.Event.ON_PAUSE -> stop()
+                else -> Unit
+            }
+        }
+        owner.lifecycle.addObserver(obs)
+        if (
+            owner.lifecycle.currentState.isAtLeast(
+                androidx.lifecycle.Lifecycle.State.RESUMED,
+            )
+        ) {
+            start()
+        }
+        onDispose {
+            owner.lifecycle.removeObserver(obs)
+            stop()
+        }
+    }
+}
+
+/**
+ * True while the screen is in front of the user, false the moment the
+ * app is backgrounded.
+ *
+ * Keying an effect on this is the least invasive way to stop a
+ * resource at the right boundary: the effect cancels, its `finally`
+ * runs, and the resource is released. The alternative — threading a
+ * LifecycleEventObserver through every capture loop — touches far more
+ * code for the same result, and a `DisposableEffect` is the wrong tool
+ * because it cancels on navigation rather than on Home.
+ */
+@Composable
+fun rememberIsForeground(): Boolean {
+    val owner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    var foreground by remember { mutableStateOf(false) }
+    DisposableEffect(owner) {
+        val obs = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            when (event) {
+                androidx.lifecycle.Lifecycle.Event.ON_RESUME ->
+                    foreground = true
+                androidx.lifecycle.Lifecycle.Event.ON_PAUSE ->
+                    foreground = false
+                else -> Unit
+            }
+        }
+        owner.lifecycle.addObserver(obs)
+        // Already resumed when a screen is entered from the grid, and
+        // ON_RESUME will not fire again.
+        foreground = owner.lifecycle.currentState.isAtLeast(
+            androidx.lifecycle.Lifecycle.State.RESUMED,
+        )
+        onDispose { owner.lifecycle.removeObserver(obs) }
+    }
+    return foreground
 }

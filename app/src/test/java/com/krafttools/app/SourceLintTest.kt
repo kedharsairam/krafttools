@@ -224,7 +224,19 @@ class SourceLintTest {
                     return@forEachIndexed
                 }
                 val body = braceBody(lines, i) ?: return@forEachIndexed
-                if (acc.containsMatchIn(body)) {
+                // A body that is a long-running coroutine is a different
+                // shape: the key gates whether the loop is STARTED, and
+                // the accumulation inside runs on its own clock. That is
+                // the correct way to release a microphone or a GPS
+                // radio at ON_PAUSE, and flagging it would push people
+                // back to a bug.
+                //
+                // The bug this lint exists for is straight-line mutation
+                // keyed on a per-sample counter, where cancelling and
+                // relaunching silently drops the work between keys.
+                val isLongRunning = Regex("\\b(while|for|do)\\s*\\(|\\bdelay\\(")
+                    .containsMatchIn(body)
+                if (!isLongRunning && acc.containsMatchIn(body)) {
                     offenders += "${file.name}:${i + 1} (key: $key)"
                 }
             }

@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -82,8 +81,17 @@ private fun DecibelBody(onBack: () -> Unit) {
     val view = LocalView.current
 
     // Single owner coroutine: opens AudioRecord, loops PCM blocks,
-    // releases on dispose. Mic is never held past this screen.
-    LaunchedEffect(Unit) {
+    // releases in its `finally`.
+    //
+    // Keyed on the foreground flag, not on Unit. `LaunchedEffect(Unit)`
+    // is cancelled on DISPOSE, which is navigation — so pressing Home
+    // used to leave AudioRecord open, the loop running, and the OS
+    // microphone indicator lit for as long as the user spent in any
+    // other app. The README says "sensors run only while their screen
+    // is open", and that was true of four tools out of fourteen.
+    val foreground = rememberIsForeground()
+    LaunchedEffect(foreground) {
+        if (!foreground) return@LaunchedEffect
         withContext(Dispatchers.IO) {
             val minBuf = AudioRecord.getMinBufferSize(
                 SAMPLE_RATE,
@@ -189,20 +197,12 @@ private fun DecibelBody(onBack: () -> Unit) {
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Sound meter") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back to tools",
-                        )
-                    }
-                },
-            )
-        },
+    ToolScaffold(
+
+        title = "Sound meter",
+
+        onBack = onBack,
+
     ) { padding ->
         Column(
             modifier = Modifier
@@ -223,7 +223,13 @@ private fun DecibelBody(onBack: () -> Unit) {
             ReadingHeader(
                 value = "%.0f".format(Locale.ROOT, instantDb),
                 unit = "dB",
-                status = "LAeq %.0f dB · 1 s".format(Locale.ROOT, leqDb),
+                // The window is a mean of two energy estimates taken
+                // 0.5 s apart, each from a 64 ms transform — so it
+                // averages 128 ms of audio spread over a second. It is
+                // not IEC 61672 LAeq,1 s, and calling it that would be
+                // a claim the code cannot support. Labelled for what it
+                // is.
+                status = "LAeq %.0f dB · 0.5 s".format(Locale.ROOT, leqDb),
                 live = instantDb > 0f,
             )
 
@@ -334,6 +340,7 @@ private fun DecibelBody(onBack: () -> Unit) {
                 }
             }
         }
+
     }
 }
 
@@ -373,9 +380,17 @@ private fun spectrumBands(ring: FloatArray, ringPos: Int): Spectrum {
     for (k in 1..n / 2) {
         val freq = k * SAMPLE_RATE.toFloat() / n
         if (freq in 20f..16000f) {
-            // aWeightPower, not aWeightLinear: the term being weighted is a
-            // square, and decibels are a power ratio.
-            energy += magsAll[k] * magsAll[k] * aWeightPower(freq)
+            // aWeightPower, not aWeightLinear: the term being weighted
+            // is a square, and decibels are a power ratio.
+            var e = magsAll[k] * magsAll[k] * aWeightPower(freq)
+            // Bin n/2 is the Nyquist bin and is its OWN conjugate
+            // partner — it is not mirrored. The whole sum is doubled
+            // below to build the one-sided spectrum, so counting it
+            // here as well counts it twice, and a hiss-dominated
+            // measurement reads up to 3 dB high. (6 dB in the degenerate
+            // case where every bit of energy sits at Nyquist.)
+            if (k == n / 2) e *= 0.5
+            energy += e
         }
     }
     // Display bands read straight off the same transform.

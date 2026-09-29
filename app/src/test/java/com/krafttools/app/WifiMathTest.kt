@@ -62,13 +62,29 @@ class WifiMathTest {
     }
 
     @Test
-    fun theFourPointNineGigahertzBandDoesNotGoNegative() {
-        // Japan, channels 182-196 at 4915-4980. Below the 5 GHz
-        // formula, so the general case divided to a negative channel
-        // and the AP vanished from the list.
-        val ch = channelOf(4915)
-        assertEquals(182, ch?.number)
-        assertTrue("channel must be positive, was ${ch?.number}", (ch?.number ?: 0) > 0)
+    fun theFourPointNineGigahertzBandIsThe802Point11JGrid() {
+        // 802.11j, Japan: f = 4000 + 5n, the 5 GHz formula with the base
+        // 1000 MHz lower. The old special case was
+        // 182 + (f - 4915)/5, which put every real channel one low and
+        // invented a channel 182 for 4915 — not a 20 MHz centre
+        // frequency. The test asserted that wrong answer, so the bug
+        // was green.
+        val ieee = mapOf(4920 to 184, 4940 to 188, 4960 to 192, 4980 to 196)
+        for ((mhz, ch) in ieee) {
+            assertEquals(
+                "$mhz MHz is IEEE channel $ch, not ${channelOf(mhz)?.number}",
+                ch,
+                channelOf(mhz)?.number,
+            )
+            assertEquals(WifiBand.BAND_5, channelOf(mhz)?.band)
+        }
+    }
+
+    @Test
+    fun aFrequencyThatIsNotAChannelCentreIsRejectedNotInvented() {
+        // 4915 is the bottom edge of the band, not a centre frequency.
+        // The old code returned a confident channel 182 for it.
+        assertNull("4915 is not a 20 MHz centre", channelOf(4915))
     }
 
     // --- 6 GHz ---
@@ -196,6 +212,46 @@ class WifiMathTest {
             val list = nonOverlapping(band)
             assertTrue("$band produced nothing", list.isNotEmpty())
             assertTrue("$band produced an invalid channel", list.all { it.isValid })
+        }
+    }
+
+    @Test
+    fun theTwoPointFourPlanIsExactlyOneSixEleven() {
+        // The classic misconception is that 2.4 GHz has 13 usable
+        // non-overlapping channels. With 20 MHz channels and 5 MHz
+        // spacing they overlap at 4 channels, so there are three.
+        assertEquals(
+            listOf(1, 6, 11),
+            nonOverlapping(WifiBand.BAND_2).map { it.number },
+        )
+    }
+
+    @Test
+    fun theSixGigaPlanIsTwentyMegahertzSpaced() {
+        // 6 GHz numbers are 5 MHz apart, so non-overlapping 20 MHz
+        // channels are 4 numbers apart. Step 5 proposed channel 6 at
+        // 5980 MHz, overlapping both 5955 and 5995 by a full 20 MHz —
+        // the "join a busy channel" failure the function prevents.
+        val chans = nonOverlapping(WifiBand.BAND_6).map { it.number }
+        assertEquals(listOf(1, 5, 9, 13), chans.take(4))
+        assertTrue("6 GHz plan should reach the top of the band", 233 in chans)
+        // Adjacent entries must be at least 4 numbers (20 MHz) apart.
+        val gaps = chans.zipWithNext { a, b -> b - a }
+        assertTrue("gap of ${gaps.min()}, needs >= 4", gaps.min() >= 4)
+    }
+
+    @Test
+    fun theFiveGigaPlanAvoidsDfsAndIncludesUniiThree() {
+        // A channel the user's router UI cannot offer is advice nobody
+        // can act on. 68-96 is DFS: it needs radar avoidance and cannot
+        // sit in an 80 MHz block. 149-161 is non-DFS and was missing.
+        val chans = nonOverlapping(WifiBand.BAND_5).map { it.number }
+        assertEquals(listOf(36, 40, 44, 48, 149, 153, 157, 161), chans)
+        for (dfs in listOf(68, 72, 80, 96)) {
+            assertTrue(
+                "channel $dfs is DFS and must not be recommended",
+                dfs !in chans,
+            )
         }
     }
 }

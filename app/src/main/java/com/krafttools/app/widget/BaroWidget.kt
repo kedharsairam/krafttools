@@ -31,10 +31,15 @@ import java.util.Locale
 import kotlinx.coroutines.flow.first
 
 /**
- * Barometer trend widget. Manual-refresh by design: tapping updates
- * from the last screen reading and opens the app. No workers, no
- * timers, no background sampling — a widget that costs nothing until
- * touched is the only kind this app ships.
+ * Barometer trend widget. No workers, no timers, no background
+ * sampling — a widget that costs nothing until touched is the only kind
+ * this app ships.
+ *
+ * Tapping opens the app. It does NOT refresh the widget: this class
+ * makes no `updateAll` call and there is no route extra on the intent,
+ * so it lands on the tool grid rather than the barometer. The old
+ * KDoc claimed tapping "updates from the last screen reading", which
+ * was never implemented.
  */
 class BaroWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -76,7 +81,8 @@ private fun WidgetBody(hpa: Float?, trend: String?, atMillis: Long) {
         Spacer(GlanceModifier.height(2.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = trend ?: "Open barometer",
+                // Honest about where the tap goes: the tool grid.
+                text = trend ?: "Tap to open",
                 style = TextStyle(fontSize = 13.sp),
             )
             Spacer(GlanceModifier.defaultWeight())

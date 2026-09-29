@@ -72,7 +72,17 @@ fun LuxScreen(onBack: () -> Unit) {
     val window = remember { ArrayDeque<Float>(120) }
     val peak = remember { PeakHold(decayPerSecond = 0.8f) }
 
-    DisposableEffect(Unit) {
+    // Keyed on the foreground flag, not on Unit. `DisposableEffect(Unit)`
+    // is cancelled on navigation, so this sensor streamed with the
+    // screen off until the user left the tool — the magnetometer at
+    // 50 Hz, the light sensor continuously. `rememberSensor` has
+    // observed the lifecycle since it was fixed; these two screens
+    // hand-roll their registration and so had missed it.
+    val foreground = rememberIsForeground()
+    DisposableEffect(Unit, foreground) {
+        if (!foreground) {
+            onDispose { }
+        } else {
         val manager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val sensor = manager.getDefaultSensor(Sensor.TYPE_LIGHT)
         if (sensor == null) {
@@ -110,6 +120,7 @@ fun LuxScreen(onBack: () -> Unit) {
             }
             manager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_UI)
             onDispose { manager.unregisterListener(listener) }
+        }
         }
     }
 

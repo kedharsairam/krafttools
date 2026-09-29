@@ -32,7 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -90,20 +89,12 @@ private fun ColorPickerBody(onBack: () -> Unit) {
     // without triggering it (color state alone drives redraws).
     val frameCount = rememberSaveable { mutableIntStateOf(0) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Color picker") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back to tools",
-                        )
-                    }
-                },
-            )
-        },
+    ToolScaffold(
+
+        title = "Colour picker",
+
+        onBack = onBack,
+
     ) { padding ->
         Column(
             modifier = Modifier
@@ -303,6 +294,7 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+
     }
 }
 

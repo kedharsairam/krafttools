@@ -35,12 +35,12 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -81,20 +81,24 @@ private fun TorchBody(onBack: () -> Unit) {
     val cameraId = remember {
         com.krafttools.app.tiles.TorchState.flashId(context)
     }
-    var on by remember { mutableStateOf(false) }
-    var strobe by remember { mutableStateOf(false) }
-    var sos by remember { mutableStateOf(false) }
+    // rememberSaveable, not remember: rotating the screen used to
+    // turn the torch OFF and reset the mode, the strobe rate and
+    // the auto-off timer, because all of it was plain `remember`
+    // and died on the configuration change.
+    var on by rememberSaveable { mutableStateOf(false) }
+    var strobe by rememberSaveable { mutableStateOf(false) }
+    var sos by rememberSaveable { mutableStateOf(false) }
     // Single mode index drives everything (was two independent
     // switches that could disagree): 0 steady, 1 strobe, 2 SOS.
-    var mode by remember { mutableStateOf(0) }
+    var mode by rememberSaveable { mutableStateOf(0) }
     val view = LocalView.current
     // Sync with LED truth on entry: the QS tile (or a dead process)
     // may have left the bulb on while this screen thinks off.
     LaunchedEffect(Unit) {
         on = com.krafttools.app.tiles.TorchState.lit
     }
-    var rateHz by remember { mutableFloatStateOf(4f) }
-    var autoOffMin by remember { mutableStateOf(0) }
+    var rateHz by rememberSaveable { mutableFloatStateOf(4f) }
+    var autoOffMin by rememberSaveable { mutableStateOf(0) }
     var autoOffLeftSec by remember { mutableStateOf(0L) }
     val scope = rememberCoroutineScope()
     var strobeJob by remember { mutableStateOf<Job?>(null) }
@@ -188,33 +192,29 @@ private fun TorchBody(onBack: () -> Unit) {
 
     DisposableEffect(Unit) {
         onDispose {
+            // Loops only. The torch itself is NOT switched off: a user
+            // who turns it on and leaves the screen expects it to stay
+            // on, and the quick-settings tile depends on the light
+            // outliving this screen. Turning it off here also meant
+            // simply rotating the device put the torch out.
             strobeJob?.cancel()
             timerJob?.cancel()
-            com.krafttools.app.tiles.TorchState.setTorch(context, false)
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Torch") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back to tools",
-                        )
-                    }
-                },
-            )
-        },
+    ToolScaffold(
+
+        title = "Torch + strobe",
+
+        onBack = onBack,
+
     ) { padding ->
         if (cameraId == null) {
             NoSensor(
                 modifier = Modifier.padding(padding),
                 name = "flashlight LED",
             )
-            return@Scaffold
+            return@ToolScaffold
         }
         Column(
             modifier = Modifier
@@ -358,6 +358,7 @@ private fun TorchBody(onBack: () -> Unit) {
                 },
             )
         }
+
     }
 }
 

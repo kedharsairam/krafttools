@@ -22,7 +22,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -81,27 +80,19 @@ fun CompassScreen(onBack: () -> Unit) {
         onDispose { }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Compass") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back to tools",
-                        )
-                    }
-                },
-            )
-        },
+    ToolScaffold(
+
+        title = "Compass",
+
+        onBack = onBack,
+
     ) { padding ->
         if (accel == null || mag == null) {
             NoSensor(
                 modifier = Modifier.padding(padding),
                 name = "compass (accelerometer + magnetometer)",
             )
-            return@Scaffold
+            return@ToolScaffold
         }
         val rot = FloatArray(9)
         val incl = FloatArray(9)
@@ -115,7 +106,7 @@ fun CompassScreen(onBack: () -> Unit) {
             azimuth = Math.toDegrees(orient[0].toDouble()).toFloat()
             if (azimuth < 0f) azimuth += 360f
         }
-        // Magnetic strength sanity: Earth's field is ~25-65 uT. Far
+        // Magnetic strength sanity: Earth's field is 22-70 uT (IGRF-14). Far
         // outside that means metal nearby — say so, don't lie.
         val strength = Math.sqrt(
             (mag!![0] * mag!![0] + mag!![1] * mag!![1] + mag!![2] * mag!![2]).toDouble(),
@@ -152,13 +143,13 @@ fun CompassScreen(onBack: () -> Unit) {
         ) {
             Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
-                value = "${trueNorth.toInt()}° ${cardinal(trueNorth)}",
+                value = "${trueNorth.roundToInt()}° ${cardinal(trueNorth)}",
                 unit = null,
                 status = confidence.verdict,
             )
             Text(
                 text = (
-                    "%d° magnetic".format(Locale.ROOT, azimuth.toInt()) +
+                    "%d° magnetic".format(Locale.ROOT, azimuth.roundToInt()) +
                         (declination?.let { " · decl %+.1f°".format(Locale.ROOT, it) }
                             ?: " · no fix, decl 0°") +
                         " · %.0f µT".format(Locale.ROOT, strength.toDouble())
@@ -230,7 +221,7 @@ fun CompassScreen(onBack: () -> Unit) {
                     disturbed ->
                         (
                             "Metal nearby — the field reads %.0f µT, outside " +
-                                "the 25–65 µT Earth range. Move away from " +
+                                "the 22–70 µT Earth range. Move away from " +
                                 "magnets, speakers and cases, then wave a " +
                                 "figure-8."
                             ).format(Locale.ROOT, strength.toDouble())
@@ -244,6 +235,7 @@ fun CompassScreen(onBack: () -> Unit) {
                 warn = disturbed,
             )
         }
+
     }
 }
 
@@ -392,17 +384,29 @@ private fun Dial(
         }
         // Deviation arc, drawn under the needle: the sweep the needle
         // still has to travel, in the direction it must travel.
+        //
+        // The subtraction of `settled` is the whole fix. The rose above
+        // is drawn inside `rotate(-settled)`, so a bearing B appears on
+        // the dial at B - azimuth, and the needle is fixed pointing up.
+        // This arc was being placed at `lock` in raw canvas space,
+        // which put it at the wrong compass position by the ENTIRE
+        // current heading: with the needle at 100 degrees and a lock at
+        // 90, a ten-degree error drew its arc at the 85-degree mark on
+        // the rose instead of across the needle. The companion target
+        // tick was misplaced the same way, so "you are here" and "get
+        // here" pointed at two unrelated places on the dial.
         val err = errorDeg
         if (lock != null && err != null && kotlin.math.abs(err) > BEARING_TOLERANCE_DEG) {
             val devColor = Color(0xFFFF4D4D)
             val sweep = kotlin.math.abs(err).coerceAtMost(180f)
             // From the locked bearing to the needle, the short way.
             val startDeg = lock - sweep / 2f
+            val onDial = startDeg - settled
             val arcR = r * 0.86f
             val thickness = 18.dp.toPx()
             drawArc(
                 color = devColor.copy(alpha = 0.28f),
-                startAngle = startDeg - 90f,
+                startAngle = onDial - 90f,
                 sweepAngle = sweep,
                 useCenter = false,
                 topLeft = Offset(cx - arcR, cy - arcR),
@@ -411,7 +415,7 @@ private fun Dial(
             )
             // A leading tick at the target so "get here" is marked, not
             // just "you are here".
-            val targetRad = Math.toRadians(startDeg.toDouble())
+            val targetRad = Math.toRadians(onDial.toDouble())
             drawLine(
                 color = devColor,
                 start = Offset(

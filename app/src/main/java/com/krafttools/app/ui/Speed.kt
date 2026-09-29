@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -57,9 +56,10 @@ fun SpeedScreen(onBack: () -> Unit) {
         alsoAccepts = android.Manifest.permission.ACCESS_COARSE_LOCATION,
         tool = "Speedometer",
         reason = "GPS position is read on this phone only to work out " +
-            "your speed. Positions are never stored or sent anywhere.",
-    
-        onBack = onBack,) {
+            "your speed. It is never sent anywhere, and the app has " +
+            "no network permission, so it cannot be.",
+        onBack = onBack,
+    ) {
         SpeedBody(onBack)
     }
 }
@@ -79,21 +79,7 @@ private fun SpeedBody(onBack: () -> Unit) {
     // alive, so it is read once.
     val hasGps = remember { manager.allProviders.contains(LocationManager.GPS_PROVIDER) }
     if (!hasGps) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Speedometer") },
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back to tools",
-                            )
-                        }
-                    },
-                )
-            },
-        ) { padding ->
+        ToolScaffold(title = "Speedometer", onBack = onBack) { padding ->
             NoSensor(modifier = Modifier.padding(padding), name = "GPS")
         }
         return
@@ -124,8 +110,15 @@ private fun SpeedBody(onBack: () -> Unit) {
     // time, and time cannot be recovered from a sample count.
     var tripStartMs by rememberSaveable { mutableStateOf(0L) }
     var tripEndMs by rememberSaveable { mutableStateOf(0L) }
-    var lastLat by rememberSaveable { mutableStateOf<Double?>(null) }
-    var lastLon by rememberSaveable { mutableStateOf<Double?>(null) }
+    // `remember`, not `rememberSaveable`. Saved-instance state is
+    // written to disk by the framework, so a rememberSaveable pair of
+    // coordinates is a stored position — and the rationale text used to
+    // claim positions were never stored. The odometer only needs the
+    // previous fix within the running screen; across a process death
+    // it is better to start a fresh leg than to resume from a stale
+    // one.
+    var lastLat by remember { mutableStateOf<Double?>(null) }
+    var lastLon by remember { mutableStateOf<Double?>(null) }
     fun startTrip() {
         val now = System.currentTimeMillis()
         if (tripActive) {
@@ -159,7 +152,14 @@ private fun SpeedBody(onBack: () -> Unit) {
             ?.let { toShown(it).toDouble() }
     }
 
-    DisposableEffect(manager) {
+    // The GPS radio at 1 Hz is the most expensive thing this app does,
+    // and it used to keep running with the screen off: removeUpdates was
+    // on dispose, which is navigation, not Home.
+    val foreground = rememberIsForeground()
+    DisposableEffect(manager, foreground) {
+        if (!foreground) {
+            onDispose { }
+        } else {
         // Framework GPS only: no Play Services dependency, works offline.
         // 1s / 1m is the sweet spot — faster drains battery without
         // better numbers, since phone GPS chips top out near 1 Hz.
@@ -253,27 +253,14 @@ private fun SpeedBody(onBack: () -> Unit) {
             }
         } catch (_: SecurityException) { }
         onDispose { manager.removeUpdates(listener) }
+        }
     }
 
     // Displayed number is the smoothed one; trip computer eats raw.
     val shown = if (emaSeeded) toShown(shownMs) else toShown(speedMs)
     val unit = if (metric) "km/h" else "mph"
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Speedometer") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back to tools",
-                        )
-                    }
-                },
-            )
-        },
-    ) { padding ->
+    ToolScaffold(title = "Speedometer", onBack = onBack) { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(24.dp),
             // Top-aligned. Centring the column distributed the leftover

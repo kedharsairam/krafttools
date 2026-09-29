@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -78,20 +77,12 @@ fun TallyScreen(onBack: () -> Unit) {
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Tally + stopwatch") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back to tools",
-                        )
-                    }
-                },
-            )
-        },
+    ToolScaffold(
+
+        title = "Tally + stopwatch",
+
+        onBack = onBack,
+
     ) { padding ->
         Column(
             modifier = Modifier
@@ -217,6 +208,7 @@ fun TallyScreen(onBack: () -> Unit) {
                     .weight(1f),
             )
         }
+
     }
 }
 
