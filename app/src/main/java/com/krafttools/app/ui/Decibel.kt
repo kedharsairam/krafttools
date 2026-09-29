@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,6 +77,7 @@ private fun DecibelBody(onBack: () -> Unit) {
     var offset by rememberSaveable { mutableFloatStateOf(0f) }
     var error by remember { mutableStateOf<String?>(null) }
     val spectrum = remember { mutableStateListOf<Float>() }
+    val view = LocalView.current
 
     // Single owner coroutine: opens AudioRecord, loops PCM blocks,
     // releases on dispose. Mic is never held past this screen.
@@ -194,63 +198,164 @@ private fun DecibelBody(onBack: () -> Unit) {
         },
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(24.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             if (error != null) {
-                Text(error!!, style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = error!!,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.error,
+                )
                 return@Column
             }
             ReadingHeader(
                 value = "%.0f".format(instantDb),
                 unit = "dB",
-                status = "LAeq %.0f · 1 s".format(leqDb),
+                status = "LAeq %.0f dB · 1 s".format(leqDb),
+                live = instantDb > 0f,
             )
-            LinearProgressIndicator(
-                progress = { (instantDb / 120f).coerceIn(0f, 1f) },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            SpectrumBars(
-                values = spectrum.toList(),
+
+            // The banded scale is the answer; the big numeral above it
+            // is just how the answer is spoken. A progress bar said
+            // "some".
+            LevelScale(
+                db = instantDb,
+                peakDb = maxDb ?: 0f,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(110.dp),
+                    .height(96.dp),
             )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text("min %.0f".format(minDb ?: 0f), style = MaterialTheme.typography.titleMedium)
-                Text("max %.0f".format(maxDb ?: 0f), style = MaterialTheme.typography.titleMedium)
+                StatChip(label = "min", value = minDb)
+                StatChip(label = "peak", value = maxDb)
+                StatChip(label = "LAeq", value = leqDb)
             }
-            // Phone mics are not calibrated: same room reads differently
-            // per device, so this is for comparing (before/after), not for law.
+
+            Spacer(modifier = Modifier.weight(0.2f))
+
+            // Labelled frequency plot, not a row of anonymous bars.
             Text(
-                text = "Relative reading only — phone mics are uncalibrated. " +
-                    "Use the offset to match a known reference meter.",
+                text = "SPECTRUM",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            SpectrumPlot(
+                values = spectrum.toList(),
+                centers = BAND_CENTERS.toList(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            )
+
+            Spacer(modifier = Modifier.weight(0.2f))
+
+            // Phone mics are not calibrated: the same room reads
+            // differently on every device, so this is for comparing
+            // (before/after), never for compliance.
+            Text(
+                text = "Relative reading only — phone microphones are " +
+                    "uncalibrated. Match a known reference meter with the " +
+                    "offset below to compare like for like.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Text(
-                text = "Calibration %+.0f dB".format(offset),
-                style = MaterialTheme.typography.titleSmall,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    text = "Calibration",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "%+.0f dB".format(offset),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (offset == 0f) {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    },
+                )
+            }
             Slider(
                 value = offset,
                 onValueChange = { offset = it },
                 valueRange = -20f..20f,
                 steps = 39,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
             )
-            Button(onClick = { minDb = null; maxDb = null }) {
-                Text("Reset stats")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        Haptics.tick(view)
+                        minDb = null
+                        maxDb = null
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 48.dp),
+                ) {
+                    Text("Reset stats")
+                }
+                // Equal weight, equal weight: these are the same rank of
+                // action, so they get the same width.
+                // Snap the offset back to zero: a meter with a forgotten
+                // calibration is worse than an uncalibrated one.
+                OutlinedButton(
+                    onClick = {
+                        Haptics.tick(view)
+                        offset = 0f
+                    },
+                    enabled = offset != 0f,
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 48.dp),
+                ) {
+                    Text("Zero")
+                }
             }
         }
     }
 }
 
-/** 8 log-spaced bands (63 Hz .. 8 kHz) from a DFT over the ring.
+/** One labeled statistic, so min/peak/LAeq read as a row of readouts
+ *  rather than three floating sentences. */
+@Composable
+private fun StatChip(label: String, value: Float?) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = label.uppercase(),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = if (value == null) "—" else "%.0f".format(value),
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+/** The eight display bands, shared by the analysis and its labels. */
+private val BAND_CENTERS = floatArrayOf(63f, 125f, 250f, 500f, 1000f, 2000f, 4000f, 8000f)
+
+/** 8 log-spaced bands (63 Hz .. 8 kHz) from an FFT over the ring.
  * Magnitudes normalized 0..1 against the strongest band: shape of
  * the sound, not absolute level (the dB headline owns that). */
 private data class Spectrum(
@@ -261,66 +366,38 @@ private data class Spectrum(
 
 private fun spectrumBands(ring: FloatArray, ringPos: Int): Spectrum {
     val n = 1024
-    val centers = floatArrayOf(63f, 125f, 250f, 500f, 1000f, 2000f, 4000f, 8000f)
-    val mags = FloatArray(centers.size)
-    var energy = 0.0
+    val centers = BAND_CENTERS
     // Full-spectrum A-weighted energy for LAeq: EVERY bin 1..511, not
     // just the 8 display bands. Summing 8 narrow bins would under-read
     // by an order of magnitude (all inter-bin energy goes missing).
-    for (k in 1 until n / 2) {
-        var re = 0.0
-        var im = 0.0
-        for (i in 0 until n) {
-            val s = ring[(ringPos + i) % ring.size].toDouble() * hann(i, n)
-            val angle = 2.0 * Math.PI * k * i / n
-            re += s * Math.cos(angle)
-            im -= s * Math.sin(angle)
-        }
+    // Window once, then transform: the Hann window is applied in the
+    // time domain, so the FFT sees a clean signal. The naive DFT this
+    // replaced cost 523k cos/sin pairs per analysis, on the audio
+    // thread, twice a second.
+    val windowed = FloatArray(n)
+    for (i in 0 until n) {
+        windowed[i] = (ring[(ringPos + i) % ring.size] * hann(i, n)).toFloat()
+    }
+    val magsAll = Fft.magnitudes(windowed)
+
+    // LAeq needs EVERY bin, not the eight display bands: summing eight
+    // narrow bins drops all the inter-bin energy and under-reads by an
+    // order of magnitude.
+    var energy = 0.0
+    for (k in 1..n / 2) {
         val freq = k * SAMPLE_RATE.toFloat() / n
         if (freq in 20f..16000f) {
-            energy += (re * re + im * im) * aWeightLinear(freq)
+            energy += magsAll[k] * magsAll[k] * aWeightLinear(freq)
         }
     }
+    // Display bands read straight off the same transform.
+    val mags = FloatArray(centers.size)
     for (b in centers.indices) {
-        // Direct bin nearest the center: bin = f * n / sampleRate.
-        val k = ((centers[b] * n / SAMPLE_RATE).toInt()).coerceIn(1, n / 2 - 1)
-        var re = 0.0
-        var im = 0.0
-        for (i in 0 until n) {
-            val s = ring[(ringPos + i) % ring.size].toDouble() * hann(i, n)
-            val angle = 2.0 * Math.PI * k * i / n
-            re += s * Math.cos(angle)
-            im -= s * Math.sin(angle)
-        }
-        val mag = sqrt(re * re + im * im).toFloat()
-        mags[b] = mag
+        val k = ((centers[b] * n / SAMPLE_RATE).toInt()).coerceIn(1, n / 2)
+        mags[b] = magsAll[k].toFloat()
     }
     val peak = mags.maxOrNull() ?: 0f
     if (peak <= 0f) return Spectrum(List(centers.size) { 0f }, 0.0)
     // Log-ish compression so quiet bands stay visible.
     return Spectrum(mags.map { (it / peak).coerceIn(0f, 1f) }, energy)
-}
-
-@Composable
-private fun SpectrumBars(values: List<Float>, modifier: Modifier = Modifier) {
-    val bar = MaterialTheme.colorScheme.primary
-    val track = MaterialTheme.colorScheme.outlineVariant
-    androidx.compose.foundation.Canvas(modifier = modifier) {
-        if (values.isEmpty()) return@Canvas
-        val gap = 8f
-        val w = (size.width - gap * (values.size - 1)) / values.size
-        values.forEachIndexed { i, v ->
-            val h = (size.height * v).coerceAtLeast(4f)
-            drawRect(
-                color = track,
-                topLeft = Offset(i * (w + gap), 0f),
-                size = Size(w, size.height),
-            )
-            drawRect(
-                color = bar,
-                topLeft = Offset(i * (w + gap), size.height - h),
-                size = Size(w, h),
-            )
-        }
-    }
 }
