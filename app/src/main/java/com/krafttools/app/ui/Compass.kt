@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -33,6 +35,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
@@ -40,13 +44,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-
-private val CARDINALS = listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
-
-fun cardinal(azimuth: Float): String {
-    val a = ((azimuth % 360f) + 360f) % 360f
-    return CARDINALS[((a + 22.5f) / 45f).toInt() % 8]
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,11 +133,12 @@ fun CompassScreen(onBack: () -> Unit) {
             0f
         }
         val tilted = tiltDeg > 35f
+        val confidence = compassConfidence(tiltDeg, strength, declination != null)
         // True bearing = magnetic + east declination. Displayed always;
         // the dial needle stays magnetic (what the sensor feels) while
         // the headline reads true (what maps use). Both labeled.
         val decl = declination ?: 0f
-        val trueNorth = (azimuth + decl + 360f) % 360f
+        val trueNorth = trueBearing(azimuth, decl)
 
         Column(
             modifier = Modifier
@@ -150,10 +148,11 @@ fun CompassScreen(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
                 value = "${trueNorth.toInt()}° ${cardinal(trueNorth)}",
                 unit = null,
-                status = "true north",
+                status = confidence.verdict,
             )
             Text(
                 text = "${azimuth.toInt()}° magnetic" +
@@ -164,26 +163,50 @@ fun CompassScreen(onBack: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             locked?.let { lock ->
-                val rel = ((azimuth - lock + 540f) % 360f) - 180f
+                val rel = compassBearingError(azimuth, lock)
+                val arrivedNow = onBearing(azimuth, lock)
                 Text(
-                    text = "Bearing ${lock.toInt()}° · %+.0f° %s".format(
+                    text = "Bearing %d° · %+.0f° %s".format(
+                        lock.toInt(),
                         kotlin.math.abs(rel),
-                        if (rel >= 0) "right" else "left",
+                        if (arrivedNow) "· on bearing" else if (rel >= 0) "right" else "left",
                     ),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = if (arrivedNow) FontWeight.Bold else FontWeight.Medium,
+                    color = if (arrivedNow) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
                 )
             }
             Dial(
                 azimuth = azimuth,
+                lock = locked,
+                errorDeg = locked?.let { compassBearingError(azimuth, it) },
+                onArrive = { Haptics.thud(context) },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .weight(1f)
                     .aspectRatio(1f)
                     .clickable {
                         Haptics.confirm(compassView)
                         locked = if (locked == null) azimuth else null
                     },
             )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Tilt is not filler: it is the number that explains WHY
+            // the heading may be wrong, so it belongs on the panel
+            // rather than only in the warning paragraph.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                StatChip(Stat.Tilt(tiltDeg))
+                StatChip(Stat.Field(strength))
+            }
+
             Text(
                 text = if (locked == null) {
                     "Tap the dial to lock a bearing."
@@ -193,36 +216,97 @@ fun CompassScreen(onBack: () -> Unit) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            if (disturbed) {
-                Text(
-                    text = "Metal nearby — move away from magnets and cases, " +
-                        "then wave a figure-8 to recalibrate.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            } else if (tilted) {
-                Text(
-                    text = ("Tilted %.0f° — lay the phone flat; headings " +
-                        "measured tilted read wrong.").format(tiltDeg.toDouble()),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            } else {
-                Text(
-                    text = "Wave a figure-8 if the needle feels stuck.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            Text(
+                text = when {
+                    disturbed ->
+                        "Metal nearby — the field reads %.0f µT, outside the " +
+                            "25–65 µT Earth range. Move away from magnets, " +
+                            "speakers and cases, then wave a figure-8.".format(
+                            strength.toDouble(),
+                        )
+                    tilted ->
+                        ("Tilted %.0f° — lay the phone flat. Headings " +
+                            "measured this far off level read wrong.").format(
+                            tiltDeg.toDouble(),
+                        )
+                    else -> "Wave a figure-8 if the needle feels stuck."
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (disturbed) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+            )
         }
     }
 }
 
+/**
+ * The compass dial. With a bearing locked it also draws the deviation
+ * arc: a red band between where the needle is and where it should be,
+ * with the needle's position marked on the ring. That is the glance a
+ * navigator actually wants — which way, and how far — without reading
+ * a single digit.
+ */
+/** What a companion readout is showing. A sealed shape, so "no value"
+ *  is a state and not a magic null meaning two different things. */
+private sealed interface Stat {
+    val label: String
+    val text: String
+    val bad: Boolean
+
+    data class Tilt(val degrees: Float) : Stat {
+        override val label = "tilt"
+        override val text = "%.0f°".format(degrees)
+        /** The rotation matrix assumes a flat phone; past 35° the
+         *  heading degrades fast enough to stop trusting. */
+        override val bad = degrees > 35f
+    }
+
+    data class Field(val microTesla: Float) : Stat {
+        override val label = "field"
+        override val text = "%.0f µT".format(microTesla)
+        /** Earth's field is 25-65 µT. Outside that, something metal is
+         *  near and the needle is reading that instead. */
+        override val bad = microTesla < 20f || microTesla > 70f
+    }
+}
+
+/** One labeled companion readout under the dial. */
 @Composable
-private fun Dial(azimuth: Float, modifier: Modifier = Modifier) {
+private fun StatChip(stat: Stat) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = stat.label.uppercase(),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = stat.text,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = if (stat.bad) {
+                MaterialTheme.colorScheme.error
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
+        )
+    }
+}
+
+@Composable
+private fun Dial(
+    azimuth: Float,
+    modifier: Modifier = Modifier,
+    lock: Float? = null,
+    errorDeg: Float? = null,
+    onArrive: () -> Unit = {},
+) {
     val ring = MaterialTheme.colorScheme.outlineVariant
     val needle = MaterialTheme.colorScheme.primary
     val text = MaterialTheme.colorScheme.onSurfaceVariant
+    val hub = MaterialTheme.colorScheme.surface
     // Unwrapped angle: 359° -> 0° sweeps forward 1°, never whips back.
     var shown by remember { mutableStateOf(azimuth) }
     LaunchedEffect(azimuth) {
@@ -239,60 +323,166 @@ private fun Dial(azimuth: Float, modifier: Modifier = Modifier) {
         ),
         label = "dial",
     )
-    // Cardinal paint once: canvas text needs Android Paint, not Compose.
+    // Cardinals are drawn with Android Paint (Canvas text needs it).
+    // The paints are created once; their SIZE is set per frame from the
+    // dial radius, because a fixed pixel size is a fixed visual size —
+    // which is why these letters used to shrink on a high-density
+    // screen and read as an afterthought.
     val cardinalPaint = remember(text) {
         android.graphics.Paint().apply {
             color = text.toArgb()
-            textSize = 44f
             textAlign = android.graphics.Paint.Align.CENTER
             isAntiAlias = true
-            typeface = android.graphics.Typeface.DEFAULT_BOLD
+            typeface = android.graphics.Typeface.create(
+                android.graphics.Typeface.DEFAULT,
+                android.graphics.Typeface.BOLD,
+            )
+            letterSpacing = 0.06f
         }
     }
     val northPaint = remember(needle) {
         android.graphics.Paint().apply {
             color = needle.toArgb()
-            textSize = 52f
             textAlign = android.graphics.Paint.Align.CENTER
             isAntiAlias = true
-            typeface = android.graphics.Typeface.DEFAULT_BOLD
+            typeface = android.graphics.Typeface.create(
+                android.graphics.Typeface.DEFAULT,
+                android.graphics.Typeface.BOLD,
+            )
         }
     }
+    // Fire the arrival haptic on the rising edge only.
+    val arrived = errorDeg != null && onBearing(azimuth, lock ?: azimuth)
+    LaunchedEffect(arrived) {
+        if (arrived) onArrive()
+    }
+
     Canvas(modifier = modifier) {
         val cx = size.width / 2f
         val cy = size.height / 2f
         val r = size.minDimension / 2f * 0.92f
         drawCircle(color = ring, radius = r, style = Stroke(4f))
         // Cardinal ticks + letters rotate with the world (needle stays up).
+        val cardSize = r * 0.155f
+        val northSize = r * 0.185f
+        cardinalPaint.textSize = cardSize
+        northPaint.textSize = northSize
+        val minorTick = r * 0.02f
+        val majorTick = r * 0.032f
+        // Every 5 degrees, the cardinals in bold. A real compass rose
+        // is dense with marks; four lonely letters is a clock face.
+        for (deg in 0 until 360 step 5) {
+            val rad = Math.toRadians(deg.toDouble())
+            val isCardinal = deg % 90 == 0
+            val isIntercardinal = deg % 45 == 0
+            val r1 = if (isCardinal) 0.90f else 0.93f
+            val r2 = 0.97f
+            drawLine(
+                color = if (isCardinal) needle else ring,
+                start = Offset(
+                    cx + (r * r1 * Math.sin(rad)).toFloat(),
+                    cy - (r * r1 * Math.cos(rad)).toFloat(),
+                ),
+                end = Offset(
+                    cx + (r * r2 * Math.sin(rad)).toFloat(),
+                    cy - (r * r2 * Math.cos(rad)).toFloat(),
+                ),
+                strokeWidth = if (isCardinal) majorTick else minorTick,
+            )
+        }
+        // Cardinal letters, counter-rotated so they never read sideways
+        // however far the dial has turned.
         rotate(-animated, Offset(cx, cy)) {
             val labels = listOf("N" to 0f, "E" to 90f, "S" to 180f, "W" to 270f)
             for ((letter, deg) in labels) {
                 val rad = Math.toRadians(deg.toDouble())
-                val x1 = cx + (r * 0.82f * Math.sin(rad)).toFloat()
-                val y1 = cy - (r * 0.82f * Math.cos(rad)).toFloat()
-                val x2 = cx + (r * 0.95f * Math.sin(rad)).toFloat()
-                val y2 = cy - (r * 0.95f * Math.cos(rad)).toFloat()
-                drawLine(
-                    color = if (deg == 0f) needle else text,
-                    start = Offset(x1, y1),
-                    end = Offset(x2, y2),
-                    strokeWidth = if (deg == 0f) 8f else 5f,
-                )
-                drawContext.canvas.nativeCanvas.drawText(
-                    letter,
-                    (cx + (r * 0.64f * Math.sin(rad)).toFloat()),
-                    (cy - (r * 0.64f * Math.cos(rad)).toFloat()) + 16f,
-                    if (deg == 0f) northPaint else cardinalPaint,
-                )
+                val lx = cx + (r * 0.72f * Math.sin(rad)).toFloat()
+                val ly = cy - (r * 0.72f * Math.cos(rad)).toFloat()
+                rotate(animated, Offset(lx, ly)) {
+                    val paint = if (deg == 0f) northPaint else cardinalPaint
+                    // Baseline centred: half the text height down.
+                    drawContext.canvas.nativeCanvas.drawText(
+                        letter,
+                        lx,
+                        ly + paint.textSize * 0.36f,
+                        paint,
+                    )
+                }
             }
         }
-        // North needle always points up.
+        // Deviation arc, drawn under the needle: the sweep the needle
+        // still has to travel, in the direction it must travel.
+        val err = errorDeg
+        if (lock != null && err != null && kotlin.math.abs(err) > BEARING_TOLERANCE_DEG) {
+            val devColor = Color(0xFFFF4D4D)
+            val sweep = kotlin.math.abs(err).coerceAtMost(180f)
+            // From the locked bearing to the needle, the short way.
+            val startDeg = lock - sweep / 2f
+            val arcR = r * 0.86f
+            val thickness = 18f
+            drawArc(
+                color = devColor.copy(alpha = 0.28f),
+                startAngle = startDeg - 90f,
+                sweepAngle = sweep,
+                useCenter = false,
+                topLeft = Offset(cx - arcR, cy - arcR),
+                size = Size(arcR * 2f, arcR * 2f),
+                style = Stroke(width = thickness),
+            )
+            // A leading tick at the target so "get here" is marked, not
+            // just "you are here".
+            val targetRad = Math.toRadians(startDeg.toDouble())
+            drawLine(
+                color = devColor,
+                start = Offset(
+                    cx + (arcR * Math.sin(targetRad)).toFloat(),
+                    cy - (arcR * Math.cos(targetRad)).toFloat(),
+                ),
+                end = Offset(
+                    cx + ((arcR + thickness * 0.9f) * Math.sin(targetRad)).toFloat(),
+                    cy - ((arcR + thickness * 0.9f) * Math.cos(targetRad)).toFloat(),
+                ),
+                strokeWidth = 5f,
+            )
+        }
+        // North needle, always up. The north half is solid and the
+        // south half is a thin tail, so the pointer has a direction
+        // rather than being a bar through the middle.
+        val northHalf = androidx.compose.ui.graphics.Path().apply {
+            moveTo(cx, cy - r * 0.74f)
+            lineTo(cx + r * 0.045f, cy - r * 0.1f)
+            lineTo(cx, cy)
+            lineTo(cx - r * 0.045f, cy - r * 0.1f)
+            close()
+        }
+        drawPath(northHalf, needle)
         drawLine(
-            color = needle,
-            start = Offset(cx, cy + r * 0.55f),
-            end = Offset(cx, cy - r * 0.7f),
-            strokeWidth = 10f,
+            color = needle.copy(alpha = 0.5f),
+            start = Offset(cx, cy + r * 0.02f),
+            end = Offset(cx, cy + r * 0.5f),
+            strokeWidth = 4f,
         )
-        drawCircle(color = needle, radius = r * 0.07f, center = Offset(cx, cy))
+        // Hub: a lit dome, not a hole. A flat fill in the surface color
+        // read as a puncture in the dial.
+        val hubR = r * 0.13f
+        drawCircle(
+            brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                colors = listOf(
+                    needle.copy(alpha = 0.55f),
+                    hub.copy(alpha = 0.0f),
+                ),
+                center = Offset(cx, cy),
+                radius = hubR,
+            ),
+            radius = hubR,
+            center = Offset(cx, cy),
+        )
+        drawCircle(color = needle, radius = r * 0.055f, center = Offset(cx, cy))
+        drawCircle(
+            color = needle.copy(alpha = 0.35f),
+            radius = r * 0.085f,
+            center = Offset(cx, cy),
+            style = Stroke(width = 2f),
+        )
     }
 }
