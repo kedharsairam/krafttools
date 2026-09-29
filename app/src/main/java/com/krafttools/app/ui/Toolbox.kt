@@ -60,6 +60,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -93,7 +100,39 @@ fun ToolboxNav(startRoute: String? = null) {
     val nav = rememberNavController()
     val valid = TOOLS.map { it.route }.toSet()
     val start = if (startRoute in valid) startRoute!! else "grid"
-    NavHost(navController = nav, startDestination = start) {
+    NavHost(
+        navController = nav,
+        startDestination = start,
+        // Phase C: directional transitions, so moving between
+        // instruments feels like turning a page rather than cutting.
+        // Forward navigation slides in from the trailing edge, back
+        // slides out to it — the gesture the user's thumb already
+        // expects from every other app on the phone.
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(280, easing = FastOutSlowInEasing),
+            ) + fadeIn(tween(180))
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(280, easing = FastOutSlowInEasing),
+            ) + fadeOut(tween(140))
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(280, easing = FastOutSlowInEasing),
+            ) + fadeIn(tween(180))
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(280, easing = FastOutSlowInEasing),
+            ) + fadeOut(tween(140))
+        },
+    ) {
         composable("grid") {
             ToolGrid(onOpen = { route ->
                 if (TOOLS.any { it.route == route && it.live }) {

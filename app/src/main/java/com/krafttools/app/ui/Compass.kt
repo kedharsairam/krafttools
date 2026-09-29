@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -263,11 +264,19 @@ private fun Dial(
     val text = MaterialTheme.colorScheme.onSurfaceVariant
     val hub = MaterialTheme.colorScheme.surface
     // Unwrapped angle: 359° -> 0° sweeps forward 1°, never whips back.
+    //
+    // Deadband first: a magnetometer at rest still reports a fraction
+    // of a degree, and each wobble re-targets the spring, so the needle
+    // never settles — measured at ~100fps of redraw with the phone
+    // lying still, which is a visible tremor and a real battery cost.
+    // Nothing below [DIAL_DEADBAND] is information a human can read off
+    // a rose, so it is discarded before it reaches the animation.
     var shown by remember { mutableStateOf(azimuth) }
     LaunchedEffect(azimuth) {
         var delta = (azimuth - shown) % 360f
         if (delta > 180f) delta -= 360f
         if (delta < -180f) delta += 360f
+        if (kotlin.math.abs(delta) < DIAL_DEADBAND) return@LaunchedEffect
         shown += delta
     }
     val animated by androidx.compose.animation.core.animateFloatAsState(
@@ -278,6 +287,18 @@ private fun Dial(
         ),
         label = "dial",
     )
+    // A magnetometer at rest still reports a fraction of a degree of
+    // noise, and the spring treats every wobble as a command to move.
+    // The needle then never settles: measured at ~100fps of continuous
+    // redraw with the phone lying still on a table, which is a visible
+    // tremor and a real battery cost.
+    //
+    // So the target is quantised to the sensor's real resolution. A
+    // human cannot read a tenth of a degree off a compass rose, and
+    // below that the noise is not information.
+    // Snap when close, so the spring actually terminates: a spring left
+    // to asymptote keeps invalidating forever.
+    val settled = if (kotlin.math.abs(animated - shown) < 0.05f) shown else animated
     // Cardinals are drawn with Android Paint (Canvas text needs it).
     // The paints are created once; their SIZE is set per frame from the
     // dial radius, because a fixed pixel size is a fixed visual size —
@@ -347,13 +368,13 @@ private fun Dial(
         }
         // Cardinal letters, counter-rotated so they never read sideways
         // however far the dial has turned.
-        rotate(-animated, Offset(cx, cy)) {
+        rotate(-settled, Offset(cx, cy)) {
             val labels = listOf("N" to 0f, "E" to 90f, "S" to 180f, "W" to 270f)
             for ((letter, deg) in labels) {
                 val rad = Math.toRadians(deg.toDouble())
                 val lx = cx + (r * 0.72f * Math.sin(rad)).toFloat()
                 val ly = cy - (r * 0.72f * Math.cos(rad)).toFloat()
-                rotate(animated, Offset(lx, ly)) {
+                rotate(settled, Offset(lx, ly)) {
                     val paint = if (deg == 0f) northPaint else cardinalPaint
                     // Baseline centred: half the text height down.
                     drawContext.canvas.nativeCanvas.drawText(

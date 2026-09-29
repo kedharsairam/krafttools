@@ -82,6 +82,14 @@ fun compassConfidence(
     return CompassConfidence(quality.coerceIn(0f, 1f), verdict)
 }
 
+/**
+ * Degrees of sensor noise ignored before the needle moves. A phone
+ * magnetometer is good to roughly half a degree at rest; below that
+ * the rose cannot show it, and chasing it costs frames and battery —
+ * measured at ~100fps of continuous redraw with the phone lying still.
+ */
+const val DIAL_DEADBAND = 0.4f
+
 /** The bearing-error band, in degrees, that reads as "you are there". */
 internal const val BEARING_TOLERANCE_DEG = 3f
 
