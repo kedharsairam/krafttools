@@ -1,9 +1,13 @@
 package com.krafttools.app.ui
 
 import android.hardware.Sensor
+import android.location.Location
+import android.location.LocationManager
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,12 +22,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -39,6 +48,33 @@ fun cardinal(azimuth: Float): String {
 fun CompassScreen(onBack: () -> Unit) {
     val accel by rememberSensor(Sensor.TYPE_ACCELEROMETER)
     val mag by rememberSensor(Sensor.TYPE_MAGNETIC_FIELD)
+    val context = LocalContext.current
+    // True north needs magnetic declination, which needs position.
+    // Last-known fix only (no tracking, no storage): FINE_LOCATION is
+    // already declared for wifi/speed. No fix -> 0° + honest note.
+    var declination by remember { mutableStateOf<Float?>(null) }
+    var locked by remember { mutableStateOf<Float?>(null) }
+
+    androidx.compose.runtime.DisposableEffect(Unit) {
+        try {
+            val lm = context.getSystemService(android.content.Context.LOCATION_SERVICE)
+                as LocationManager
+            val fix: Location? =
+                lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                    ?: lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            declination = fix?.let {
+                android.hardware.GeomagneticField(
+                    it.latitude.toFloat(),
+                    it.longitude.toFloat(),
+                    it.altitude.toFloat(),
+                    it.time,
+                ).declination
+            }
+        } catch (_: SecurityException) {
+            declination = null
+        }
+        onDispose { }
+    }
 
     Scaffold(
         topBar = {
@@ -80,6 +116,11 @@ fun CompassScreen(onBack: () -> Unit) {
             (mag!![0] * mag!![0] + mag!![1] * mag!![1] + mag!![2] * mag!![2]).toDouble(),
         ).toFloat()
         val disturbed = strength < 20f || strength > 70f
+        // True bearing = magnetic + east declination. Displayed always;
+        // the dial needle stays magnetic (what the sensor feels) while
+        // the headline reads true (what maps use). Both labeled.
+        val decl = declination ?: 0f
+        val trueNorth = (azimuth + decl + 360f) % 360f
 
         Column(
             modifier = Modifier
@@ -90,21 +131,45 @@ fun CompassScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "${azimuth.toInt()}° ${cardinal(azimuth)}",
+                text = "${trueNorth.toInt()}° ${cardinal(trueNorth)} true",
                 style = MaterialTheme.typography.displayLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = "%.0f µT".format(strength.toDouble()),
+                text = "${azimuth.toInt()}° magnetic" +
+                    (declination?.let { " · decl %+.1f°".format(it) }
+                        ?: " · no fix, decl 0°") +
+                    " · %.0f µT".format(strength.toDouble()),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            locked?.let { lock ->
+                val rel = ((azimuth - lock + 540f) % 360f) - 180f
+                Text(
+                    text = "Bearing ${lock.toInt()}° · %+.0f° %s".format(
+                        kotlin.math.abs(rel),
+                        if (rel >= 0) "right" else "left",
+                    ),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
             Dial(
                 azimuth = azimuth,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f),
+                    .aspectRatio(1f)
+                    .clickable { locked = if (locked == null) azimuth else null },
+            )
+            Text(
+                text = if (locked == null) {
+                    "Tap the dial to lock a bearing."
+                } else {
+                    "Bearing locked — tap again to release."
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             if (disturbed) {
                 Text(

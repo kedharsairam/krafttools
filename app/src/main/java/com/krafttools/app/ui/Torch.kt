@@ -16,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -71,9 +72,13 @@ private fun TorchBody(onBack: () -> Unit) {
     }
     var on by remember { mutableStateOf(false) }
     var strobe by remember { mutableStateOf(false) }
+    var sos by remember { mutableStateOf(false) }
     var rateHz by remember { mutableFloatStateOf(4f) }
+    var autoOffMin by remember { mutableStateOf(0) }
+    var autoOffLeftSec by remember { mutableStateOf(0L) }
     val scope = rememberCoroutineScope()
     var strobeJob by remember { mutableStateOf<Job?>(null) }
+    var timerJob by remember { mutableStateOf<Job?>(null) }
 
     fun setTorch(state: Boolean) {
         if (cameraId == null) return
@@ -85,9 +90,67 @@ private fun TorchBody(onBack: () -> Unit) {
         }
     }
 
+    /** Stop everything: used by mode switches, timer fire, and dispose. */
+    fun stopAll() {
+        strobeJob?.cancel()
+        strobeJob = null
+        timerJob?.cancel()
+        timerJob = null
+        strobe = false
+        sos = false
+        autoOffLeftSec = 0L
+        setTorch(false)
+    }
+
+    fun armAutoOff() {
+        timerJob?.cancel()
+        timerJob = null
+        autoOffLeftSec = 0L
+        if (autoOffMin <= 0) return
+        val deadline = android.os.SystemClock.elapsedRealtime() + autoOffMin * 60_000L
+        timerJob = scope.launch {
+            while (isActive) {
+                val left =
+                    (deadline - android.os.SystemClock.elapsedRealtime()) / 1000L
+                if (left <= 0) {
+                    stopAll()
+                    break
+                }
+                autoOffLeftSec = left
+                delay(1000)
+            }
+        }
+    }
+
+    /** International Morse SOS: ··· −−− ···, then 2s silence, repeat. */
+    fun startSos() {
+        stopAll()
+        sos = true
+        setTorch(false)
+        armAutoOff()
+        strobeJob = scope.launch {
+            val u = 200L
+            // S O S as (on-ms, off-ms) steps; trailing word gap included.
+            val pattern = listOf(
+                u to u, u to u, u to 3 * u, // ···
+                3 * u to u, 3 * u to u, 3 * u to 3 * u, // −−−
+                u to u, u to u, u to 7 * u, // ··· + word gap
+            )
+            while (isActive) {
+                for ((litMs, gapMs) in pattern) {
+                    setTorch(true)
+                    delay(litMs)
+                    setTorch(false)
+                    delay(gapMs)
+                }
+            }
+        }
+    }
+
     DisposableEffect(Unit) {
         onDispose {
             strobeJob?.cancel()
+            timerJob?.cancel()
             try {
                 if (cameraId != null) manager.setTorchMode(cameraId, false)
             } catch (_: Exception) {
@@ -126,61 +189,73 @@ private fun TorchBody(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = if (strobe) "STROBE" else if (on) "ON" else "OFF",
+                text = when {
+                    sos -> "SOS"
+                    strobe -> "STROBE"
+                    on -> "ON"
+                    else -> "OFF"
+                },
                 style = MaterialTheme.typography.displayLarge,
                 fontWeight = FontWeight.Bold,
-                color = if (on || strobe) {
+                color = if (on || strobe || sos) {
                     MaterialTheme.colorScheme.primary
                 } else {
                     MaterialTheme.colorScheme.onSurface
                 },
             )
+            if (autoOffLeftSec > 0) {
+                Text(
+                    text = "Auto-off in %d:%02d".format(
+                        autoOffLeftSec / 60,
+                        autoOffLeftSec % 60,
+                    ),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Button(
                 onClick = {
-                    strobeJob?.cancel()
-                    strobeJob = null
-                    strobe = false
-                    setTorch(!on)
+                    if (on || strobe || sos) {
+                        stopAll()
+                    } else {
+                        stopAll()
+                        setTorch(true)
+                        armAutoOff()
+                    }
                 },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(if (on) "Turn off" else "Turn on")
+                Text(if (on || strobe || sos) "Turn off" else "Turn on")
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(
-                    text = "Strobe",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                androidx.compose.material3.Switch(
-                    checked = strobe,
-                    onCheckedChange = { want ->
-                        strobeJob?.cancel()
-                        strobeJob = null
-                        if (want) {
-                            strobe = true
-                            setTorch(false)
-                            strobeJob = scope.launch {
-                                var lit = false
-                                while (isActive) {
-                                    lit = !lit
-                                    setTorch(lit)
-                                    val period = (1000.0 / rateHz)
-                                        .toLong().coerceAtLeast(80L)
-                                    delay(period / 2)
-                                }
+            ModeRow(
+                label = "Strobe",
+                active = strobe,
+                onToggle = { want ->
+                    if (want) {
+                        stopAll()
+                        strobe = true
+                        setTorch(false)
+                        armAutoOff()
+                        strobeJob = scope.launch {
+                            var lit = false
+                            while (isActive) {
+                                lit = !lit
+                                setTorch(lit)
+                                val period = (1000.0 / rateHz)
+                                    .toLong().coerceAtLeast(80L)
+                                delay(period / 2)
                             }
-                        } else {
-                            strobe = false
-                            setTorch(false)
                         }
-                    },
-                )
-            }
+                    } else {
+                        stopAll()
+                    }
+                },
+            )
+            ModeRow(
+                label = "SOS signal",
+                active = sos,
+                onToggle = { want -> if (want) startSos() else stopAll() },
+            )
             if (strobe) {
                 Text(
                     text = "%.1f Hz — photosensitive epilepsy warning: " +
@@ -194,13 +269,79 @@ private fun TorchBody(onBack: () -> Unit) {
                     valueRange = 1f..12f,
                     steps = 10,
                 )
-            } else {
+            }
+            if (sos) {
+                Text(
+                    text = "International distress: ··· −−− ···, repeating. " +
+                        "Same epilepsy caution as strobe.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            if (!strobe && !sos) {
                 Text(
                     text = "Strobe tops out at 12 Hz. Never point it at " +
                         "anyone's face; the LED also gets hot.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+            Text(
+                text = "Auto-off",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+            AutoOffRow(
+                minutes = autoOffMin,
+                onPick = {
+                    autoOffMin = it
+                    if (on || strobe || sos) {
+                        armAutoOff()
+                    } else {
+                        timerJob?.cancel()
+                        timerJob = null
+                        autoOffLeftSec = 0L
+                    }
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun ModeRow(label: String, active: Boolean, onToggle: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.weight(1f),
+        )
+        androidx.compose.material3.Switch(
+            checked = active,
+            onCheckedChange = onToggle,
+        )
+    }
+}
+
+@Composable
+private fun AutoOffRow(minutes: Int, onPick: (Int) -> Unit) {
+    val options = listOf(0 to "Off", 1 to "1 min", 5 to "5 min", 15 to "15 min")
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        for ((mins, label) in options) {
+            if (mins == minutes) {
+                Button(onClick = { onPick(mins) }) {
+                    Text(label)
+                }
+            } else {
+                OutlinedButton(onClick = { onPick(mins) }) {
+                    Text(label)
+                }
             }
         }
     }

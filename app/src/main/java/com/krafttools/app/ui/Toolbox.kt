@@ -1,11 +1,13 @@
 package com.krafttools.app.ui
 
+import android.content.Context
 import android.hardware.Sensor
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,6 +41,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -181,6 +186,24 @@ private fun ToolGrid(onOpen: (String) -> Unit) {
 private fun LevelScreen(onBack: () -> Unit) {
     val gravity by rememberSensor(Sensor.TYPE_ACCELEROMETER)
     var zero by remember { mutableStateOf<Pair<Float, Float>?>(null) }
+    var sound by remember { mutableStateOf(true) }
+    val context = LocalContext.current
+    // Beep engine: ToneGenerator needs no permission. A short tick
+    // quickens as level approaches, going solid inside 1° — level
+    // behind furniture without looking. Haptic ticks the crossing.
+    val tone = remember {
+        try {
+            android.media.ToneGenerator(
+                android.media.AudioManager.STREAM_MUSIC, 60,
+            )
+        } catch (_: Exception) {
+            null
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose { try { tone?.release() } catch (_: Exception) { } }
+    }
+    var wasLevel by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -210,6 +233,39 @@ private fun LevelScreen(onBack: () -> Unit) {
         val dp = pitch - zp
         val dr = roll - zr
         val level = Math.hypot(dp.toDouble(), dr.toDouble()).toFloat()
+        val isLevel = level < 1f
+
+        // Audio + haptic feedback, driven by composition: crossing into
+        // level ticks once (vibrate 30ms); inside level, a soft beat.
+        LaunchedEffect(isLevel) {
+            if (isLevel && !wasLevel) {
+                try {
+                    (context.getSystemService(Context.VIBRATOR_SERVICE)
+                        as android.os.Vibrator).let { vib ->
+                        if (vib.hasVibrator()) {
+                            vib.vibrate(
+                                android.os.VibrationEffect.createOneShot(
+                                    30,
+                                    android.os.VibrationEffect.DEFAULT_AMPLITUDE,
+                                ),
+                            )
+                        }
+                    }
+                } catch (_: Exception) {
+                }
+            }
+            wasLevel = isLevel
+        }
+        LaunchedEffect(isLevel, sound) {
+            if (!sound) return@LaunchedEffect
+            while (isLevel) {
+                try {
+                    tone?.startTone(android.media.ToneGenerator.TONE_PROP_BEEP, 120)
+                } catch (_: Exception) {
+                }
+                kotlinx.coroutines.delay(600)
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -229,18 +285,32 @@ private fun LevelScreen(onBack: () -> Unit) {
                 },
             )
             Text(
-                text = if (level < 1f) "Level" else "Tilted",
+                text = if (isLevel) "Level" else "Tilted",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Bubble(
                 dx = (dr / 45f).coerceIn(-1f, 1f),
                 dy = (dp / 45f).coerceIn(-1f, 1f),
-                level = level < 1f,
+                level = isLevel,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
             )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = "Sound",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                androidx.compose.material3.Switch(
+                    checked = sound,
+                    onCheckedChange = { sound = it },
+                )
+            }
             Text(
                 text = "Lay flat, then tap Calibrate to zero this surface.",
                 style = MaterialTheme.typography.bodyMedium,

@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -38,6 +39,13 @@ fun TallyScreen(onBack: () -> Unit) {
     var running by remember { mutableStateOf(false) }
     var elapsedMs by remember { mutableLongStateOf(0L) }
     val laps = remember { mutableStateListOf<String>() }
+
+    // Volume keys count while this screen is up (installed here,
+    // cleared below — MainActivity only forwards when installed).
+    DisposableEffect(Unit) {
+        TallyVolumeKeys.onVolume = { count++ }
+        onDispose { TallyVolumeKeys.onVolume = null }
+    }
 
     // Stopwatch ticker: 100 ms ticks while running.
     LaunchedEffect(running) {
@@ -121,6 +129,11 @@ fun TallyScreen(onBack: () -> Unit) {
                     Text("Clear")
                 }
             }
+            Text(
+                text = "Tip: the volume keys count too — pocket counting.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -149,4 +162,14 @@ private fun formatStopwatch(ms: Long): String {
     } else {
         "%02d:%02d.%d".format(minutes, seconds, tenths)
     }
+}
+
+/**
+ * Volume-key counting, owned by the tally screen. MainActivity forwards
+ * volume presses here only while this handler is installed (set on
+ * entering tally, cleared on leaving) — so volume behaves normally
+ * everywhere else. No permission, no focus tricks.
+ */
+object TallyVolumeKeys {
+    var onVolume: (() -> Unit)? = null
 }
