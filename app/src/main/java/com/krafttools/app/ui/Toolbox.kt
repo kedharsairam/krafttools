@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -51,6 +53,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -234,32 +237,22 @@ private fun LevelScreen(onBack: () -> Unit) {
             )
             return@Scaffold
         }
-        val (pitch, roll) = pitchRoll(g)
+        val orientation = orientationOf(g)
         val (zp, zr) = zero ?: (0f to 0f)
-        val dp = pitch - zp
-        val dr = roll - zr
-        val level = Math.hypot(dp.toDouble(), dr.toDouble()).toFloat()
-        val isLevel = level < 1f
+        val tilt = Tilt(
+            orientation.pitchDeg - zp,
+            orientation.rollDeg - zr,
+            isUseless = orientation.isUseless,
+        )
+        val level = tilt.magnitude
+        val isLevel = tilt.isLevel && !tilt.isUseless
+        val near = tilt.isNear
 
-        // Audio + haptic feedback, driven by composition: crossing into
-        // level ticks once (vibrate 30ms); inside level, a soft beat.
+        // Phase B: the success moment. Crossing into level flashes the
+        // vial green and confirms with a haptic — the whole point of a
+        // spirit level is knowing you got there without looking.
         LaunchedEffect(isLevel) {
-            if (isLevel && !wasLevel) {
-                try {
-                    (context.getSystemService(Context.VIBRATOR_SERVICE)
-                        as android.os.Vibrator).let { vib ->
-                        if (vib.hasVibrator()) {
-                            vib.vibrate(
-                                android.os.VibrationEffect.createOneShot(
-                                    30,
-                                    android.os.VibrationEffect.DEFAULT_AMPLITUDE,
-                                ),
-                            )
-                        }
-                    }
-                } catch (_: Exception) {
-                }
-            }
+            if (isLevel && !wasLevel) Haptics.confirm(view)
             wasLevel = isLevel
         }
         LaunchedEffect(isLevel, sound) {
@@ -277,32 +270,56 @@ private fun LevelScreen(onBack: () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(24.dp),
+                .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            Spacer(modifier = Modifier.height(4.dp))
+            ReadingHeader(
+                value = "%.1f".format(level.toDouble()),
+                unit = "°",
+                status = when {
+                    tilt.isUseless -> "turn over"
+                    isLevel -> "level"
+                    near -> "nearly"
+                    else -> "tilted"
+                },
+                live = isLevel || near,
+            )
+            // The instruction is the actionable part: which way to move.
             Text(
-                text = "%.1f°".format(level.toDouble()),
-                style = MaterialTheme.typography.displayLarge,
-                color = if (level < 1f) {
+                text = tiltInstruction(tilt) ?: if (isLevel) "hold still" else "—",
+                style = MaterialTheme.typography.titleMedium,
+                color = if (isLevel) {
                     MaterialTheme.colorScheme.primary
                 } else {
-                    MaterialTheme.colorScheme.onSurface
+                    MaterialTheme.colorScheme.onSurfaceVariant
                 },
             )
-            Text(
-                text = if (isLevel) "Level" else "Tilted",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+
+            val (bx, by) = bubbleOffset(tilt)
             Bubble(
-                dx = (dr / 45f).coerceIn(-1f, 1f),
-                dy = (dp / 45f).coerceIn(-1f, 1f),
+                dx = bx,
+                dy = by,
                 level = isLevel,
+                near = near,
+                useless = tilt.isUseless,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f),
+                    .weight(1f),
             )
+
+            // Raw pitch and roll: the numbers behind the bubble, so a
+            // user can read a surface the vial cannot resolve.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                AngleStat("pitch", tilt.pitchDeg)
+                AngleStat("roll", tilt.rollDeg)
+                AngleStat("zero", if (zero == null) null else 0f)
+            }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -314,24 +331,172 @@ private fun LevelScreen(onBack: () -> Unit) {
                 )
                 androidx.compose.material3.Switch(
                     checked = sound,
-                    onCheckedChange = { sound = it },
+                    onCheckedChange = {
+                        Haptics.tick(view)
+                        sound = it
+                    },
                 )
             }
             Text(
-                text = "Lay flat, then tap Calibrate to zero this surface.",
+                text = "Lay flat, then Calibrate to zero this surface. " +
+                    "The vial is level within 1°.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            androidx.compose.material3.Button(
+            androidx.compose.material3.OutlinedButton(
                 onClick = {
                     Haptics.confirm(view)
-                    zero = pitch to roll
+                    zero = orientation.pitchDeg to orientation.rollDeg
                 },
-                modifier = Modifier.heightIn(min = 48.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
             ) {
-                Text(if (zero == null) "Calibrate" else "Re-calibrate")
+                Text(if (zero == null) "Calibrate this surface" else "Re-calibrate")
             }
         }
+    }
+}
+
+/** One labeled angle under the vial. */
+@Composable
+private fun AngleStat(label: String, degrees: Float?) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = label.uppercase(),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = if (degrees == null) "—" else "%+.1f°".format(degrees),
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+/**
+ * The vial. Machined bezel, a target cross at the centre, and a bubble
+ * that lags on a spring like liquid in a real tube. Crossing into
+ * level washes the housing green (Phase B) — a level that confirms
+ * only in text is a level you have to read.
+ */
+@Composable
+private fun Bubble(
+    dx: Float,
+    dy: Float,
+    level: Boolean,
+    near: Boolean,
+    useless: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val ring = MaterialTheme.colorScheme.outlineVariant
+    val accent = MaterialTheme.colorScheme.primary
+    val success = Color(0xFF3DDC84)
+    val danger = MaterialTheme.colorScheme.error
+    // Spring physics on the bubble: it lags and settles like a real
+    // vial instead of teleporting with the sensor.
+    val adx by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = dx,
+        animationSpec = androidx.compose.animation.core.spring(
+            dampingRatio = 0.55f,
+            stiffness = 220f,
+        ),
+        label = "bubbleX",
+    )
+    val ady by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = dy,
+        animationSpec = androidx.compose.animation.core.spring(
+            dampingRatio = 0.55f,
+            stiffness = 220f,
+        ),
+        label = "bubbleY",
+    )
+    // The wash blooms in rather than snapping, so success feels like
+    // an event instead of a state change.
+    val flash by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (level) 1f else 0f,
+        animationSpec = androidx.compose.animation.core.spring(
+            dampingRatio = 0.6f,
+            stiffness = 260f,
+        ),
+        label = "levelFlash",
+    )
+    val bubbleColor = when {
+        level -> success
+        useless -> danger
+        near -> accent
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+    Canvas(modifier = modifier) {
+        val r = size.minDimension / 2f
+        val cx = size.width / 2f
+        val cy = size.height / 2f
+        // Machined bezel: outer ring + cardinal ticks give the vial
+        // a physical housing instead of floating lines.
+        drawCircle(color = ring, radius = r, style = androidx.compose.ui.graphics.drawscope.Stroke(4f))
+        drawCircle(color = ring, radius = r * 0.97f, style = androidx.compose.ui.graphics.drawscope.Stroke(10f))
+        // Success wash, inside the housing.
+        if (flash > 0.01f) {
+            drawCircle(
+                brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                    colors = listOf(
+                        success.copy(alpha = 0.22f * flash),
+                        success.copy(alpha = 0f),
+                    ),
+                    center = Offset(cx, cy),
+                    radius = r * 0.95f,
+                ),
+                radius = r * 0.95f,
+                center = Offset(cx, cy),
+            )
+        }
+        for (deg in 0 until 360 step 15) {
+            val rad = Math.toRadians(deg.toDouble())
+            val major = deg % 90 == 0
+            val r1 = if (major) 0.86f else 0.92f
+            drawLine(
+                color = if (major) ring else ring.copy(alpha = 0.6f),
+                start = Offset(
+                    cx + (r * r1 * Math.sin(rad)).toFloat(),
+                    cy - (r * r1 * Math.cos(rad)).toFloat(),
+                ),
+                end = Offset(
+                    cx + (r * 0.97f * Math.sin(rad)).toFloat(),
+                    cy - (r * 0.97f * Math.cos(rad)).toFloat(),
+                ),
+                strokeWidth = if (major) 5f else 2f,
+            )
+        }
+        // Target cross: what "level" looks like, drawn even when empty.
+        val targetR = r * 0.25f
+        drawCircle(color = ring, radius = targetR, center = Offset(cx, cy), style = androidx.compose.ui.graphics.drawscope.Stroke(3f))
+        drawLine(
+            color = ring.copy(alpha = 0.7f),
+            start = Offset(cx - targetR * 1.5f, cy),
+            end = Offset(cx + targetR * 1.5f, cy),
+            strokeWidth = 2f,
+        )
+        drawLine(
+            color = ring.copy(alpha = 0.7f),
+            start = Offset(cx, cy - targetR * 1.5f),
+            end = Offset(cx, cy + targetR * 1.5f),
+            strokeWidth = 2f,
+        )
+        // The bubble: a body with a highlight, not a flat dot.
+        val bR = r * 0.16f
+        val bc = Offset(cx + adx * r * 0.8f, cy + ady * r * 0.8f)
+        drawCircle(
+            color = bubbleColor.copy(alpha = 0.25f),
+            radius = bR * 1.9f,
+            center = bc,
+        )
+        drawCircle(color = bubbleColor, radius = bR, center = bc)
+        drawCircle(
+            color = Color.White.copy(alpha = 0.45f),
+            radius = bR * 0.38f,
+            center = Offset(bc.x - bR * 0.3f, bc.y - bR * 0.3f),
+        )
     }
 }
 

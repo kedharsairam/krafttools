@@ -55,12 +55,3 @@ fun rememberSensor(
     return reading
 }
 
-/** Pitch/roll in degrees from a gravity vector (accelerometer). */
-fun pitchRoll(gravity: FloatArray): Pair<Float, Float> {
-    val ax = gravity[0].toDouble()
-    val ay = gravity[1].toDouble()
-    val az = gravity[2].toDouble()
-    val pitch = Math.toDegrees(Math.atan2(-ax, Math.hypot(ay, az))).toFloat()
-    val roll = Math.toDegrees(Math.atan2(ay, Math.hypot(ax, az))).toFloat()
-    return pitch to roll
-}
