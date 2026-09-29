@@ -199,6 +199,51 @@ object SpeedMath {
     fun needleRotation(fraction: Float): Float =
         DIAL_START_ANGLE + DIAL_SWEEP * fraction.coerceIn(0f, 1f) - SCREEN_UP_ANGLE
 
+    /**
+     * Below this the fix is precise enough to trust as a speed.
+     *
+     * Approximate location reports accuracies of 1000-2000 m, which
+     * sounds extreme but is Android's documented behaviour for a coarse
+     * fix. At that error the position is still good enough to compute a
+     * speed from successive fixes; what it is not good enough for is the
+     * trip odometer, because the teleport guard rejects any step over
+     * 500 m and every step at this accuracy is over it.
+     */
+    const val PRECISE_ENOUGH_METRES = 30f
+
+    /** Whether a fix is precise enough to contribute to the odometer. */
+    fun countsTowardsTrip(accuracyMetres: Float?): Boolean =
+        accuracyMetres != null &&
+            accuracyMetres.isFinite() &&
+            accuracyMetres < PRECISE_ENOUGH_METRES
+
+    /**
+     * Why the odometer is not moving, in the user's terms. A trip
+     * showing 0.00 km forever with no explanation reads as a broken
+     * odometer; the real reason is the permission the user chose.
+     */
+    fun tripAccuracyNote(accuracyMetres: Float?): String? = when {
+        accuracyMetres == null || !accuracyMetres.isFinite() ->
+            "No fix yet."
+        // The format argument is bound to the WHOLE parenthesised
+        // concatenation. Writing "a" + "b".format(x) applies the format
+        // to "b" alone and prints the placeholder literally in the
+        // first half — which is exactly what it did here, so the note
+        // read "only good to %.0f m". FormatStringTest exists for this.
+        accuracyMetres >= 1000f -> (
+            "Location is set to approximate, so fixes are only good to " +
+                "about %.0f m. That is fine for speed, but the trip " +
+                "distance needs metre-level fixes and will stay at " +
+                "0.00 km until you turn on precise location."
+            ).format(accuracyMetres)
+        !countsTowardsTrip(accuracyMetres) -> (
+            "The current fix is only good to %.0f m, so it is too coarse " +
+                "to add to the trip distance. Go outside and wait for a " +
+                "tighter fix."
+            ).format(accuracyMetres)
+        else -> null
+    }
+
     /** Full-scale for the gauge, per unit. */
     fun fullScale(metric: Boolean): Float = if (metric) 120f else 75f
 

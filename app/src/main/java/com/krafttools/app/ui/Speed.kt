@@ -184,7 +184,17 @@ private fun SpeedBody(onBack: () -> Unit) {
                     )
                     emaSeeded = true
                 }
-                if (tripActive && loc.hasAccuracy() && loc.accuracy < 25f) {
+                // Note: the trip judges THIS fix's own accuracy, not
+                // the sticky one. Stickiness is right for the display —
+                // a provider that told us how good it is has not
+                // un-told us — but a fix that carries no accuracy of its
+                // own must not be allowed to inherit an old claim and
+                // add to the odometer on it.
+                if (tripActive &&
+                    SpeedMath.countsTowardsTrip(
+                        if (loc.hasAccuracy()) loc.accuracy else null,
+                    )
+                ) {
                     // Junk fixes (tunnels, first-fix jumps) would invent
                     // kilometers: only accumulate fixes better than 25 m.
                     val prevLat = lastLat
@@ -382,6 +392,15 @@ private fun SpeedBody(onBack: () -> Unit) {
                 ) {
                     Text("Clear trip")
                 }
+            }
+            // The copy must not contradict the accuracy figure directly
+            // above it. With approximate location the screen said
+            // "±2000 m accuracy" and, two lines later, "Phone GPS is
+            // ±3–5 m on a good day" — and the odometer silently stayed
+            // at 0.00 km forever, which reads as a broken instrument.
+            val tripNote = SpeedMath.tripAccuracyNote(accuracy)
+            if (tripNote != null && (tripActive || tripStartMs != 0L)) {
+                ToolHint(tripNote, warn = true)
             }
             Text(
                 "Phone GPS is ±3–5 m on a good day, so the number lags " +

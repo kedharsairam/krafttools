@@ -3,6 +3,7 @@ package com.krafttools.app
 import com.krafttools.app.ui.SpeedMath
 import com.krafttools.app.ui.formatElapsed
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -388,6 +389,87 @@ class SpeedMathTest {
                 expectedH * 0.15f,
             )
         }
+    }
+
+    // --- approximate location, which is a permission the user chooses ---
+    //
+    // With "approximate" granted, Android reports fixes good only to
+    // 1000-2000 m. That is fine for a speed, and useless for a trip:
+    // the teleport guard rejects any step over 500 m, so every step at
+    // that accuracy is rejected and the odometer sits at 0.00 km
+    // forever. Saying so beats an instrument that looks broken.
+
+    @Test
+    fun aPreciseFixCountsTowardsTheTrip() {
+        assertTrue(SpeedMath.countsTowardsTrip(5f))
+        assertTrue(SpeedMath.countsTowardsTrip(25f))
+    }
+
+    @Test
+    fun anApproximateFixDoesNotCountTowardsTheTrip() {
+        // 2000 m is what Android actually reports for a coarse fix.
+        assertTrue(!SpeedMath.countsTowardsTrip(2000f))
+        assertTrue(!SpeedMath.countsTowardsTrip(1000f))
+        assertTrue(!SpeedMath.countsTowardsTrip(65f))
+    }
+
+    @Test
+    fun aMissingOrImpossibleAccuracyDoesNotCount() {
+        assertTrue(!SpeedMath.countsTowardsTrip(null))
+        assertTrue(!SpeedMath.countsTowardsTrip(Float.NaN))
+        assertTrue(!SpeedMath.countsTowardsTrip(Float.POSITIVE_INFINITY))
+    }
+
+    @Test
+    fun theApproximateCaseIsExplained() {
+        val note = SpeedMath.tripAccuracyNote(2000f)!!
+        assertTrue(note, note.contains("approximate"))
+        assertTrue("the note should name the remedy", note.contains("precise"))
+    }
+
+    @Test
+    fun noNoteEverPrintsAPlaceholder() {
+        // "a" + "b".format(x) applies the format to "b" alone and
+        // leaves a literal %.0f in the first half. That reached the
+        // screen on the approximate branch before this test existed.
+        for (a in listOf(null, 0f, 5f, 65f, 999f, 1000f, 2000f, 12000f,
+            Float.NaN, Float.POSITIVE_INFINITY)) {
+            val note = SpeedMath.tripAccuracyNote(a) ?: continue
+            assertFalse(
+                "accuracy=$a produced an unformatted note: $note",
+                note.contains("%"),
+            )
+            assertTrue(
+                "accuracy=$a produced an empty note",
+                note.isNotBlank(),
+            )
+        }
+    }
+
+    @Test
+    fun theApproximateNoteQuotesTheRealFigure() {
+        // Android reports ~2000 m for a coarse fix; the note has to say
+        // the number it was actually given, not a guess.
+        assertTrue(SpeedMath.tripAccuracyNote(2000f)!!.contains("2000"))
+        assertTrue(SpeedMath.tripAccuracyNote(1500f)!!.contains("1500"))
+    }
+
+    @Test
+    fun aMerelyLooseFixGetsADifferentNoteThanApproximateLocation() {
+        // 65 m is a normal fix indoors, not a permission problem, and
+        // telling the user to change their location settings would be
+        // wrong advice.
+        val note = SpeedMath.tripAccuracyNote(65f)!!
+        assertTrue(note, note.contains("65"))
+        assertTrue(
+            "should not blame the permission choice: $note",
+            !note.contains("approximate"),
+        )
+    }
+
+    @Test
+    fun aGoodFixProducesNoNoteAtAll() {
+        assertNull(SpeedMath.tripAccuracyNote(5f))
     }
 
     // --- the needle: a constant 270-degree error, and it was invisible
