@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.krafttools.app-mergeDebugResources-47:/values-v30/values-v30.xml",
+            "outputFile": "com.krafttools.app-mergeDebugResources-53:/values-v30/values-v30.xml",
             "map": [
                 {
                     "source": "/home/kedhar/.gradle/caches/9.7.1/transforms/4be30ed5fbf5d158eb3eb53d79578037/transformed/material3/res/values-v30/values-v30.xml",

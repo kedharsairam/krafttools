@@ -25,8 +25,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -34,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlin.math.pow
+import kotlinx.coroutines.launch
 
 // Barometer + altimeter. Barometer chips report absolute station pressure;
 // altitude is derived, never measured, so both numbers are shown with
@@ -47,6 +50,9 @@ fun BarometerScreen(onBack: () -> Unit) {
     val history = rememberSaveable(saver = floatListSaver) { mutableStateListOf<Float>() }
     var lastSample by rememberSaveable { mutableStateOf(0L) }
     var seaLevelInput by rememberSaveable { mutableStateOf("1013.25") }
+    val context = LocalContext.current
+    val baroStore = remember { com.krafttools.app.data.BaroStore(context) }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -75,6 +81,14 @@ fun BarometerScreen(onBack: () -> Unit) {
             history.add(pressure)
             if (history.size > 120) history.removeAt(0)
             lastSample = now
+            // Feed the home-screen widget (same cadence, tiny write).
+            // Widget shows the short arrow; the screen owns the sentence.
+            scope.launch {
+                try {
+                    baroStore.save(pressure, null)
+                } catch (_: Exception) {
+                }
+            }
         }
         // Rolling mean rides on the trace data so spikes (doors, HVAC)
         // stay visible in the graph while the headline stays readable.
@@ -100,6 +114,25 @@ fun BarometerScreen(onBack: () -> Unit) {
                 t <= 0.5 -> "Steady — no change ahead"
                 t < 2.0 -> "Rising — improving"
                 else -> "Rising fast — fair spell coming"
+            }
+        }
+        // Widget arrow mirrors the forecast direction (short form).
+        // Saved only on change: recompositions fire constantly.
+        var lastArrow by rememberSaveable { mutableStateOf<String?>(null) }
+        val arrow = tendency?.let { t ->
+            when {
+                t < -0.5 -> "↓ falling"
+                t > 0.5 -> "↑ rising"
+                else -> "→ steady"
+            }
+        }
+        if (arrow != null && arrow != lastArrow) {
+            lastArrow = arrow
+            scope.launch {
+                try {
+                    baroStore.save(smooth, arrow)
+                } catch (_: Exception) {
+                }
             }
         }
         val rawAlt = SensorManager.getAltitude(

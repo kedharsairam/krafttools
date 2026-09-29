@@ -7,3 +7,5 @@ font space_grotesk
 mipmap ic_launcher
 mipmap ic_launcher_round
 string app_name
+string widget_desc
+xml baro_widget_info

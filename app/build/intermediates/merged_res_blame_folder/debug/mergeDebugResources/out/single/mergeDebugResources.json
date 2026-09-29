@@ -1,26 +1,30 @@
 [
     {
-        "merged": "com.krafttools.app-debug-49:/font_space_grotesk.ttf.flat",
-        "source": "com.krafttools.app-main-51:/font/space_grotesk.ttf"
+        "merged": "com.krafttools.app-debug-55:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.krafttools.app-main-57:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "/home/kedhar/.gradle/daemon/9.7.1/com.krafttools.app-debug-49:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "/home/kedhar/.gradle/daemon/9.7.1/com.krafttools.app-main-51:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "com.krafttools.app-debug-55:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.krafttools.app-main-57:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "/home/kedhar/.gradle/daemon/9.7.1/com.krafttools.app-debug-49:/drawable_ic_tile_level.xml.flat",
-        "source": "/home/kedhar/.gradle/daemon/9.7.1/com.krafttools.app-main-51:/drawable/ic_tile_level.xml"
+        "merged": "com.krafttools.app-debug-55:/drawable_ic_tile_torch.xml.flat",
+        "source": "com.krafttools.app-main-57:/drawable/ic_tile_torch.xml"
     },
     {
-        "merged": "/home/kedhar/.gradle/daemon/9.7.1/com.krafttools.app-debug-49:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "/home/kedhar/.gradle/daemon/9.7.1/com.krafttools.app-main-51:/drawable/ic_launcher_foreground.xml"
+        "merged": "com.krafttools.app-debug-55:/xml_baro_widget_info.xml.flat",
+        "source": "com.krafttools.app-main-57:/xml/baro_widget_info.xml"
     },
     {
-        "merged": "/home/kedhar/.gradle/daemon/9.7.1/com.krafttools.app-debug-49:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "/home/kedhar/.gradle/daemon/9.7.1/com.krafttools.app-main-51:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "com.krafttools.app-debug-55:/drawable_ic_tile_level.xml.flat",
+        "source": "com.krafttools.app-main-57:/drawable/ic_tile_level.xml"
     },
     {
-        "merged": "/home/kedhar/.gradle/daemon/9.7.1/com.krafttools.app-debug-49:/drawable_ic_tile_torch.xml.flat",
-        "source": "/home/kedhar/.gradle/daemon/9.7.1/com.krafttools.app-main-51:/drawable/ic_tile_torch.xml"
+        "merged": "com.krafttools.app-debug-55:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.krafttools.app-main-57:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.krafttools.app-debug-55:/font_space_grotesk.ttf.flat",
+        "source": "com.krafttools.app-main-57:/font/space_grotesk.ttf"
     }
 ]
