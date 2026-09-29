@@ -54,6 +54,38 @@ fun rememberSensor(
 class SensorReading {
     /** Set by the composable that owns this reading, to redraw on it. */
     internal var onChange: () -> Unit = {}
+
+    /**
+     * Bumped on every event, and readable as Compose state.
+     *
+     * `values` below is a plain `var`: the composable forces a redraw
+     * through a separate tick rather than by making the array itself
+     * state. That is fine for a tool that reads the value *during
+     * composition*, because the tick has already redrawn by then.
+     *
+     * It is not fine for a tool that wants to *stream* samples in a
+     * coroutine. `snapshotFlow { reading.values }` captures the array
+     * reference into a coroutine-local `val` and then observes nothing
+     * that can ever change, so the flow emits once — usually `null`,
+     * because the first frame runs before the sensor has delivered —
+     * and never again.
+     *
+     * That is not a hypothetical. The vibration meter and the
+     * barometer both did this, and both had empty analysis windows
+     * forever: the vibration trace never moved off zero and the
+     * barometer never plotted a single sample. Neither crashed, neither
+     * looked absent, and the barometer's hero number still updated,
+     * so nothing in the app said anything was wrong.
+     *
+     * So the reading carries its own observable version, and a
+     * streaming tool collects on that and reads the array inside the
+     * collector.
+     */
+    private val eventCount = androidx.compose.runtime.mutableIntStateOf(0)
+
+    /** Increments once per sensor event. Read this to await data. */
+    val version: Int get() = eventCount.intValue
+
     var values: FloatArray? = null
         private set
 
@@ -72,21 +104,25 @@ class SensorReading {
     internal fun deliver(v: FloatArray) {
         values = v
         onChange()
+        eventCount.intValue++
     }
 
     internal fun reportAccuracy(a: Int) {
         accuracy = a
         onChange()
+        eventCount.intValue++
     }
 
     internal fun markAbsent() {
         absent = true
         onChange()
+        eventCount.intValue++
     }
 
     internal fun markFailed() {
         failed = true
         onChange()
+        eventCount.intValue++
     }
 
     /** True once a usable value has ever arrived. */

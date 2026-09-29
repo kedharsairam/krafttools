@@ -87,7 +87,8 @@ private val PLAUSIBLE_HPA = 300f..1100f
  */
 @Composable
 fun BarometerScreen(onBack: () -> Unit) {
-    val reading = rememberSensor(Sensor.TYPE_PRESSURE).values
+    val baroReading = rememberSensor(Sensor.TYPE_PRESSURE)
+    val reading = baroReading.values
     val context = LocalContext.current
     val view = LocalView.current
     val baroStore = remember { com.krafttools.app.data.BaroStore(context) }
@@ -111,7 +112,14 @@ fun BarometerScreen(onBack: () -> Unit) {
     // FFT: the window filled at the refresh rate while the analysis
     // assumed the sample rate.
     LaunchedEffect(Unit) {
-        snapshotFlow { reading }.collect { values ->
+        // Same fix as the vibration meter: collect on the reading's
+        // observable version and read the array inside the collector.
+        // Collecting on a captured `reading.values` emitted once, before
+        // the sensor's first event, and the 30-minute window therefore
+        // never received a single sample — the tool showed a live
+        // number, an empty plot, and a caption telling the user to wait.
+        snapshotFlow { baroReading.version }.collect {
+            val values = baroReading.values
             val pressure = values?.getOrNull(0) ?: return@collect
             val now = SystemClock.elapsedRealtime()
             if (now - lastSampleAt < SAMPLE_SECONDS * 1000) return@collect
@@ -244,15 +252,14 @@ fun BarometerScreen(onBack: () -> Unit) {
                     .fillMaxWidth()
                     .weight(1f),
             )
-            if (window.isEmpty()) {
-                Text(
-                    text = "Collecting — the trace needs a minute of " +
-                        "samples before it means anything.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(vertical = 4.dp),
-                )
-            }
+            ToolCaption(
+                text = if (window.isEmpty()) {
+                    "Collecting — the trace needs a minute of samples " +
+                        "before it means anything."
+                } else {
+                    null
+                },
+            )
 
             StatRow {
                 StatChip("mean", if (window.isEmpty()) "—" else "%.2f".format(Locale.ROOT, smooth.toDouble()))

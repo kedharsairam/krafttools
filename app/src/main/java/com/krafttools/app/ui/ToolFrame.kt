@@ -30,6 +30,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.core.Animatable
 
 /**
  * The frame every tool sits in.
@@ -243,4 +252,66 @@ fun NoSensor(
             }
         }
     }
+}
+
+/**
+ * A caption whose height never changes.
+ *
+ * These tools are a number and an instrument, and the instrument takes
+ * whatever height is left. That makes the instrument's size a function
+ * of *everything above it* — so a line of help text that appears when a
+ * state changes, or a status line that grows from one row to two, does
+ * not add a sentence. It takes space from the meter, and the meter
+ * visibly shrinks and re-grows under the user's thumb. On a measuring
+ * instrument that reads as the tool flinching.
+ *
+ * So the caption has a home with a fixed height, and its contents come
+ * and go inside it. One row of type, two at most, and the layout below
+ * never learns that anything happened.
+ */
+@Composable
+fun ToolCaption(
+    text: String?,
+    modifier: Modifier = Modifier,
+    maxLines: Int = 2,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            // Two rows, reserved whether or not there is anything to
+            // say. This is the whole point: the height is constant.
+            .heightIn(min = if (maxLines > 1) 40.dp else 20.dp),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        if (text != null) {
+            // A short cross-fade, so a changed sentence reads as a
+            // change rather than as a jump. The value is resolved
+            // outside the layer lambda, which is not a composable
+            // scope.
+            val alpha = captionAlpha(text)
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                maxLines = maxLines,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.graphicsLayer { this.alpha = alpha },
+            )
+        }
+    }
+}
+
+/**
+ * A caption that eases in when the sentence changes.
+ *
+ * Keyed on the text, so a new sentence gets its own fade and a repeat
+ * of the same sentence does not re-animate. The height is fixed either
+ * way — this only softens the swap, it does not make room for it.
+ */
+@Composable
+private fun captionAlpha(text: String): Float {
+    val alpha = remember(text) { Animatable(0f) }
+    LaunchedEffect(text) { alpha.animateTo(1f, tween(200)) }
+    return alpha.value
 }

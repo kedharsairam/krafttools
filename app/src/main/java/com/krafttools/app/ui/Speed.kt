@@ -56,9 +56,7 @@ fun SpeedScreen(onBack: () -> Unit) {
         // either one is enough for a scan or a position fix.
         alsoAccepts = android.Manifest.permission.ACCESS_COARSE_LOCATION,
         tool = "Speedometer",
-        reason = "GPS position is read on this phone only to work out " +
-            "your speed. It is never sent anywhere, and the app has " +
-            "no network permission, so it cannot be.",
+        reason = "To measure your speed. Your position stays on this phone.",
         onBack = onBack,
     ) {
         SpeedBody(onBack)

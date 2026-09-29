@@ -42,6 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Locale
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 
 /**
  * Spirit level.
@@ -157,6 +159,11 @@ fun LevelScreen(onBack: () -> Unit) {
                 live = isLevel || near,
             )
             // The instruction is the actionable part: which way to move.
+            // One row, always. This sentence changes with every degree
+            // of tilt, and a second row here took the vial's height
+            // with it — the bubble visibly resized while the user was
+            // trying to level something. Its colour may change; its
+            // height may not.
             Text(
                 text = tiltInstruction(tilt) ?: if (isLevel) "hold still" else "—",
                 style = MaterialTheme.typography.titleMedium,
@@ -165,6 +172,9 @@ fun LevelScreen(onBack: () -> Unit) {
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
             )
 
             val (bx, by) = bubbleOffset(tilt)
@@ -230,8 +240,7 @@ fun LevelScreen(onBack: () -> Unit) {
 )
             }
             Text(
-                text = "Lay flat, then Calibrate to zero this surface. " +
-                    "The vial is level within 1°.",
+                                text = "Lay flat, then Calibrate.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

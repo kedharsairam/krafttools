@@ -63,11 +63,11 @@ fun TorchScreen(onBack: () -> Unit) {
     PermissionGate(
         permission = android.Manifest.permission.CAMERA,
         tool = "Torch",
-        reason = "The flashlight LED lives behind the camera stack, " +
-            "so Android asks for camera access. The lens is never " +
-            "opened and no picture is ever taken.",
+        reason = "Android puts the torch behind the camera, so it asks for " +
+            "camera. The lens is never used.",
     
-        onBack = onBack,) {
+        onBack = onBack,
+    ) {
         TorchBody(onBack)
     }
 }
@@ -362,8 +362,7 @@ private fun TorchBody(onBack: () -> Unit) {
             }
             if (!strobe && !sos) {
                 Text(
-                    text = "Strobe tops out at 12 Hz. Never point it at " +
-                        "anyone's face; the LED also gets hot.",
+                    text = "Never point the strobe at a face.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

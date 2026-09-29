@@ -60,10 +60,9 @@ fun ColorPickerScreen(onBack: () -> Unit) {
     PermissionGate(
         permission = android.Manifest.permission.CAMERA,
         tool = "Color picker",
-        reason = "Point at a surface and the center spot's color appears below. " +
-            "Frames never leave the phone — sampling happens on-device.",
-    
-        onBack = onBack,) {
+        reason = "To sample a surface's colour.",
+        onBack = onBack,
+    ) {
         ColorPickerBody(onBack)
     }
 }
@@ -309,8 +308,7 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                 }
             }
             Text(
-                text = "Approximate only — auto white-balance shifts hues, " +
-                    "so never use this as a Pantone reference.",
+                                text = "Approximate. Auto white-balance shifts hue.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

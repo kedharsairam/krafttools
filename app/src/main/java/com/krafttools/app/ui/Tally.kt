@@ -42,6 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import java.util.Locale
+import kotlin.math.ceil
+import kotlin.math.min
 
 /**
  * Tally + stopwatch. Full-viewport composition:
@@ -249,18 +251,34 @@ private fun TallyMarks(count: Int, modifier: Modifier = Modifier) {
         val maxH = size.height * 0.74f
         val groups = (count + 4) / 5
 
-        // Fit: pick the tallest mark height that still lays every gate
-        // out on the wall. Columns and rows trade off against each other,
-        // so iterate to a fixed point instead of guessing twice.
-        var h = maxH
+        // Fit: the tallest mark height that still lays every gate out
+        // on the wall.
+        //
+        // The old code coupled height, column count and row count and
+        // iterated four times hoping to settle. It does not settle: each
+        // answer changes the question, and the loop ended wherever it
+        // happened to be on the fourth pass. Past about forty marks that
+        // landed on a single row of ever-shorter bars marching off the
+        // right-hand edge — technically a fit, visually a smear, and a
+        // waste of the space above the baseline.
+        //
+        // So the row count is decided first and the height follows from
+        // it, which is a one-way dependency that cannot oscillate. The
+        // block also stays roughly as wide as it is tall rather than
+        // stretching into a ribbon.
+        val targetRows = if (groups <= 1) {
+            1
+        } else {
+            ceil(groups / MAX_COLUMNS.toFloat()).toInt().coerceAtLeast(1)
+        }
+        var h = min(maxH, baseY / (targetRows * ROW_PITCH))
         var cols = columnsFor(size.width, h)
-        var rows = if (groups == 0) 1 else (groups + cols - 1) / cols
-        repeat(4) {
-            val next = (baseY / (rows * ROW_PITCH)).coerceAtMost(h)
-            if (next == h) return@repeat
-            h = next
-            cols = columnsFor(size.width, h)
-            rows = if (groups == 0) 1 else (groups + cols - 1) / cols
+        // If the height that fits those rows leaves the block narrow,
+        // spend the spare width on more columns and re-fit once.
+        repeat(2) {
+            val wanted = (groups + targetRows - 1) / targetRows
+            if (cols >= wanted) return@repeat
+            cols = wanted.coerceAtMost(columnsFor(size.width, h))
         }
         val groupGap = h * 0.3f
         val slotW = h * 0.6f + groupGap
@@ -342,6 +360,15 @@ private fun TallyMarks(count: Int, modifier: Modifier = Modifier) {
 
 /** Row spacing as a multiple of mark height — the wall's vertical rhythm. */
 private const val ROW_PITCH = 1.12f
+
+/**
+ * The most gates a row may hold before the block wraps.
+ *
+ * A tally wall is a block of gates, not a scroll. Past eight the marks
+ * stop being countable at a glance and start being a scale, which is
+ * the thing this tool exists not to be.
+ */
+private const val MAX_COLUMNS = 8
 
 /** Gate language: five to a gate, the way the marks are actually drawn. */
 private fun gateReadout(count: Int): String {

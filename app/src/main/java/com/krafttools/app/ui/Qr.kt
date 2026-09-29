@@ -114,9 +114,7 @@ fun QrScreen(onBack: () -> Unit) {
         permission = android.Manifest.permission.CAMERA,
         tool = "QR scanner",
         onBack = onBack,
-        reason = "Point at a code and its text appears below. Frames never " +
-            "leave the phone — decoding happens on-device, and nothing is " +
-            "uploaded anywhere.",
+        reason = "To scan QR codes.",
     ) {
         QrBody(onBack)
     }

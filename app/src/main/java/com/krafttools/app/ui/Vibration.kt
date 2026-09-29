@@ -60,12 +60,13 @@ private const val SAMPLE_HZ = 50f
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VibrationScreen(onBack: () -> Unit) {
-    val accel = rememberSensor(
+    val accelReading = rememberSensorReading(
         Sensor.TYPE_ACCELEROMETER,
         // GAME rate (≈50 Hz): plenty for a viewer. FASTEST (0 µs)
         // requires HIGH_SAMPLING_RATE_SENSORS and crashes without it.
         SensorManager.SENSOR_DELAY_GAME,
-    ).values
+    )
+    val accel = accelReading.values
     val view = LocalView.current
 
     // Per-channel rolling windows, plus the live reading per channel.
@@ -88,8 +89,14 @@ fun VibrationScreen(onBack: () -> Unit) {
     LaunchedEffect(Unit) {
         var last = 0L
         var sinceAnalysis = 0
-        snapshotFlow { accel }.collect { g ->
-            if (g == null) return@collect
+        // Collect on the reading's own version, not on the array
+        // reference. `snapshotFlow { accel }` captured a coroutine-local
+        // val that nothing could ever change, so this emitted once —
+        // null, before the sensor's first event — and never again. The
+        // analysis window was therefore empty for the life of the
+        // process and the trace sat on zero forever.
+        snapshotFlow { accelReading.version }.collect {
+            val g = accelReading.values ?: return@collect
             val now = android.os.SystemClock.elapsedRealtime()
             val dt = if (last == 0L) 1f / SAMPLE_HZ else ((now - last) / 1000f).coerceIn(0.001f, 0.2f)
             last = now
@@ -192,15 +199,14 @@ fun VibrationScreen(onBack: () -> Unit) {
                     .fillMaxWidth()
                     .weight(1f),
             )
-            if (window.isEmpty()) {
-                Text(
-                    text = "Waiting for the accelerometer — lay the " +
-                        "phone on the machine you want to measure.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(vertical = 4.dp),
-                )
-            }
+            ToolCaption(
+                text = if (window.isEmpty()) {
+                    "Waiting for the accelerometer — lay the phone on " +
+                        "the machine you want to measure."
+                } else {
+                    null
+                },
+            )
 
             // Axis selector, phyphox style: which channel the trace and
             // the number are talking about, stated explicitly.
@@ -230,9 +236,7 @@ fun VibrationScreen(onBack: () -> Unit) {
                 }
             }
             Text(
-                text = "Lay the phone on the machine. A still table reads near " +
-                    "zero; a running motor shows its rhythm. Total watches the " +
-                    "vector, an axis watches that axis with gravity removed.",
+                                text = "Lay the phone on the machine.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

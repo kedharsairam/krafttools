@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import java.util.Locale
+import androidx.compose.ui.text.style.TextOverflow
 
 /**
  * The shared reading header: every measurement tool speaks here.
@@ -68,10 +69,19 @@ fun ReadingHeader(
             },
         )
         if (status != null) {
+            // One line, always. The status changes as the reading
+            // changes, and a status that grew from one row to two took
+            // the instrument's height with it — the meter visibly
+            // resized under the user's thumb several times a second.
+            // An ellipsis costs a word; a moving instrument costs the
+            // whole reading.
             Text(
                 text = status.uppercase(),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
             )
         }
         if (caveat != null) {
@@ -80,6 +90,8 @@ fun ReadingHeader(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -229,13 +241,33 @@ fun TraceGraph(
             }
             lines = ticks
         } else {
-            lines = listOf(0.25f, 0.5f, 0.75f, 1f)
+            // Fractions of the span, CONVERTED TO VALUES. These used to
+            // be the bare fractions 0.25 / 0.5 / 0.75 / 1, which `norm`
+            // then read as absolute values: for a 35..40 uT trace every
+            // one of them clamped to the floor, so all four gridlines
+            // drew on top of each other along the bottom edge and all
+            // four labels collided. The plot had no scale at all, and
+            // the gutter stayed reserved on the left for labels that
+            // were never legible.
+            // No 1.0: the ceiling rule already draws and labels the top
+            // boundary, and a gridline on the same value printed the
+            // same number twice.
+            lines = listOf(0.25f, 0.5f, 0.75f).map { floor + range * it }
         }
         val span = range
         val decimals = decimalsFor(span)
         // Tracks the last label's y so a crowded axis drops labels
         // rather than printing the same number over itself.
-        var lastLabelY = Float.MAX_VALUE
+        //
+        // This started as Float.MAX_VALUE, which is a bug in itself:
+        // the guard is `y - lastLabelY < lineHeight`, and with that
+        // sentinel the difference is hugely NEGATIVE, so the guard
+        // fired on the first label and on every one after it. Every
+        // axis label in the app was suppressed and the gutter stayed
+        // reserved and empty. It read as a fix on the vibration trace
+        // only because that trace's labels were all stacked at the same
+        // y, so dropping them looked like tidying.
+        var lastLabelY = -1f
         for (f in lines) {
             val y = size.height * (1f - norm(f))
             drawLine(grid, Offset(0f, y), Offset(size.width, y), 2.dp.toPx())
@@ -270,7 +302,14 @@ fun TraceGraph(
             // And skip any label that would land on top of the last
             // one drawn, which is the general case the decimals fix
             // only narrows.
-            if (y - lastLabelY < layout.size.height * 1.2f) {
+            // Absolute distance, because the lines run floor-to-ceiling
+            // and so does NOT arrive top to bottom: y decreases on every
+            // step, and a signed difference is negative every time,
+            // which reads as "far too close" and drops the rest of the
+            // axis. One label survived by accident — the first.
+            if (lastLabelY >= 0f &&
+                kotlin.math.abs(y - lastLabelY) < layout.size.height * 1.2f
+            ) {
                 continue
             }
             lastLabelY = y

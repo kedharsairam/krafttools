@@ -56,11 +56,9 @@ fun DecibelScreen(onBack: () -> Unit) {
     PermissionGate(
         permission = android.Manifest.permission.RECORD_AUDIO,
         tool = "Sound meter",
-        reason = "The meter listens to the microphone for a loudness " +
-            "reading only. Nothing is recorded or sent anywhere — " +
-            "audio is measured live and discarded.",
-    
-        onBack = onBack,) {
+        reason = "To measure loudness. Nothing is recorded.",
+        onBack = onBack,
+    ) {
         DecibelBody(onBack)
     }
 }
@@ -301,9 +299,7 @@ private fun DecibelBody(onBack: () -> Unit) {
             // differently on every device, so this is for comparing
             // (before/after), never for compliance.
             Text(
-                text = "Relative reading only — phone microphones are " +
-                    "uncalibrated. Match a known reference meter with the " +
-                    "offset below to compare like for like.",
+                                text = "Uncalibrated. Match a known reference meter.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
