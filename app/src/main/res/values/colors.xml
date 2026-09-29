@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      The house dark, from Theme.kt. Named here as well because the
+      window background is painted by the platform before Compose has
+      drawn anything, and it has to be the same colour or the app opens
+      on a white flash.
+    -->
+    <color name="kraft_background">#121214</color>
+</resources>

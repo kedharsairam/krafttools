@@ -1,13 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Deliberately empty, but not *empty*.
+
+  The artwork is a complete composition — a compass at the centre of a
+  ring of eight tool glyphs — not a mark sitting on a background, so it
+  is the background layer, full bleed, and the launcher applies its own
+  mask. In the foreground it would be scaled into the 72dp safe zone and
+  surrounded by dark border, which reads as a picture of an icon.
+
+  The path below is one fully transparent pixel. A vector with no paths
+  at all is not a drawable that `AdaptiveIconDrawable` will accept, and
+  when it rejects one layer the launcher falls back to the platform
+  placeholder robot — which is exactly what a completely empty
+  foreground produced.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Placeholder glyph: bubble level. Replaced by real icon before v1. -->
     <path
-        android:fillColor="#56CCF2"
-        android:pathData="M54,30m-22,0a22,22 0,1 1,44 0a22,22 0,1 1,-44 0" />
-    <path
-        android:fillColor="#06222B"
-        android:pathData="M54,24m-6,0a6,6 0,1 1,12 0a6,6 0,1 1,-12 0" />
+        android:pathData="M0,0 h1 v1 h-1 z"
+        android:fillColor="#00000000" />
 </vector>

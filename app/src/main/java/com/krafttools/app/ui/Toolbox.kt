@@ -1,5 +1,8 @@
 package com.krafttools.app.ui
+import com.krafttools.app.R
 
+import androidx.compose.ui.res.painterResource
+import androidx.annotation.DrawableRes
 import android.content.Context
 import android.hardware.Sensor
 import androidx.compose.foundation.Canvas
@@ -20,17 +23,17 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Balance
+import androidx.compose.material.icons.filled.SettingsInputAntenna
+import androidx.compose.material.icons.filled.Architecture
+import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.QrCode2
-import androidx.compose.material.icons.filled.SafetyCheck
 import androidx.compose.material.icons.filled.Speed
-import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.filled.Wifi
@@ -81,10 +84,19 @@ private data class Tool(
     val route: String,
     val name: String,
     val icon: ImageVector,
+    /**
+     * A drawn glyph, when the honest one is not in the icon set.
+     *
+     * Material has no bubble level, and its nearest neighbour is a pair
+     * of weighing scales — which measures mass, not angle. One tool in
+     * this list is worth a glyph of its own rather than the closest
+     * available substitute.
+     */
+    @DrawableRes val art: Int? = null,
 )
 
 private val TOOLS = listOf(
-    Tool("level", "Spirit level", Icons.Filled.Balance),
+    Tool("level", "Spirit level", Icons.Filled.Balance, art = R.drawable.ic_spirit_level),
     Tool("compass", "Compass", Icons.Filled.Explore),
     Tool("torch", "Torch + strobe", Icons.Filled.FlashlightOn),
     Tool("vibration", "Vibration meter", Icons.Filled.Vibration),
@@ -92,12 +104,12 @@ private val TOOLS = listOf(
     Tool("qr", "QR scanner", Icons.Filled.QrCode2),
     Tool("wifi", "WiFi analyzer", Icons.Filled.Wifi),
     Tool("lux", "Light meter", Icons.Filled.Lightbulb),
-    Tool("emf", "Metal + EMF", Icons.Filled.SafetyCheck),
+    Tool("emf", "Metal + EMF", Icons.Filled.SettingsInputAntenna),
     Tool("db", "Sound meter", Icons.Filled.Mic),
     Tool("color", "Color picker", Icons.Filled.Palette),
-    Tool("angle", "Angle ruler", Icons.Filled.AspectRatio),
+    Tool("angle", "Angle ruler", Icons.Filled.Architecture),
     Tool("speed", "Speedometer", Icons.Filled.Speed),
-    Tool("pressure", "Barometer", Icons.Filled.Thermostat),
+    Tool("pressure", "Barometer", Icons.Filled.Air),
 )
 
 @Composable
@@ -188,7 +200,7 @@ private fun ToolGrid(onOpen: (String) -> Unit) {
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1.15f)
+                        .aspectRatio(1.25f)
                         .clickable { onOpen(tool.route) }
                         .semantics {
                             contentDescription = tool.name
@@ -217,13 +229,28 @@ private fun ToolGrid(onOpen: (String) -> Unit) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
+                        if (tool.art != null) {
+                            Icon(
+                                painter = painterResource(tool.art),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(46.dp),
+                            )
+                        } else {
                         Icon(
                             imageVector = tool.icon,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(38.dp),
+                            // 46dp rather than 38. In a 183dp-wide
+                            // tile, 38 is a third smaller than the
+                            // icon wants to be, and the group left
+                            // 70dp of empty card below it. 46 is a
+                            // quarter of the width, which is the
+                            // proportion a grid of tiles wants.
+                            modifier = Modifier.size(46.dp),
                         )
-                        Spacer(modifier = Modifier.height(14.dp))
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = tool.name,
                             style = MaterialTheme.typography.titleSmall,

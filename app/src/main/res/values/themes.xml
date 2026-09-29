@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Compose owns everything the user sees; this theme exists for the
+      two things it cannot reach — the window background the platform
+      paints before the first frame, and the system bars.
+
+      It was the stock `Theme.Material.NoActionBar`, which is a light
+      theme, so every launch began with a white window that Compose
+      then painted over. It is dark now, and the splash is configured
+      in values-v31 where the API exists.
+    -->
+    <style name="Theme.KraftTools" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/kraft_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

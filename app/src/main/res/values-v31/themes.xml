@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      The splash, from API 31.
+
+      Without this the system shows the launcher icon on whatever the
+      theme's background is, which on a dark-only app is a white screen
+      with a dark icon in the middle of it. The icon is the artwork and
+      the background is the house dark, so the launch reads as one
+      surface rather than as a white card in a dark app.
+    -->
+    <style name="Theme.KraftTools" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/kraft_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowSplashScreenBackground">@color/kraft_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_art</item>
+    </style>
+</resources>

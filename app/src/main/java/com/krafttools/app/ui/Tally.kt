@@ -45,6 +45,7 @@ import kotlinx.coroutines.delay
 import java.util.Locale
 import kotlin.math.ceil
 import kotlin.math.min
+import androidx.compose.ui.platform.testTag
 
 /**
  * Tally + stopwatch. Full-viewport composition:
@@ -252,7 +253,7 @@ private fun TallyMarks(count: Int, modifier: Modifier = Modifier) {
     // painted over by marks, because the marks simply kept going past
     // the top of the panel. Clipping turns any future fit mistake into
     // a truncated block rather than a broken screen.
-    Canvas(modifier = modifier.clipToBounds()) {
+    Canvas(modifier = modifier.clipToBounds().testTag("tally:marks")) {
         val baseY = size.height * 0.9f
         val maxH = size.height * 0.74f
 

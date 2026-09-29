@@ -1,0 +1,43 @@
+<!--
+  A spirit level.
+
+  Material's icon set has no bubble level, and the nearest thing to one
+  is `Balance` — a pair of weighing scales. That is not a small
+  inaccuracy: a scale is an instrument that measures MASS, and the tool
+  measures ANGLE. Putting a weighing scale on the tile for a spirit
+  level says the wrong thing about the one tool whose entire job is to
+  be read by sight.
+
+  So this is drawn rather than borrowed. A sealed vial, a pair of end
+  caps, the two centre lines the bubble rests between, and the bubble
+  itself sitting high — which is what a level looks like when it is
+  tilted, and the only state in which anyone looks at one.
+
+  On the 24dp Material grid, and stroked rather than filled so it holds
+  up at 46dp on a tile without turning into a solid bar.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- The vial: a horizontal capsule with rounded ends. -->
+    <path
+        android:pathData="M4.6,8.9 L19.4,8.9 A3,3 0 0,1 19.4,14.9 L4.6,14.9 A3,3 0 0,1 4.6,8.9 Z"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.1"
+        android:strokeLineJoin="round" />
+
+    <!-- The two marks the bubble is read against. -->
+    <path
+        android:pathData="M9.9,10.2 L9.9,13.8 M14.1,10.2 L14.1,13.8"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+
+    <!-- The bubble, sitting high: a tilted level. -->
+    <path
+        android:pathData="M12,8.9 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"
+        android:fillColor="#FFFFFF" />
+</vector>
