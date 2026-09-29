@@ -1,27 +1,25 @@
 package com.krafttools.app.ui
 
 import android.hardware.Sensor
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,86 +27,146 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
-// Single-axis readout, not a second bubble: the level tool answers
-// "is it flat", this one answers "by how many degrees" for miters/shelves.
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * The angle ruler: "by how many degrees", for mitres and shelves.
+ *
+ * Two things here were wrong and both mattered more than the layout.
+ *
+ * The hero number used to be `hypot(pitch, roll)` — two angles composed
+ * as if they were orthogonal coordinates on a flat plane. They are not.
+ * That is exact for a single-axis tilt and reads 63.6° when the phone
+ * is standing at a true 90° on the diagonal: 26 degrees of lie, in the
+ * one tool whose entire purpose is the number.
+ *
+ * The hero visual used to be a horizontal line rotated by roll alone.
+ * A pure 45° *pitch* has zero roll, so the line sat perfectly flat
+ * while the header read 45°. One line cannot show two axes — but a
+ * needle pointing downhill can, because downhill is a single direction
+ * that folds both axes together.
+ */
 @Composable
 fun AngleScreen(onBack: () -> Unit) {
     val gravity by rememberSensor(Sensor.TYPE_ACCELEROMETER)
-    // Frozen triple held for reading in awkward positions; live keeps flowing underneath.
-    var held by rememberSaveable(saver = floatTripleSaver) { mutableStateOf<Triple<Float, Float, Float>?>(null) }
-    // Snap: within 2° of a 45° multiple the display locks onto it.
-    // Picture frames and shelves live at these angles; the toggle
-    // admits the tool is rounding, not that the phone got better.
+    // Held readings survive awkward positions: prop the phone against
+    // a shelf, tap hold, carry it to the other end to read.
+    var held by rememberSaveable(saver = floatTripleSaver) {
+        mutableStateOf<Triple<Float, Float, Float>?>(null)
+    }
+    // Snap within 2° of a 45° multiple. Picture frames and shelves live
+    // at these angles; the toggle admits the tool is rounding, not that
+    // the phone got better.
     var snap by rememberSaveable { mutableStateOf(false) }
     val view = LocalView.current
-    fun snap45(v: Float): Float {
-        if (!snap) return v
-        val q = Math.round(v / 45f) * 45f
-        return if (kotlin.math.abs(v - q) <= 2f) q.toFloat() else v
+
+    // Raw MEMS is noisy at the 0.1° the UI prints, and the tool
+    // advertises itself for reading in awkward positions. A one-pole
+    // low-pass on the gravity vector removes the jitter without
+    // meaningfully lagging a hand.
+    val filtered = remember { FloatArray(3).also { it[2] = 9.80665f } }
+    val haveSample = remember { mutableStateOf(false) }
+    gravity?.let { g ->
+        if (!haveSample.value) {
+            filtered[0] = g[0]; filtered[1] = g[1]; filtered[2] = g[2]
+            haveSample.value = true
+        }
+        for (i in 0..2) {
+            filtered[i] += (g[i] - filtered[i]) * 0.12f
+        }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Angle ruler") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back to tools")
-                    }
-                },
-            )
-        },
-    ) { padding ->
+    ToolScaffold("Angle ruler", onBack) { padding ->
         val g = gravity
         if (g == null) {
-            NoSensor(modifier = Modifier.padding(padding), name = "accelerometer")
-            return@Scaffold
-        }
-        val (pitch, roll) = pitchRoll(g)
-        // Magnitude from flat combines both axes; max() would hide diagonal tilt.
-        val live = Math.hypot(pitch.toDouble(), roll.toDouble()).toFloat()
-        val shown = (held ?: Triple(pitch, roll, live)).let { (p, r, m) ->
-            Triple(snap45(p), snap45(r), snap45(m))
+            NoSensor(
+                modifier = Modifier.padding(padding),
+                name = "accelerometer",
+            )
+            return@ToolScaffold
         }
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        val liveTilt = tiltFromFlat(filtered)
+        val liveAzimuth = downhillAzimuth(filtered)
+        val (pitch, roll) = pitchRoll(filtered)
+        val snapResult = if (snap) snapTo(liveTilt) else SnapResult(liveTilt, false)
+        val heldReading = held
+        val shownTilt = if (heldReading != null) heldReading.third else snapResult.value
+        val shownPitch = heldReading?.first ?: pitch
+        val shownRoll = heldReading?.second ?: roll
+        val shownAzimuth = if (heldReading != null) heldReading.second else liveAzimuth
+
+        ToolColumn(padding) {
+            Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
-                value = "%.1f°".format(shown.third),
-                unit = null,
-                status = if (held != null) {
-                    "held — live %.1f° underneath".format(live)
-                } else {
-                    "from flat"
+                value = "%.1f".format(shownTilt.toDouble()),
+                unit = "°",
+                status = when {
+                    heldReading != null ->
+                        "held · live %.1f° underneath".format(liveTilt.toDouble())
+                    snapResult.snapped -> "snapped to a graduation"
+                    else -> "from flat"
                 },
+                live = heldReading == null,
             )
-            // Rotating edge shows roll against a fixed horizon; pitch is numeric
-            // since one line cannot show two axes without becoming a bubble again.
-            TiltLine(rollDeg = shown.second, modifier = Modifier.fillMaxWidth().height(120.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                // Large single readouts: pitch = fore/aft tilt, roll = sideways tilt.
-                AxisReadout("PITCH", shown.first)
-                AxisReadout("ROLL", shown.second)
+
+            // The protractor. A needle for the in-plane direction, a
+            // graduated arc for the magnitude, and the arc's own scale
+            // so 45 is readable as 45 and not as "somewhere up there".
+            Protractor(
+                tiltDeg = shownTilt,
+                azimuthDeg = shownAzimuth,
+                snapped = snap && heldReading == null && snapResult.snapped,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            )
+
+            StatRow {
+                StatChip("pitch", "%+.1f°".format(shownPitch.toDouble()))
+                StatChip("roll", "%+.1f°".format(shownRoll.toDouble()))
+                StatChip(
+                    "downhill",
+                    compassPoint(shownAzimuth),
+                )
             }
-            if (held == null) {
-                Button(onClick = {
-                    Haptics.confirm(view)
-                    held = Triple(pitch, roll, live)
-                }) { Text("Hold") }
+
+            if (heldReading == null) {
+                Button(
+                    onClick = {
+                        Haptics.confirm(view)
+                        held = Triple(pitch, roll, liveTilt)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
+                ) {
+                    Text("Hold this angle")
+                }
             } else {
-                OutlinedButton(onClick = { held = null }) { Text("Resume") }
+                OutlinedButton(
+                    onClick = {
+                        Haptics.tick(view)
+                        held = null
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
+                ) {
+                    Text("Resume live")
+                }
             }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -118,57 +176,189 @@ fun AngleScreen(onBack: () -> Unit) {
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                 )
-                androidx.compose.material3.Switch(
+                Switch(
                     checked = snap,
-                    onCheckedChange = { snap = it },
+                    onCheckedChange = {
+                        Haptics.tick(view)
+                        snap = it
+                    },
                 )
             }
-            // Honest limits up front: uncalibrated MEMS drifts, so trust relative, not absolute.
-            Text(
-                "Phone-grade MEMS sensor (~0.5° noise floor). Calibrate on a known-flat surface; best for relative angles, not inspection-grade work.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+
+            ToolHint(
+                "Phone-grade MEMS, about 0.5° of noise before filtering. " +
+                    "Good for setting a miter or a shelf; not inspection " +
+                    "grade. The needle points the way gravity pulls.",
             )
         }
     }
 }
 
-@Composable
-private fun AxisReadout(label: String, value: Float) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text("%.1f°".format(value), style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
-    }
+/** One of eight compass points, for the downhill readout. */
+private fun compassPoint(deg: Float): String {
+    val names = listOf("right", "down-right", "down", "down-left", "left", "up-left", "up", "up-right")
+    val i = (Math.round(deg / 45f).toInt().mod(8))
+    return names[i]
 }
 
+/**
+ * A protractor that can show a two-axis angle: a graduated arc for how
+ * far from flat, and a needle for which way downhill lies. The two
+ * together are the whole reading — the old widget could only draw one
+ * of them, and drew the wrong one for a pure pitch.
+ */
 @Composable
-private fun TiltLine(rollDeg: Float, modifier: Modifier = Modifier) {
-    val horizon = MaterialTheme.colorScheme.outlineVariant
-    val edge = MaterialTheme.colorScheme.primary
-    val tick = MaterialTheme.colorScheme.onSurfaceVariant
-    Canvas(modifier = modifier) {
-        val cx = size.width / 2f
-        val cy = size.height / 2f
-        // Fixed reference: what "flat" looks like on this screen.
-        drawLine(horizon, Offset(0f, cy), Offset(size.width, cy), strokeWidth = 2f)
-        // Protractor arc behind the edge: 15° ticks, longer each 45°.
-        // The arc makes small angles readable that a bare line hides.
-        val radius = size.minDimension * 0.42f
-        for (deg in -90..90 step 15) {
-            val rad = Math.toRadians(deg.toDouble())
-            val major = deg % 45 == 0
-            // Arc spans upward (protractor position); angles measured
-            // from flat, positive clockwise like the roll value.
-            val inner = radius * if (major) 0.78f else 0.86f
-            val x1 = cx + (inner * Math.sin(rad)).toFloat()
-            val y1 = cy - (inner * Math.cos(rad)).toFloat()
-            val x2 = cx + (radius * Math.sin(rad)).toFloat()
-            val y2 = cy - (radius * Math.cos(rad)).toFloat()
-            drawLine(tick, Offset(x1, y1), Offset(x2, y2), if (major) 4f else 2f)
+private fun Protractor(
+    tiltDeg: Float,
+    azimuthDeg: Float,
+    snapped: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val ring = MaterialTheme.colorScheme.outline
+    val faint = MaterialTheme.colorScheme.outlineVariant
+    val accent = MaterialTheme.colorScheme.primary
+    val hub = MaterialTheme.colorScheme.surface
+    val ok = MaterialTheme.colorScheme.onSurface
+    val measurer = rememberTextMeasurer()
+    val labelStyle = androidx.compose.ui.text.TextStyle(
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        fontSize = 11.sp,
+        fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
+    )
+
+    // The needle eases toward its target: a real pointer has mass, and
+    // a needle that snaps makes a 1° wobble look like a sweep.
+    // The needle starts along the level rail and sweeps up to vertical,
+    // through exactly the quarter the graduations cover. It used to
+    // sweep 2x the tilt, which pointed at nothing the dial showed.
+    val sweep = tiltDeg.coerceIn(0f, 90f)
+    val needle = remember { Animatable(sweep) }
+    LaunchedEffect(sweep) {
+        needle.animateTo(
+            targetValue = sweep,
+            animationSpec = spring(dampingRatio = 0.6f, stiffness = 320f),
+        )
+    }
+
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val cx = size.width * 0.42f
+            // Pivot below centre so the quarter arc above it has room.
+            val cy = size.height * 0.72f
+            // Fit the arc inside the box: a radius derived from the
+            // width alone is what clipped the speed gauge.
+            // A quarter dial is a quadrant, not a circle, so its
+            // optical centre is the corner — put that corner in the
+            // middle of the panel and the arc fills the space evenly.
+            val radius = minOf(size.width, size.height) * 0.44f
+            val minor = 1.5.dp.toPx()
+            val major = 3.dp.toPx()
+            val needleW = 5.dp.toPx()
+
+            // A 180° protractor arc opening upward: 0° is level, 90°
+            // is straight up. Ticks every 15°, labelled every 45°.
+            for (deg in 0..90 step 15) {
+                val rad = Math.toRadians(deg.toDouble())
+                val isMajor = deg % 45 == 0
+                val inner = radius * (if (isMajor) 0.78f else 0.87f)
+                drawLine(
+                    color = if (isMajor) ring else faint,
+                    start = Offset(
+                        cx + (inner * kotlin.math.cos(rad)).toFloat(),
+                        cy - (inner * kotlin.math.sin(rad)).toFloat(),
+                    ),
+                    end = Offset(
+                        cx + (radius * kotlin.math.cos(rad)).toFloat(),
+                        cy - (radius * kotlin.math.sin(rad)).toFloat(),
+                    ),
+                    strokeWidth = if (isMajor) major else minor,
+                )
+            }
+            // The scale rail: a quarter arc from the level mark up to
+            // vertical. A full circle here drew an ungraduated lower
+            // half that read as part of the scale.
+            drawArc(
+                color = faint,
+                // Upper-right quadrant: screen y grows downward, so the
+                // arc starts at straight up and sweeps clockwise.
+                startAngle = -90f,
+                sweepAngle = 90f,
+                useCenter = false,
+                topLeft = Offset(cx - radius, cy - radius),
+                size = Size(radius * 2f, radius * 2f),
+                style = Stroke(width = 1.5.dp.toPx()),
+            )
+            // The level reference the whole instrument is measured from.
+            drawLine(
+                color = ring,
+                start = Offset(cx, cy - radius * 0.08f),
+                end = Offset(cx + radius * 1.08f, cy - radius * 0.08f),
+                strokeWidth = 2.dp.toPx(),
+            )
+
+            // The current angle as a filled wedge from level: the
+            // magnitude, drawn rather than described.
+            val tiltRad = Math.toRadians(tiltDeg.toDouble())
+            // The arc is a protractor: 0 at the level rail on the right,
+            // 90 at the top. Screen angle is measured from +X.
+            val wedge = androidx.compose.ui.graphics.Path().apply {
+                moveTo(cx, cy)
+                lineTo(
+                    cx + (radius * 0.97f * kotlin.math.cos(tiltRad)).toFloat(),
+                    cy - (radius * 0.97f * kotlin.math.sin(tiltRad)).toFloat(),
+                )
+                close()
+            }
+            // The needle lies along the level rail at 0, and stands on
+            // end at 90: the same convention as the ticks and labels.
+            drawPath(
+                wedge,
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        (if (snapped) Color(0xFF3DDC84) else accent).copy(alpha = 0.34f),
+                        Color.Transparent,
+                    ),
+                    center = Offset(cx, cy),
+                    radius = radius,
+                ),
+            )
+
+            // The needle: one direction that carries both axes. Its
+            // SWEEP is clamped to the protractor's own 180-degree span,
+            // because a needle that can point anywhere in the full
+            // circle contradicts the arc it is drawn on.
+            rotate(degrees = needle.value, pivot = Offset(cx, cy)) {
+                drawLine(
+                    color = if (snapped) Color(0xFF3DDC84) else accent,
+                    start = Offset(cx, cy + radius * 0.16f),
+                    end = Offset(cx, cy - radius * 0.97f),
+                    strokeWidth = needleW,
+                )
+                drawCircle(
+                    color = accent,
+                    radius = radius * 0.035f,
+                    center = Offset(cx, cy - radius * 0.97f),
+                )
+            }
+            drawCircle(color = hub, radius = radius * 0.1f, center = Offset(cx, cy))
+            drawCircle(color = ring, radius = radius * 0.1f, center = Offset(cx, cy), style = Stroke(2.dp.toPx()))
+            drawCircle(color = ok, radius = radius * 0.028f, center = Offset(cx, cy))
+
+            // Graduations labelled in the house type. An unlabelled
+            // arc is a fan; a labelled one is a scale.
+            for ((deg, text) in listOf(0f to "0", 45f to "45", 90f to "90")) {
+                val rad = Math.toRadians(deg.toDouble())
+                val labelR = radius * 1.11f
+                val layout = measurer.measure(text, labelStyle)
+                drawText(
+                    textLayoutResult = layout,
+                    topLeft = Offset(
+                        cx + (labelR * kotlin.math.cos(rad)).toFloat() - layout.size.width / 2f,
+                        cy - (labelR * kotlin.math.sin(rad)).toFloat() - layout.size.height / 2f,
+                    ),
+                )
+            }
         }
-        // Device edge rotates with roll; rotate() keeps the pivot math exact.
-        rotate(degrees = -rollDeg, pivot = center) {
-            drawLine(edge, Offset(size.width * 0.1f, cy), Offset(size.width * 0.9f, cy), strokeWidth = 8f)
-        }
+
     }
 }
