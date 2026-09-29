@@ -47,23 +47,40 @@ fun PermissionGate(
     tool: String,
     reason: String,
     onBack: (() -> Unit)? = null,
+    /** An alternative permission that also satisfies the need. For
+     *  location this is COARSE: from Android 12 the user may grant
+     *  "approximate", which denies FINE while granting COARSE, and an
+     *  app that declares only FINE then locks the user out of a
+     *  setting they have already granted. */
+    alsoAccepts: String? = null,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
     var asked by rememberSaveable { mutableStateOf(false) }
-    var granted by remember {
-        mutableStateOf(
+    // True when EITHER permission is held. For location this matters:
+    // a user who picks "approximate" has granted something, and
+    // telling them the permission is off in Settings when it is on is
+    // both wrong and unactionable.
+    fun holds(): Boolean {
+        val primary = ContextCompat.checkSelfPermission(
+            context,
+            permission,
+        ) == PackageManager.PERMISSION_GRANTED
+        val alt = alsoAccepts != null &&
             ContextCompat.checkSelfPermission(
                 context,
-                permission,
-            ) == PackageManager.PERMISSION_GRANTED,
-        )
+                alsoAccepts,
+            ) == PackageManager.PERMISSION_GRANTED
+        return primary || alt
     }
+    var granted by remember { mutableStateOf(holds()) }
+    // Request both, so the system chooser appears; a single FINE
+    // request is ignored outright on some Android 12 releases.
     val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { ok ->
+        ActivityResultContracts.RequestMultiplePermissions(),
+    ) { result ->
         asked = true
-        granted = ok
+        granted = result.values.any { it } || holds()
     }
     // Re-check on every resume: one-time grants expire and users can
     // revoke in Settings while away. A stale `granted=true` would show
@@ -72,14 +89,14 @@ fun PermissionGate(
     DisposableEffect(owner) {
         val obs = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                granted = ContextCompat.checkSelfPermission(
-                    context,
-                    permission,
-                ) == PackageManager.PERMISSION_GRANTED
+                granted = holds()
             }
         }
         owner.lifecycle.addObserver(obs)
         onDispose { owner.lifecycle.removeObserver(obs) }
+    }
+    val toRequest = remember(permission, alsoAccepts) {
+        listOfNotNull(permission, alsoAccepts).distinct()
     }
     if (granted) {
         content()
@@ -122,7 +139,7 @@ fun PermissionGate(
                 }
             } else {
                 Button(
-                    onClick = { launcher.launch(permission) },
+                    onClick = { launcher.launch(toRequest.toTypedArray()) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 48.dp),

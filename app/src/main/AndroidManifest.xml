@@ -6,6 +6,12 @@
          rationale screen. Nothing is asked at install beyond these
          declarations, and nothing touches the network. -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Coarse is declared alongside fine because from Android 12 the
+         user can grant "approximate" instead, which denies FINE while
+         granting COARSE. An app that declares only FINE and treats a
+         denial as permanent then locks the user out of a setting they
+         already granted. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- Normal (auto-granted, no prompt): threshold buzz. -->

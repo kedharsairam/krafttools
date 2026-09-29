@@ -11,6 +11,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.math.abs
 
 /**
  * The altitude formula is the one number in this app that can be
@@ -291,4 +292,3 @@ class BaroMathTest {
     }
 }
 
-private fun abs(v: Float) = kotlin.math.abs(v)

@@ -83,6 +83,10 @@ private data class Net(
 fun WifiScreen(onBack: () -> Unit) {
     PermissionGate(
         permission = android.Manifest.permission.ACCESS_FINE_LOCATION,
+        // Android 12+ lets the user grant "approximate" instead, which
+        // denies FINE while granting COARSE. Both are declared, and
+        // either one is enough for a scan or a position fix.
+        alsoAccepts = android.Manifest.permission.ACCESS_COARSE_LOCATION,
         tool = "WiFi analyzer",
         reason = "Android only hands scan results (network names and " +
             "signal strengths) to apps holding location permission. " +
