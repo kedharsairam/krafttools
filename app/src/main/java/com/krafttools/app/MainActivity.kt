@@ -11,9 +11,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // Feed process-wide LED truth before any screen reads it.
+        com.krafttools.app.tiles.TorchState.observe(this)
         setContent {
             ToolboxTheme {
-                ToolboxNav()
+                ToolboxNav(
+                    startRoute = intent.getStringExtra("krafttools.route"),
+                )
             }
         }
     }

@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-32:12
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-32:12
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-32:12
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-32:12
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-52:12
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-52:12
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-52:12
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:2:1-52:12
 MERGED from [androidx.camera:camera-video:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/1910795be0a16ce71cd3346dedf45586/transformed/camera-video-1.4.1/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.camera:camera-view:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/0af6e96b9da586cadc1de9f6b9ef8638/transformed/camera-view-1.4.1/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.camera:camera-lifecycle:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/f9e40431be1505a6d5f83d290d934006/transformed/camera-lifecycle-1.4.1/AndroidManifest.xml:2:1-7:12
@@ -115,8 +115,8 @@ ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/s
 	android:name
 		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:22-73
 application
-ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:5-30:19
-INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:5-30:19
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:5-50:19
+INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:5-50:19
 MERGED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:23:5-34:19
 MERGED from [androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:23:5-34:19
 MERGED from [androidx.camera:camera-core:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/bd06696429c1337ddf4129e4715b090e/transformed/camera-core-1.4.1/AndroidManifest.xml:23:5-34:19
@@ -169,6 +169,36 @@ category#android.intent.category.LAUNCHER
 ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:27:17-77
 	android:name
 		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:27:27-74
+service#com.krafttools.app.tiles.TorchTileService
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:30:9-39:19
+	android:label
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:32:13-42
+	android:exported
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:35:13-36
+	android:permission
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:34:13-77
+	android:icon
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:33:13-51
+	android:name
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:31:13-51
+intent-filter#action:name:android.service.quicksettings.action.QS_TILE
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:36:13-38:29
+action#android.service.quicksettings.action.QS_TILE
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:37:17-87
+	android:name
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:37:25-84
+service#com.krafttools.app.tiles.LevelTileService
+ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:40:9-49:19
+	android:label
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:42:13-42
+	android:exported
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:45:13-36
+	android:permission
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:44:13-77
+	android:icon
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:43:13-51
+	android:name
+		ADDED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:41:13-51
 uses-sdk
 INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml

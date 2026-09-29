@@ -1,8 +1,5 @@
 package com.krafttools.app.ui
 
-import android.content.Context
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -57,22 +55,19 @@ fun TorchScreen(onBack: () -> Unit) {
 @Composable
 private fun TorchBody(onBack: () -> Unit) {
     val context = LocalContext.current
-    val manager = remember {
-        context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-    }
+    // LED presence check stays local (drives the NoSensor gate);
+    // all writes funnel through TorchState (QS-tile agreement).
     val cameraId = remember {
-        try {
-            manager.cameraIdList.firstOrNull { id ->
-                manager.getCameraCharacteristics(id)
-                    .get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
-            }
-        } catch (_: Exception) {
-            null
-        }
+        com.krafttools.app.tiles.TorchState.flashId(context)
     }
     var on by remember { mutableStateOf(false) }
     var strobe by remember { mutableStateOf(false) }
     var sos by remember { mutableStateOf(false) }
+    // Sync with LED truth on entry: the QS tile (or a dead process)
+    // may have left the bulb on while this screen thinks off.
+    LaunchedEffect(Unit) {
+        on = com.krafttools.app.tiles.TorchState.lit
+    }
     var rateHz by remember { mutableFloatStateOf(4f) }
     var autoOffMin by remember { mutableStateOf(0) }
     var autoOffLeftSec by remember { mutableStateOf(0L) }
@@ -81,13 +76,8 @@ private fun TorchBody(onBack: () -> Unit) {
     var timerJob by remember { mutableStateOf<Job?>(null) }
 
     fun setTorch(state: Boolean) {
-        if (cameraId == null) return
-        try {
-            manager.setTorchMode(cameraId, state)
-            on = state
-        } catch (_: Exception) {
-            on = false
-        }
+        // Funnel through process truth so the QS tile never disagrees.
+        on = com.krafttools.app.tiles.TorchState.setTorch(context, state)
     }
 
     /** Stop everything: used by mode switches, timer fire, and dispose. */
@@ -151,10 +141,7 @@ private fun TorchBody(onBack: () -> Unit) {
         onDispose {
             strobeJob?.cancel()
             timerJob?.cancel()
-            try {
-                if (cameraId != null) manager.setTorchMode(cameraId, false)
-            } catch (_: Exception) {
-            }
+            com.krafttools.app.tiles.TorchState.setTorch(context, false)
         }
     }
 

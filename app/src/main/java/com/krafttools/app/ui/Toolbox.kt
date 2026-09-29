@@ -84,9 +84,11 @@ private val TOOLS = listOf(
 )
 
 @Composable
-fun ToolboxNav() {
+fun ToolboxNav(startRoute: String? = null) {
     val nav = rememberNavController()
-    NavHost(navController = nav, startDestination = "grid") {
+    val valid = TOOLS.map { it.route }.toSet()
+    val start = if (startRoute in valid) startRoute!! else "grid"
+    NavHost(navController = nav, startDestination = start) {
         composable("grid") {
             ToolGrid(onOpen = { route ->
                 if (TOOLS.any { it.route == route && it.live }) {

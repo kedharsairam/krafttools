@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.krafttools.app-mergeReleaseResources-45:/values-hdpi-v4/values-hdpi-v4.xml",
+            "map": [
+                {
+                    "source": "/home/kedhar/.gradle/caches/9.7.1/transforms/0e1ae65ca49fa88e473032c1c4214fae/transformed/appcompat-1.1.0/res/values-hdpi-v4/values-hdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "13",
+                        "endOffsets": "327"
+                    }
+                }
+            ]
+        }
+    ]
+}

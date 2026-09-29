@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "com.krafttools.app-release-48:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.krafttools.app-main-49:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.krafttools.app-release-48:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.krafttools.app-main-49:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.krafttools.app-release-48:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.krafttools.app-main-49:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    }
+]

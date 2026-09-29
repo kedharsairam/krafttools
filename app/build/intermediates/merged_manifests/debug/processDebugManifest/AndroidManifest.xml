@@ -48,6 +48,26 @@
         </activity>
 
         <service
+            android:name="com.krafttools.app.tiles.TorchTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_tile_torch"
+            android:label="Toolbox torch"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" >
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.krafttools.app.tiles.LevelTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_tile_level"
+            android:label="Toolbox level"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" >
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
             android:name="androidx.camera.core.impl.MetadataHolderService"
             android:enabled="false"
             android:exported="false" >
