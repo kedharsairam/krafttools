@@ -50,7 +50,8 @@ fun SpeedScreen(onBack: () -> Unit) {
         tool = "Speedometer",
         reason = "GPS position is read on this phone only to work out " +
             "your speed. Positions are never stored or sent anywhere.",
-    ) {
+    
+        onBack = onBack,) {
         SpeedBody(onBack)
     }
 }

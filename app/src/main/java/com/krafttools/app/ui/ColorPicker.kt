@@ -62,7 +62,8 @@ fun ColorPickerScreen(onBack: () -> Unit) {
         tool = "Color picker",
         reason = "Point at a surface and the center spot's color appears below. " +
             "Frames never leave the phone — sampling happens on-device.",
-    ) {
+    
+        onBack = onBack,) {
         ColorPickerBody(onBack)
     }
 }
@@ -223,18 +224,43 @@ private fun ColorPickerBody(onBack: () -> Unit) {
             ) {
                 Text("Save swatch")
             }
-            // Contrast ratio (WCAG): text-legibility check for designers.
-            // Computed live against black and white.
+            // Contrast: the reason a designer opens this tool. It now
+            // says PASS or FAIL, not just a number to look up.
             val (r, g, b) = rgb
-            val lum = { c: Int ->
-                val v = c / 255.0
-                if (v <= 0.03928) v / 12.92 else Math.pow((v + 0.055) / 1.055, 2.4)
+            val packed = (r shl 16) or (g shl 8) or b
+            val onWhite = ColorMath.contrast(packed, 0xFFFFFF)
+            val onBlack = ColorMath.contrast(packed, 0x000000)
+            val best = maxOf(onWhite, onBlack)
+            val verdict = ColorMath.verdict(best)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = verdict.label,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = when (verdict) {
+                        ColorMath.ContrastVerdict.FAIL -> MaterialTheme.colorScheme.error
+                        ColorMath.ContrastVerdict.AA_LARGE -> warnAmber
+                        else -> MaterialTheme.colorScheme.primary
+                    },
+                )
+                Text(
+                    text = "%.1f:1 on %s".format(
+                        best,
+                        if (onWhite >= onBlack) "white" else "black",
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
-            val l = 0.2126 * lum(r) + 0.7152 * lum(g) + 0.0722 * lum(b)
-            val onBlack = (l + 0.05) / 0.05
-            val onWhite = 1.05 / (l + 0.05)
             Text(
-                text = "Contrast %.1f on black · %.1f on white".format(onBlack, onWhite),
+                text = "Also %.1f:1 on %s. %s".format(
+                    minOf(onWhite, onBlack),
+                    if (onWhite >= onBlack) "black" else "white",
+                    verdict.detail,
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -281,23 +307,49 @@ private fun ColorPickerBody(onBack: () -> Unit) {
     }
 }
 
-/** Average a ~24x24 center patch, YUV_420_888 -> RGB via BT.601.
- *  Center patch (not full frame): immune to edges/vignetting, and
- *  matches the on-screen reticle so sampling feels predictable. */
+/** The house "nearly, but not quite" amber, shared with the level
+ *  scale's zones so a warning looks the same everywhere. */
+internal val warnAmber = androidx.compose.ui.graphics.Color(0xFFFFC53D)
+
+/**
+ * Average a 25x25 centre patch and convert to sRGB.
+ *
+ * Two defects fixed here, one of them total:
+ *
+ * The matrix was the full-range BT.601 applied to **limited-range**
+ * data, which is what Android actually delivers. Measured: a black
+ * surface came out #C300F3, mid grey came out #FF00FF. ColourMath now
+ * does the limited-range conversion and its tests pin the exact
+ * reference points.
+ *
+ * The chroma reads were clamped against `capacity()` rather than
+ * `limit()`. `ByteBuffer.get` validates against the limit, and camera
+ * buffers are page-padded so capacity routinely exceeds the data — an
+ * index in between throws. It was swallowed by the caller's catch, so
+ * the symptom was the colour readout silently freezing rather than a
+ * crash, which is a much harder bug to report.
+ */
 @OptIn(ExperimentalGetImage::class)
-private fun sampleCenter(image: ImageProxy): Triple<Int, Int, Int>? {
+internal fun sampleCenter(image: ImageProxy): Triple<Int, Int, Int>? {
     val yuv = image.image ?: return null
     val w = image.width
     val h = image.height
+    if (w <= 0 || h <= 0) return null
     val half = 12
     val cx = w / 2
     val cy = h / 2
+    if (yuv.planes.size < 3) return null
     val yPlane = yuv.planes[0]
     val uPlane = yuv.planes[1]
     val vPlane = yuv.planes[2]
     val yBuf = yPlane.buffer
     val uBuf = uPlane.buffer
     val vBuf = vPlane.buffer
+    // limit(), never capacity(): get(int) bounds-checks the limit.
+    val yLimit = minOf(yBuf.capacity(), yBuf.limit())
+    val uLimit = minOf(uBuf.capacity(), uBuf.limit())
+    val vLimit = minOf(vBuf.capacity(), vBuf.limit())
+
     var rSum = 0L
     var gSum = 0L
     var bSum = 0L
@@ -306,24 +358,17 @@ private fun sampleCenter(image: ImageProxy): Triple<Int, Int, Int>? {
         for (dx in -half..half) {
             val x = (cx + dx).coerceIn(0, w - 1)
             val y = (cy + dy).coerceIn(0, h - 1)
-            val yVal = (yBuf.get(y * yPlane.rowStride + x).toInt() and 0xFF)
-            // Chroma is 2x subsampled: one U/V sample covers a 2x2 luma block.
-            val ux = (x / 2 * uPlane.pixelStride)
-                .coerceIn(0, uBuf.capacity() - 1)
-            val uy = (y / 2 * uPlane.rowStride)
-            val vx = (x / 2 * vPlane.pixelStride)
-                .coerceIn(0, vBuf.capacity() - 1)
-            val vy = (y / 2 * vPlane.rowStride)
-            val uPos = (uy + ux).coerceIn(0, uBuf.capacity() - 1)
-            val vPos = (vy + vx).coerceIn(0, vBuf.capacity() - 1)
-            val u = (uBuf.get(uPos).toInt() and 0xFF) - 128
-            val v = (vBuf.get(vPos).toInt() and 0xFF) - 128
-            // Float BT.601 kept: integer fixed-point saves nothing here at
-            // ~625 px per analyzed frame, and float reads as the spec.
-            val r = (yVal + 1.402 * v).roundToInt().coerceIn(0, 255)
-            val g = (yVal - 0.344136 * u - 0.714136 * v)
-                .roundToInt().coerceIn(0, 255)
-            val b = (yVal + 1.772 * u).roundToInt().coerceIn(0, 255)
+            val yi = y * yPlane.rowStride + x
+            if (yi >= yLimit) continue
+            val yVal = yBuf.get(yi).toInt() and 0xFF
+            // Chroma is 2x subsampled: one U/V sample covers 2x2 luma.
+            val uPos = (y / 2 * uPlane.rowStride + x / 2 * uPlane.pixelStride)
+                .coerceIn(0, uLimit - 1)
+            val vPos = (y / 2 * vPlane.rowStride + x / 2 * vPlane.pixelStride)
+                .coerceIn(0, vLimit - 1)
+            val u = uBuf.get(uPos).toInt() and 0xFF
+            val v = vBuf.get(vPos).toInt() and 0xFF
+            val (r, g, b) = ColorMath.yuvToRgb(yVal, u, v)
             rSum += r
             gSum += g
             bSum += b

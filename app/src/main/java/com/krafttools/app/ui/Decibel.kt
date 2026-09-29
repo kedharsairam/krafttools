@@ -56,7 +56,8 @@ fun DecibelScreen(onBack: () -> Unit) {
         reason = "The meter listens to the microphone for a loudness " +
             "reading only. Nothing is recorded or sent anywhere — " +
             "audio is measured live and discarded.",
-    ) {
+    
+        onBack = onBack,) {
         DecibelBody(onBack)
     }
 }

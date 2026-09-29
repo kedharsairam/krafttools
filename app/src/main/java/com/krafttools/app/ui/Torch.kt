@@ -65,7 +65,8 @@ fun TorchScreen(onBack: () -> Unit) {
         reason = "The flashlight LED lives behind the camera stack, " +
             "so Android asks for camera access. The lens is never " +
             "opened and no picture is ever taken.",
-    ) {
+    
+        onBack = onBack,) {
         TorchBody(onBack)
     }
 }

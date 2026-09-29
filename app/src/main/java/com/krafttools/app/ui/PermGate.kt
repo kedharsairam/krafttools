@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -43,6 +46,7 @@ fun PermissionGate(
     permission: String,
     tool: String,
     reason: String,
+    onBack: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
@@ -84,35 +88,60 @@ fun PermissionGate(
     val activity = context as? Activity
     val blocked = asked && activity != null &&
         !ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = tool,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold,
-        )
-        Text(
-            text = reason,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        if (blocked) {
+    ToolScaffold(tool, onBack ?: {}) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(
+                12.dp,
+                Alignment.CenterVertically,
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Text(
-                text = "Permission is off in system settings. The tool stays locked until you allow it there.",
-                style = MaterialTheme.typography.bodyMedium,
+                text = reason,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Button(onClick = { openAppSettings(context) }) {
-                Text("Open settings")
+            if (blocked) {
+                Text(
+                    text = "It is turned off in system settings, so this " +
+                        "tool stays locked until you allow it there.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Button(
+                    onClick = { openAppSettings(context) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
+                ) {
+                    Text("Open settings")
+                }
+            } else {
+                Button(
+                    onClick = { launcher.launch(permission) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
+                ) {
+                    Text("Allow")
+                }
             }
-        } else {
-            Button(onClick = { launcher.launch(permission) }) {
-                Text("Allow")
+            // A gate is a door, not a wall. Without this, denying a
+            // permission left the user with no way back to the tools
+            // except the system gesture.
+            if (onBack != null) {
+                OutlinedButton(
+                    onClick = onBack,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
+                ) {
+                    Text("Not now")
+                }
             }
         }
     }

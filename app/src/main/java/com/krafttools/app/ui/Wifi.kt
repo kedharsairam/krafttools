@@ -55,7 +55,8 @@ fun WifiScreen(onBack: () -> Unit) {
             "signal strengths) to apps holding location permission. " +
             "Your location is never read, stored, or sent anywhere — " +
             "the permission is just the key to the scan API.",
-    ) {
+    
+        onBack = onBack,) {
         WifiBody(onBack)
     }
 }
