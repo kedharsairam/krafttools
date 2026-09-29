@@ -1,4 +1,4 @@
-package com.toolbox.app
+package com.krafttools.app
 
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap

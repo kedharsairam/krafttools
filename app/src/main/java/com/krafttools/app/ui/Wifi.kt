@@ -8,10 +8,14 @@ import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -35,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,6 +64,7 @@ private data class Net(
     val bssid: String,
     val level: Int,
     val freq: String,
+    val mhz: Int,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +85,7 @@ private fun WifiBody(onBack: () -> Unit) {
                 .filter { it.SSID.isNotBlank() }
                 .distinctBy { it.BSSID }
                 .sortedByDescending { it.level }
-                .map { r -> Net(r.SSID, r.BSSID, r.level, bandOf(r)) }
+                .map { r -> Net(r.SSID, r.BSSID, r.level, bandOf(r), r.frequency) }
             if (cached.isNotEmpty()) {
                 nets = cached
                 true
@@ -191,6 +197,10 @@ private fun WifiBody(onBack: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            ChannelGraph(
+                nets = nets,
+                modifier = Modifier.fillMaxWidth(),
+            )
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -242,6 +252,101 @@ private fun bandOf(r: ScanResult): String = when {
     r.frequency in 4900..5900 -> "5 GHz"
     r.frequency in 5925..7125 -> "6 GHz"
     else -> "${r.frequency} MHz"
+}
+
+/** Frequency MHz -> WiFi channel number (2.4/5/6 GHz rules). */
+private fun channelOf(freqMHz: Int, ssid: String): Int = when {
+    freqMHz in 2400..2500 -> (freqMHz - 2407) / 5
+    freqMHz in 4900..5900 -> (freqMHz - 5000) / 5
+    freqMHz in 5925..7125 -> (freqMHz - 5950) / 5
+    else -> -1
+}
+
+/**
+ * Channel-utilization graph: strongest signal per WiFi channel.
+ * The analyzer signature view \u2014 crowded channels (tall bars) are why
+ * the video call stutters. 2.4 GHz channels overlap, so neighbors
+ * bleed into each other; 5/6 GHz bars stand alone.
+ */
+@Composable
+private fun ChannelGraph(nets: List<Net>, modifier: Modifier = Modifier) {
+    val perChannel = nets
+        .mapNotNull { net ->
+            val ch = channelOf(net.mhz, net.ssid)
+            if (ch < 0) null else ch to net.level
+        }
+        .groupBy({ it.first }, { it.second })
+        .mapValues { (_, levels) -> levels.max() }
+        .toSortedMap()
+    if (perChannel.isEmpty()) return
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = "Crowded channels",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+        )
+        ChannelBars(
+            channels = perChannel.keys.toList(),
+            levels = perChannel.values.toList(),
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Text(
+            text = "Taller bar = stronger squatter. Move your router's " +
+                "channel to the shortest bar's neighborhood.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+private fun ChannelBars(
+    channels: List<Int>,
+    levels: List<Int>,
+    modifier: Modifier = Modifier,
+) {
+    val bar = MaterialTheme.colorScheme.primary
+    val track = MaterialTheme.colorScheme.outlineVariant
+    val label = MaterialTheme.colorScheme.onSurfaceVariant
+    androidx.compose.foundation.Canvas(
+        modifier = modifier.height(96.dp),
+    ) {
+        if (channels.isEmpty()) return@Canvas
+        val gap = 6f
+        val w = (size.width - gap * (channels.size - 1)) / channels.size
+        channels.forEachIndexed { i, _ ->
+            val frac = signalFraction(levels[i])
+            val h = (size.height * 0.72f * frac).coerceAtLeast(4f)
+            val base = size.height * 0.78f
+            drawRect(
+                color = track,
+                topLeft = Offset(i * (w + gap), 0f),
+                size = androidx.compose.ui.geometry.Size(w, base),
+            )
+            drawRect(
+                color = bar,
+                topLeft = Offset(i * (w + gap), base - h),
+                size = androidx.compose.ui.geometry.Size(w, h),
+            )
+        }
+    }
+    androidx.compose.foundation.layout.FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        channels.forEach { ch ->
+            Text(
+                text = "$ch",
+                style = MaterialTheme.typography.labelMedium,
+                color = label,
+                modifier = Modifier.widthIn(min = 24.dp),
+            )
+        }
+    }
 }
 
 /** dBm (-100..-30) into 0..1 for the bar. */
