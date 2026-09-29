@@ -769,12 +769,6 @@ SPLandroidx/compose/foundation/text/selection/SelectionRegistrarKt**->**(**)**
 SPLandroidx/compose/foundation/text/selection/TextSelectionColors;->**(**)**
 SPLandroidx/compose/foundation/text/selection/TextSelectionColorsKt**->**(**)**
 
-# Baseline profile rules for androidx.compose.ui.unit
-# =============================================
-# everything in unit is relatively small and in the hot path, so we just add everything
-HSPLandroidx/compose/ui/unit/**->**(**)**
-Landroidx/compose/ui/unit/**
-
 # Baseline profile rules for androidx.compose.ui.geometry
 # =============================================
 # All of geometry is highly used, small, and mathy, so we include everything
@@ -924,6 +918,12 @@ HSPLkotlin/text/StringsKt__StringsKt;->substringAfterLast(Ljava/lang/String;CLja
 HSPLkotlin/text/StringsKt__StringsKt;->trim(Ljava/lang/String;[C)Ljava/lang/String;
 HSPLkotlin/text/StringsKt___StringsKt;->first(Ljava/lang/CharSequence;)C
 HSPLkotlin/text/StringsKt___StringsKt;->slice(Ljava/lang/String;Lkotlin/ranges/IntRange;)Ljava/lang/String;
+
+# Baseline profile rules for androidx.compose.ui.unit
+# =============================================
+# everything in unit is relatively small and in the hot path, so we just add everything
+HSPLandroidx/compose/ui/unit/**->**(**)**
+Landroidx/compose/ui/unit/**
 
 SPLandroidx/compose/ui/AbsoluteAlignment;->**(**)**
 HSPLandroidx/compose/ui/Actual_androidKt**->**(**)**

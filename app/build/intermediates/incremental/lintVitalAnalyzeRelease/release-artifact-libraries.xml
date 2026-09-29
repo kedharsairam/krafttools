@@ -208,10 +208,10 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
-      name="androidx.compose.ui:ui-util-android:1.12.1@aar"
-      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/17181b22cc4ad3faeff2cba7749ea93d/transformed/ui-util/jars/classes.jar"
-      resolved="androidx.compose.ui:ui-util-android:1.12.1"
-      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/17181b22cc4ad3faeff2cba7749ea93d/transformed/ui-util"
+      name="androidx.glance:glance:1.1.1@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/f9e10b240bffbbc71b7da6a5158481b8/transformed/glance-1.1.1/jars/classes.jar"
+      resolved="androidx.glance:glance:1.1.1"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/f9e10b240bffbbc71b7da6a5158481b8/transformed/glance-1.1.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -221,10 +221,23 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
-      name="androidx.compose.ui:ui-unit-android:1.12.1@aar"
-      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/c1fd66f671207b0cc05d6038b23197aa/transformed/ui-unit/jars/classes.jar"
-      resolved="androidx.compose.ui:ui-unit-android:1.12.1"
-      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/c1fd66f671207b0cc05d6038b23197aa/transformed/ui-unit"
+      name="androidx.glance:glance-appwidget:1.1.1@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/jars/classes.jar"
+      resolved="androidx.glance:glance-appwidget:1.1.1"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.ui:ui-util-android:1.12.1@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/17181b22cc4ad3faeff2cba7749ea93d/transformed/ui-util/jars/classes.jar"
+      resolved="androidx.compose.ui:ui-util-android:1.12.1"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/17181b22cc4ad3faeff2cba7749ea93d/transformed/ui-util"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -251,6 +264,19 @@
       jars="/home/kedhar/.gradle/caches/9.7.1/transforms/f08d9c6141bf8103ed21131b80fdeada/transformed/ui-text/jars/classes.jar"
       resolved="androidx.compose.ui:ui-text-android:1.12.1"
       folder="/home/kedhar/.gradle/caches/9.7.1/transforms/f08d9c6141bf8103ed21131b80fdeada/transformed/ui-text"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.compose.ui:ui-unit-android:1.12.1@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/c1fd66f671207b0cc05d6038b23197aa/transformed/ui-unit/jars/classes.jar"
+      resolved="androidx.compose.ui:ui-unit-android:1.12.1"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/c1fd66f671207b0cc05d6038b23197aa/transformed/ui-unit"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -498,6 +524,62 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
+      name="androidx.datastore:datastore-core-okio-jvm:1.2.1@jar"
+      jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/androidx.datastore/datastore-core-okio-jvm/1.2.1/16e01a0603ce8cf206b21a304ff1ded7a9bff1da/datastore-core-okio-jvm-1.2.1.jar"
+      resolved="androidx.datastore:datastore-core-okio-jvm:1.2.1"/>
+  <library
+      name="androidx.datastore:datastore-core-android:1.2.1@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/fbd2b8eaa44ef8547f91548fe8a00fa3/transformed/datastore-core/jars/classes.jar"
+      resolved="androidx.datastore:datastore-core-android:1.2.1"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/fbd2b8eaa44ef8547f91548fe8a00fa3/transformed/datastore-core"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.datastore:datastore-preferences-core-android:1.2.1@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/e0ee84126afdef5353e8ceec605fe15d/transformed/datastore-preferences-core/jars/classes.jar"
+      resolved="androidx.datastore:datastore-preferences-core-android:1.2.1"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/e0ee84126afdef5353e8ceec605fe15d/transformed/datastore-preferences-core"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.datastore:datastore-android:1.2.1@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/02ec4312dfc08630f8bae80ac46c62b5/transformed/datastore/jars/classes.jar"
+      resolved="androidx.datastore:datastore-android:1.2.1"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/02ec4312dfc08630f8bae80ac46c62b5/transformed/datastore"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.datastore:datastore-preferences-android:1.2.1@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/90ce371742f00aaaa9389ca43fa8072c/transformed/datastore-preferences/jars/classes.jar"
+      resolved="androidx.datastore:datastore-preferences-android:1.2.1"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/90ce371742f00aaaa9389ca43fa8072c/transformed/datastore-preferences"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
       name="androidx.navigationevent:navigationevent-compose-android:1.0.0@aar"
       jars="/home/kedhar/.gradle/caches/9.7.1/transforms/c37701dd3aa91db47c0f354e9abf9667/transformed/navigationevent-compose/jars/classes.jar"
       resolved="androidx.navigationevent:navigationevent-compose-android:1.0.0"
@@ -693,6 +775,10 @@
       jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-serialization-core-jvm/1.7.3/1f226780b845ff9206474c05159245d861556249/kotlinx-serialization-core-jvm-1.7.3.jar"
       resolved="org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.3"/>
   <library
+      name="com.squareup.okio:okio-jvm:3.9.1@jar"
+      jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio-jvm/3.9.1/79696e3f4ff05d41ba2b3dc68adb5808a2e5dc53/okio-jvm-3.9.1.jar"
+      resolved="com.squareup.okio:okio-jvm:3.9.1"/>
+  <library
       name="org.jetbrains.kotlin:kotlin-stdlib:2.2.10@jar"
       jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.2.10/30de6faa127a4a012db8e71bf1b9c0a99b1402b2/kotlin-stdlib-2.2.10.jar"
       resolved="org.jetbrains.kotlin:kotlin-stdlib:2.2.10"/>
@@ -712,6 +798,14 @@
       name="org.jspecify:jspecify:1.0.0@jar"
       jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/org.jspecify/jspecify/1.0.0/7425a601c1c7ec76645a78d22b8c6a627edee507/jspecify-1.0.0.jar"
       resolved="org.jspecify:jspecify:1.0.0"/>
+  <library
+      name="androidx.glance:glance-appwidget-external-protobuf:1.1.1@jar"
+      jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/androidx.glance/glance-appwidget-external-protobuf/1.1.1/6d2bcb8fb2d00a5513cf681bb2756be459d21b78/glance-appwidget-external-protobuf-1.1.1.jar"
+      resolved="androidx.glance:glance-appwidget-external-protobuf:1.1.1"/>
+  <library
+      name="androidx.glance:glance-appwidget-proto:1.1.1@jar"
+      jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/androidx.glance/glance-appwidget-proto/1.1.1/a509ef84a63e2584c5afae6e1d5a757e1bae4418/glance-appwidget-proto-1.1.1.jar"
+      resolved="androidx.glance:glance-appwidget-proto:1.1.1"/>
   <library
       name="androidx.appcompat:appcompat:1.1.0@aar"
       jars="/home/kedhar/.gradle/caches/9.7.1/transforms/0e1ae65ca49fa88e473032c1c4214fae/transformed/appcompat-1.1.0/jars/classes.jar"
@@ -765,6 +859,32 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
+      name="androidx.work:work-runtime-ktx:2.7.1@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/f857e87b707e9b77e1c04df22e6e32f9/transformed/work-runtime-ktx-2.7.1/jars/classes.jar"
+      resolved="androidx.work:work-runtime-ktx:2.7.1"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/f857e87b707e9b77e1c04df22e6e32f9/transformed/work-runtime-ktx-2.7.1"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.work:work-runtime:2.7.1@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/jars/classes.jar"
+      resolved="androidx.work:work-runtime:2.7.1"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
       name="androidx.emoji2:emoji2:1.4.0@aar"
       jars="/home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/jars/classes.jar:/home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/jars/libs/repackaged.jar"
       resolved="androidx.emoji2:emoji2:1.4.0"
@@ -791,6 +911,19 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
+      name="androidx.lifecycle:lifecycle-service:2.11.0@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/f685628d7986919980b8d56bc9627b49/transformed/lifecycle-service-2.11.0/jars/classes.jar"
+      resolved="androidx.lifecycle:lifecycle-service:2.11.0"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/f685628d7986919980b8d56bc9627b49/transformed/lifecycle-service-2.11.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
       name="androidx.loader:loader:1.0.0@aar"
       jars="/home/kedhar/.gradle/caches/9.7.1/transforms/831267f3cff3b84de0548229f5f42697/transformed/loader-1.0.0/jars/classes.jar"
       resolved="androidx.loader:loader:1.0.0"
@@ -808,6 +941,19 @@
       jars="/home/kedhar/.gradle/caches/9.7.1/transforms/335aba204ca502cc4af18ff28abb7889/transformed/lifecycle-viewmodel-2.11.0/jars/classes.jar"
       resolved="androidx.lifecycle:lifecycle-viewmodel:2.11.0"
       folder="/home/kedhar/.gradle/caches/9.7.1/transforms/335aba204ca502cc4af18ff28abb7889/transformed/lifecycle-viewmodel-2.11.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.core:core-remoteviews:1.1.0@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/e42fd129feaad1aa579b58041aaebcbc/transformed/core-remoteviews-1.1.0/jars/classes.jar"
+      resolved="androidx.core:core-remoteviews:1.1.0"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/e42fd129feaad1aa579b58041aaebcbc/transformed/core-remoteviews-1.1.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -964,6 +1110,14 @@
       jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-common-java8/2.11.0/9d9c098b5dc3bbcdce8ec4495991b9b0ee25606e/lifecycle-common-java8-2.11.0.jar"
       resolved="androidx.lifecycle:lifecycle-common-java8:2.11.0"/>
   <library
+      name="androidx.datastore:datastore-preferences-external-protobuf:1.2.1@jar"
+      jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/androidx.datastore/datastore-preferences-external-protobuf/1.2.1/200a891fd29602b4bcff8e197d243a372fb026d5/datastore-preferences-external-protobuf-1.2.1.jar"
+      resolved="androidx.datastore:datastore-preferences-external-protobuf:1.2.1"/>
+  <library
+      name="androidx.datastore:datastore-preferences-proto:1.2.1@jar"
+      jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/androidx.datastore/datastore-preferences-proto/1.2.1/5d062b556fb45141138c3d86284bbdcbe07cc770/datastore-preferences-proto-1.2.1.jar"
+      resolved="androidx.datastore:datastore-preferences-proto:1.2.1"/>
+  <library
       name="androidx.concurrent:concurrent-futures-ktx:1.1.0@jar"
       jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/androidx.concurrent/concurrent-futures-ktx/1.1.0/b4c245baf36d1a9e7defaf3be84f7a2ad4e1c797/concurrent-futures-ktx-1.1.0.jar"
       resolved="androidx.concurrent:concurrent-futures-ktx:1.1.0"/>
@@ -1050,9 +1204,52 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
+      name="androidx.room:room-runtime:2.2.5@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/1724649ebefb088bd90a5bade143b773/transformed/room-runtime-2.2.5/jars/classes.jar"
+      resolved="androidx.room:room-runtime:2.2.5"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/1724649ebefb088bd90a5bade143b773/transformed/room-runtime-2.2.5"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.sqlite:sqlite-framework:2.1.0@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/b3c524795656a72b9158426dcde9a9bb/transformed/sqlite-framework-2.1.0/jars/classes.jar"
+      resolved="androidx.sqlite:sqlite-framework:2.1.0"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/b3c524795656a72b9158426dcde9a9bb/transformed/sqlite-framework-2.1.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
+      name="androidx.sqlite:sqlite:2.1.0@aar"
+      jars="/home/kedhar/.gradle/caches/9.7.1/transforms/89b2d17922530a618611fc3885905d2d/transformed/sqlite-2.1.0/jars/classes.jar"
+      resolved="androidx.sqlite:sqlite:2.1.0"
+      folder="/home/kedhar/.gradle/caches/9.7.1/transforms/89b2d17922530a618611fc3885905d2d/transformed/sqlite-2.1.0"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
       name="androidx.collection:collection-ktx:1.5.0@jar"
       jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/androidx.collection/collection-ktx/1.5.0/27c78a926a16a1bf792b2285cf2834e8caae4a07/collection-ktx-1.5.0.jar"
       resolved="androidx.collection:collection-ktx:1.5.0"/>
+  <library
+      name="androidx.room:room-common:2.2.5@jar"
+      jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/androidx.room/room-common/2.2.5/f5e3b73a0c2ab5e276e26868e4ce3542baede207/room-common-2.2.5.jar"
+      resolved="androidx.room:room-common:2.2.5"/>
   <library
       name="androidx.interpolator:interpolator:1.0.0@aar"
       jars="/home/kedhar/.gradle/caches/9.7.1/transforms/4c85ef26b25ab56cbf78991d3c80911d/transformed/interpolator-1.0.0/jars/classes.jar"
@@ -1066,6 +1263,10 @@
       symbolFile="R.txt"
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
+  <library
+      name="org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.7.3@jar"
+      jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-serialization-json-jvm/1.7.3/6701e8c68d9e82387ce72ee96e8ddf058208d58f/kotlinx-serialization-json-jvm-1.7.3.jar"
+      resolved="org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.7.3"/>
   <library
       name="com.google.auto.value:auto-value-annotations:1.6.3@jar"
       jars="/home/kedhar/.gradle/caches/modules-2/files-2.1/com.google.auto.value/auto-value-annotations/1.6.3/b88c1bb7f149f6d2cc03898359283e57b08f39cc/auto-value-annotations-1.6.3.jar"

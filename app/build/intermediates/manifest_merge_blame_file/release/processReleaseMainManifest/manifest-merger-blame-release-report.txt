@@ -17,165 +17,509 @@
 14         declarations, and nothing touches the network.
 15    -->
 16    <uses-permission android:name="android.permission.CAMERA" />
-16-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:7:5-65
-16-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:7:22-62
+16-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:8:5-65
+16-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:8:22-62
 17    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-17-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:8:5-79
-17-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:8:22-76
+17-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:9:5-79
+17-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:9:22-76
 18    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-18-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:9:5-71
-18-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:9:22-68
+18-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:10:5-71
+18-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:10:22-68
 19    <!-- Normal (auto-granted, no prompt): threshold buzz. -->
 20    <uses-permission android:name="android.permission.VIBRATE" />
-20-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:11:5-66
-20-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:11:22-63
+20-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:12:5-66
+20-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:12:22-63
 21    <!-- Normal (auto-granted, no prompt): scan control + result reads. -->
 22    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-22-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:13:5-76
-22-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:13:22-73
+22-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:5-76
+22-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:22-73
 23    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-23-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:5-76
-23-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:14:22-73
-24
-25    <permission
-25-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:22:5-24:47
-26        android:name="com.krafttools.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-26-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:23:9-81
-27        android:protectionLevel="signature" />
-27-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:24:9-44
+23-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:15:5-76
+23-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:15:22-73
+24    <uses-permission android:name="android.permission.WAKE_LOCK" />
+24-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:25:5-68
+24-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:25:22-65
+25    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+25-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:26:5-79
+25-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:26:22-76
+26    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+26-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:27:5-81
+26-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:27:22-78
+27    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+27-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:28:5-77
+27-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:28:22-74
 28
-29    <uses-permission android:name="com.krafttools.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-29-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:26:5-97
-29-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:26:22-94
-30
-31    <application
-31-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:16:5-30:19
-32        android:allowBackup="false"
-32-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:17:9-36
-33        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-33-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:28:18-86
-34        android:extractNativeLibs="false"
-34-->INJECTED
-35        android:icon="@mipmap/ic_launcher"
-35-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:18:9-43
-36        android:label="@string/app_name"
-36-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:19:9-41
-37        android:supportsRtl="true"
-37-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:20:9-35
-38        android:theme="@android:style/Theme.Material.NoActionBar" >
-38-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:21:9-66
-39        <activity
-39-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:22:9-29:20
-40            android:name="com.krafttools.app.MainActivity"
-40-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:23:13-41
-41            android:exported="true" >
-41-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:24:13-36
-42            <intent-filter>
-42-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:25:13-28:29
-43                <action android:name="android.intent.action.MAIN" />
-43-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:26:17-69
-43-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:26:25-66
-44
-45                <category android:name="android.intent.category.LAUNCHER" />
-45-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:27:17-77
-45-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:27:27-74
-46            </intent-filter>
-47        </activity>
+29    <permission
+29-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:22:5-24:47
+30        android:name="com.krafttools.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+30-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:23:9-81
+31        android:protectionLevel="signature" />
+31-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:24:9-44
+32
+33    <uses-permission android:name="com.krafttools.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+33-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:26:5-97
+33-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:26:22-94
+34
+35    <application
+35-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:17:5-76:19
+36        android:allowBackup="false"
+36-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:18:9-36
+37        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+37-->[androidx.core:core:1.18.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d8090c4c2464d8ca19c6e0b9c0b8a7c0/transformed/core-1.18.0/AndroidManifest.xml:28:18-86
+38        android:extractNativeLibs="false"
+38-->INJECTED
+39        android:icon="@mipmap/ic_launcher"
+39-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:19:9-43
+40        android:label="@string/app_name"
+40-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:20:9-41
+41        android:supportsRtl="true"
+41-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:21:9-35
+42        android:theme="@android:style/Theme.Material.NoActionBar" >
+42-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:22:9-66
+43        <activity
+43-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:23:9-30:20
+44            android:name="com.krafttools.app.MainActivity"
+44-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:24:13-41
+45            android:exported="true" >
+45-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:25:13-36
+46            <intent-filter>
+46-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:26:13-29:29
+47                <action android:name="android.intent.action.MAIN" />
+47-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:27:17-69
+47-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:27:25-66
 48
-49        <service
-49-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:24:9-33:19
-50            android:name="androidx.camera.core.impl.MetadataHolderService"
-50-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:25:13-75
-51            android:enabled="false"
-51-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:26:13-36
-52            android:exported="false" >
-52-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:27:13-37
-53            <meta-data
-53-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:30:13-32:89
-54                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
-54-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:31:17-103
-55                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
-55-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:32:17-86
-56        </service>
-57
-58        <provider
-58-->[androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
-59            android:name="androidx.startup.InitializationProvider"
-59-->[androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:25:13-67
-60            android:authorities="com.krafttools.app.androidx-startup"
-60-->[androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:26:13-68
-61            android:exported="false" >
-61-->[androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:27:13-37
-62            <meta-data
-62-->[androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
-63                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-63-->[androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
-64                android:value="androidx.startup" />
-64-->[androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
-65            <meta-data
-65-->[androidx.lifecycle:lifecycle-process:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2c86240f8073fccfe3a2222fc24fe83d/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:29:13-31:52
-66                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-66-->[androidx.lifecycle:lifecycle-process:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2c86240f8073fccfe3a2222fc24fe83d/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:30:17-78
-67                android:value="androidx.startup" />
-67-->[androidx.lifecycle:lifecycle-process:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2c86240f8073fccfe3a2222fc24fe83d/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:31:17-49
-68            <meta-data
-68-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
-69                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-69-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
-70                android:value="androidx.startup" />
-70-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
-71        </provider>
-72
-73        <uses-library
-73-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:23:9-25:40
-74            android:name="androidx.window.extensions"
-74-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:24:13-54
-75            android:required="false" />
-75-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:25:13-37
-76        <uses-library
-76-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:26:9-28:40
-77            android:name="androidx.window.sidecar"
-77-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:27:13-51
-78            android:required="false" />
-78-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:28:13-37
-79
-80        <receiver
-80-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
-81            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-81-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
-82            android:directBootAware="false"
-82-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
-83            android:enabled="true"
-83-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
-84            android:exported="true"
-84-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
-85            android:permission="android.permission.DUMP" >
-85-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
-86            <intent-filter>
-86-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
-87                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-87-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
-87-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
-88            </intent-filter>
-89            <intent-filter>
-89-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
-90                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-90-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
-90-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
-91            </intent-filter>
-92            <intent-filter>
-92-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
-93                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-93-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
-93-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
-94            </intent-filter>
-95            <intent-filter>
-95-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
-96                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-96-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
-96-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
-97            </intent-filter>
-98        </receiver>
-99    </application>
-100
-101</manifest>
+49                <category android:name="android.intent.category.LAUNCHER" />
+49-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:28:17-77
+49-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:28:27-74
+50            </intent-filter>
+51        </activity>
+52
+53        <service
+53-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:31:9-40:19
+54            android:name="com.krafttools.app.tiles.TorchTileService"
+54-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:32:13-51
+55            android:exported="true"
+55-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:36:13-36
+56            android:icon="@drawable/ic_tile_torch"
+56-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:34:13-51
+57            android:label="Toolbox torch"
+57-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:33:13-42
+58            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" >
+58-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:35:13-77
+59            <intent-filter>
+59-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:37:13-39:29
+60                <action android:name="android.service.quicksettings.action.QS_TILE" />
+60-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:38:17-87
+60-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:38:25-84
+61            </intent-filter>
+62        </service>
+63        <service
+63-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:41:9-50:19
+64            android:name="com.krafttools.app.tiles.LevelTileService"
+64-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:42:13-51
+65            android:exported="true"
+65-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:46:13-36
+66            android:icon="@drawable/ic_tile_level"
+66-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:44:13-51
+67            android:label="Toolbox level"
+67-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:43:13-42
+68            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" >
+68-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:45:13-77
+69            <intent-filter>
+69-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:37:13-39:29
+70                <action android:name="android.service.quicksettings.action.QS_TILE" />
+70-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:38:17-87
+70-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:38:25-84
+71            </intent-filter>
+72        </service>
+73
+74        <receiver
+74-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:51:9-62:20
+75            android:name="com.krafttools.app.widget.BaroWidgetReceiver"
+75-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:52:13-54
+76            android:description="@string/widget_desc"
+76-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:54:13-54
+77            android:exported="false"
+77-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:55:13-37
+78            android:label="Barometer trend" >
+78-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:53:13-44
+79            <intent-filter>
+79-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:56:13-58:29
+80                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+80-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:57:17-84
+80-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:57:25-81
+81            </intent-filter>
+82
+83            <meta-data
+83-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:59:13-61:60
+84                android:name="android.appwidget.provider"
+84-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:60:17-58
+85                android:resource="@xml/baro_widget_info" />
+85-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:61:17-57
+86        </receiver>
+87        <!--
+88             No background work anywhere in this app: kill WorkManager's
+89             auto-init (pulled in transitively by Glance). It crashes
+90             under R8 and would be a dead scheduler anyway.
+91        -->
+92        <provider
+92-->INJECTED
+93            android:name="androidx.startup.InitializationProvider"
+93-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:67:13-67
+94            android:authorities="com.krafttools.app.androidx-startup"
+94-->INJECTED
+95            android:exported="false" >
+95-->/home/kedhar/Projects/opencode/opencode-config/projects/toolbox/app/src/main/AndroidManifest.xml:69:13-37
+96            <meta-data
+96-->[androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
+97                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+97-->[androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
+98                android:value="androidx.startup" />
+98-->[androidx.emoji2:emoji2:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/158ab6fb5fdf04857aebf73672e27429/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
+99            <meta-data
+99-->[androidx.lifecycle:lifecycle-process:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2c86240f8073fccfe3a2222fc24fe83d/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:29:13-31:52
+100                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+100-->[androidx.lifecycle:lifecycle-process:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2c86240f8073fccfe3a2222fc24fe83d/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:30:17-78
+101                android:value="androidx.startup" />
+101-->[androidx.lifecycle:lifecycle-process:2.11.0] /home/kedhar/.gradle/caches/9.7.1/transforms/2c86240f8073fccfe3a2222fc24fe83d/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:31:17-49
+102            <meta-data
+102-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+103                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+103-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+104                android:value="androidx.startup" />
+104-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+105        </provider>
+106
+107        <activity
+107-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:23:9-28:62
+108            android:name="androidx.glance.appwidget.action.ActionTrampolineActivity"
+108-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:24:13-85
+109            android:enabled="true"
+109-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:25:13-35
+110            android:excludeFromRecents="true"
+110-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:26:13-46
+111            android:exported="false"
+111-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:27:13-37
+112            android:theme="@android:style/Theme.NoDisplay" />
+112-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:28:13-59
+113        <activity
+113-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:29:9-36:81
+114            android:name="androidx.glance.appwidget.action.InvisibleActionTrampolineActivity"
+114-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:30:13-94
+115            android:enabled="true"
+115-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:31:13-35
+116            android:exported="false"
+116-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:32:13-37
+117            android:launchMode="singleInstance"
+117-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:33:13-48
+118            android:noHistory="true"
+118-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:34:13-37
+119            android:taskAffinity="androidx.glance.appwidget.ListAdapterCallbackTrampoline"
+119-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:35:13-91
+120            android:theme="@style/Widget.Glance.AppWidget.CallbackTrampoline" />
+120-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:36:13-78
+121
+122        <receiver
+122-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:38:9-41:40
+123            android:name="androidx.glance.appwidget.action.ActionCallbackBroadcastReceiver"
+123-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:39:13-92
+124            android:enabled="true"
+124-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:40:13-35
+125            android:exported="false" />
+125-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:41:13-37
+126        <receiver
+126-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:42:9-45:40
+127            android:name="androidx.glance.appwidget.UnmanagedSessionReceiver"
+127-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:43:13-78
+128            android:enabled="true"
+128-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:44:13-35
+129            android:exported="false" />
+129-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:45:13-37
+130        <receiver
+130-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:46:9-53:20
+131            android:name="androidx.glance.appwidget.MyPackageReplacedReceiver"
+131-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:47:13-79
+132            android:enabled="true"
+132-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:48:13-35
+133            android:exported="false" >
+133-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:49:13-37
+134            <intent-filter>
+134-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:50:13-52:29
+135                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+135-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:51:17-84
+135-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:51:25-81
+136            </intent-filter>
+137        </receiver>
+138
+139        <service
+139-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:55:9-58:72
+140            android:name="androidx.glance.appwidget.GlanceRemoteViewsService"
+140-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:56:13-78
+141            android:exported="true"
+141-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:57:13-36
+142            android:permission="android.permission.BIND_REMOTEVIEWS" />
+142-->[androidx.glance:glance-appwidget:1.1.1] /home/kedhar/.gradle/caches/9.7.1/transforms/a7c997cec89a35dc47f2f4192422b7ab/transformed/glance-appwidget-1.1.1/AndroidManifest.xml:58:13-69
+143        <service
+143-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:24:9-33:19
+144            android:name="androidx.camera.core.impl.MetadataHolderService"
+144-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:25:13-75
+145            android:enabled="false"
+145-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:26:13-36
+146            android:exported="false" >
+146-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:27:13-37
+147            <meta-data
+147-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:30:13-32:89
+148                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+148-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:31:17-103
+149                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+149-->[androidx.camera:camera-camera2:1.4.1] /home/kedhar/.gradle/caches/9.7.1/transforms/4db587645c0f9acbe6cfbbf8aab822d8/transformed/camera-camera2-1.4.1/AndroidManifest.xml:32:17-86
+150        </service>
+151        <service
+151-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:41:9-46:35
+152            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
+152-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:42:13-88
+153            android:directBootAware="false"
+153-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:43:13-44
+154            android:enabled="@bool/enable_system_alarm_service_default"
+154-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:44:13-72
+155            android:exported="false" />
+155-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:45:13-37
+156        <service
+156-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:47:9-53:35
+157            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+157-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:48:13-84
+158            android:directBootAware="false"
+158-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:49:13-44
+159            android:enabled="@bool/enable_system_job_service_default"
+159-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:50:13-70
+160            android:exported="true"
+160-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:51:13-36
+161            android:permission="android.permission.BIND_JOB_SERVICE" />
+161-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:52:13-69
+162        <service
+162-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:54:9-59:35
+163            android:name="androidx.work.impl.foreground.SystemForegroundService"
+163-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:55:13-81
+164            android:directBootAware="false"
+164-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:56:13-44
+165            android:enabled="@bool/enable_system_foreground_service_default"
+165-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:57:13-77
+166            android:exported="false" />
+166-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:58:13-37
+167
+168        <receiver
+168-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:61:9-66:35
+169            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
+169-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:62:13-88
+170            android:directBootAware="false"
+170-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:63:13-44
+171            android:enabled="true"
+171-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:64:13-35
+172            android:exported="false" />
+172-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:65:13-37
+173        <receiver
+173-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:67:9-77:20
+174            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
+174-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:68:13-106
+175            android:directBootAware="false"
+175-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:69:13-44
+176            android:enabled="false"
+176-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:70:13-36
+177            android:exported="false" >
+177-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:71:13-37
+178            <intent-filter>
+178-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:73:13-76:29
+179                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+179-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:74:17-87
+179-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:74:25-84
+180                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+180-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:75:17-90
+180-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:75:25-87
+181            </intent-filter>
+182        </receiver>
+183        <receiver
+183-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:78:9-88:20
+184            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
+184-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:79:13-104
+185            android:directBootAware="false"
+185-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:80:13-44
+186            android:enabled="false"
+186-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:81:13-36
+187            android:exported="false" >
+187-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:82:13-37
+188            <intent-filter>
+188-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:84:13-87:29
+189                <action android:name="android.intent.action.BATTERY_OKAY" />
+189-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:85:17-77
+189-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:85:25-74
+190                <action android:name="android.intent.action.BATTERY_LOW" />
+190-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:86:17-76
+190-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:86:25-73
+191            </intent-filter>
+192        </receiver>
+193        <receiver
+193-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:89:9-99:20
+194            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
+194-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:90:13-104
+195            android:directBootAware="false"
+195-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:91:13-44
+196            android:enabled="false"
+196-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:92:13-36
+197            android:exported="false" >
+197-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:93:13-37
+198            <intent-filter>
+198-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:95:13-98:29
+199                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+199-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:96:17-83
+199-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:96:25-80
+200                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
+200-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:97:17-82
+200-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:97:25-79
+201            </intent-filter>
+202        </receiver>
+203        <receiver
+203-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:100:9-109:20
+204            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
+204-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:101:13-103
+205            android:directBootAware="false"
+205-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:102:13-44
+206            android:enabled="false"
+206-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:103:13-36
+207            android:exported="false" >
+207-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:104:13-37
+208            <intent-filter>
+208-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:106:13-108:29
+209                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+209-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:107:17-79
+209-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:107:25-76
+210            </intent-filter>
+211        </receiver>
+212        <receiver
+212-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:110:9-121:20
+213            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+213-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:111:13-88
+214            android:directBootAware="false"
+214-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:112:13-44
+215            android:enabled="false"
+215-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:113:13-36
+216            android:exported="false" >
+216-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:114:13-37
+217            <intent-filter>
+217-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:116:13-120:29
+218                <action android:name="android.intent.action.BOOT_COMPLETED" />
+218-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:117:17-79
+218-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:117:25-76
+219                <action android:name="android.intent.action.TIME_SET" />
+219-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:118:17-73
+219-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:118:25-70
+220                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+220-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:119:17-81
+220-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:119:25-78
+221            </intent-filter>
+222        </receiver>
+223        <receiver
+223-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:122:9-131:20
+224            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
+224-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:123:13-99
+225            android:directBootAware="false"
+225-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:124:13-44
+226            android:enabled="@bool/enable_system_alarm_service_default"
+226-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:125:13-72
+227            android:exported="false" >
+227-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:126:13-37
+228            <intent-filter>
+228-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:128:13-130:29
+229                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
+229-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:129:17-98
+229-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:129:25-95
+230            </intent-filter>
+231        </receiver>
+232        <receiver
+232-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:132:9-142:20
+233            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
+233-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:133:13-78
+234            android:directBootAware="false"
+234-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:134:13-44
+235            android:enabled="true"
+235-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:135:13-35
+236            android:exported="true"
+236-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:136:13-36
+237            android:permission="android.permission.DUMP" >
+237-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:137:13-57
+238            <intent-filter>
+238-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:139:13-141:29
+239                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
+239-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:140:17-88
+239-->[androidx.work:work-runtime:2.7.1] /home/kedhar/.gradle/caches/9.7.1/transforms/049054c4daf4028d9d690d99fbdd2c6a/transformed/work-runtime-2.7.1/AndroidManifest.xml:140:25-85
+240            </intent-filter>
+241        </receiver>
+242
+243        <service
+243-->[androidx.core:core-remoteviews:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/e42fd129feaad1aa579b58041aaebcbc/transformed/core-remoteviews-1.1.0/AndroidManifest.xml:24:9-27:63
+244            android:name="androidx.core.widget.RemoteViewsCompatService"
+244-->[androidx.core:core-remoteviews:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/e42fd129feaad1aa579b58041aaebcbc/transformed/core-remoteviews-1.1.0/AndroidManifest.xml:25:13-73
+245            android:permission="android.permission.BIND_REMOTEVIEWS" />
+245-->[androidx.core:core-remoteviews:1.1.0] /home/kedhar/.gradle/caches/9.7.1/transforms/e42fd129feaad1aa579b58041aaebcbc/transformed/core-remoteviews-1.1.0/AndroidManifest.xml:26:13-69
+246
+247        <uses-library
+247-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:23:9-25:40
+248            android:name="androidx.window.extensions"
+248-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:24:13-54
+249            android:required="false" />
+249-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:25:13-37
+250        <uses-library
+250-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:26:9-28:40
+251            android:name="androidx.window.sidecar"
+251-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:27:13-51
+252            android:required="false" />
+252-->[androidx.window:window:1.5.0] /home/kedhar/.gradle/caches/9.7.1/transforms/d75a2e39fb5a9fd7a5e0228fc48f00ea/transformed/window-1.5.0/AndroidManifest.xml:28:13-37
+253
+254        <receiver
+254-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+255            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+255-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+256            android:directBootAware="false"
+256-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+257            android:enabled="true"
+257-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+258            android:exported="true"
+258-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+259            android:permission="android.permission.DUMP" >
+259-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+260            <intent-filter>
+260-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+261                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+261-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+261-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+262            </intent-filter>
+263            <intent-filter>
+263-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+264                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+264-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+264-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+265            </intent-filter>
+266            <intent-filter>
+266-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+267                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+267-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+267-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+268            </intent-filter>
+269            <intent-filter>
+269-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+270                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+270-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+270-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/kedhar/.gradle/caches/9.7.1/transforms/10239098dfe8a26337b6bc9f075ffac4/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+271            </intent-filter>
+272        </receiver>
+273
+274        <service
+274-->[androidx.room:room-runtime:2.2.5] /home/kedhar/.gradle/caches/9.7.1/transforms/1724649ebefb088bd90a5bade143b773/transformed/room-runtime-2.2.5/AndroidManifest.xml:25:9-28:40
+275            android:name="androidx.room.MultiInstanceInvalidationService"
+275-->[androidx.room:room-runtime:2.2.5] /home/kedhar/.gradle/caches/9.7.1/transforms/1724649ebefb088bd90a5bade143b773/transformed/room-runtime-2.2.5/AndroidManifest.xml:26:13-74
+276            android:directBootAware="true"
+276-->[androidx.room:room-runtime:2.2.5] /home/kedhar/.gradle/caches/9.7.1/transforms/1724649ebefb088bd90a5bade143b773/transformed/room-runtime-2.2.5/AndroidManifest.xml:27:13-43
+277            android:exported="false" />
+277-->[androidx.room:room-runtime:2.2.5] /home/kedhar/.gradle/caches/9.7.1/transforms/1724649ebefb088bd90a5bade143b773/transformed/room-runtime-2.2.5/AndroidManifest.xml:28:13-37
+278    </application>
+279
+280</manifest>

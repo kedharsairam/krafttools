@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KraftTools</string>
+    <string name="widget_desc">Live barometer trend from your last reading. Tap to open.</string>
 </resources>
