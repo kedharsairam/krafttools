@@ -10,7 +10,7 @@ import android.view.View
 
 /**
  * The house haptic vocabulary — one mapping, used everywhere.
- * Follows the Apple/Google doctrine: toggles tick, threshold snaps
+ * Follows the platform doctrine: toggles tick, threshold snaps
  * confirm lightly, saves confirm fully, errors reject. Overuse kills
  * meaning, so each call site names its metaphor in a comment.
  *

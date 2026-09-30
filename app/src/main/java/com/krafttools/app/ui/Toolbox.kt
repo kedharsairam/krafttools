@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Architecture
 import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.FlashlightOn
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Palette
@@ -153,7 +154,10 @@ fun ToolboxNav(startRoute: String? = null) {
         composable("grid") {
             // Every tool is live, so the grid used to re-check the
             // flag on every tap before navigating. The flag is gone.
-            ToolGrid(onOpen = { route -> nav.navigate(route) })
+            ToolGrid(
+                onOpen = { route -> nav.navigate(route) },
+                onAbout = { nav.navigate("about") },
+            )
         }
         composable("level") { LevelScreen(onBack = { nav.popBackStack() }) }
         composable("compass") { CompassScreen(onBack = { nav.popBackStack() }) }
@@ -175,14 +179,35 @@ fun ToolboxNav(startRoute: String? = null) {
         composable("pressure") {
             BarometerScreen(onBack = { nav.popBackStack() })
         }
+        composable("about") { AboutScreen(onBack = { nav.popBackStack() }) }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ToolGrid(onOpen: (String) -> Unit) {
+private fun ToolGrid(onOpen: (String) -> Unit, onAbout: () -> Unit) {
     Scaffold(
-        topBar = { TopAppBar(title = { Text("KraftTools") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("KraftTools") },
+                // An action in the bar rather than a fifteenth tile.
+                //
+                // Fourteen tools make two clean columns, and an about
+                // tile among them would read as an instrument — it
+                // would be the one thing on this screen that is not a
+                // measurement, sitting in the place where a user goes
+                // looking for one. The bar is where chrome belongs, and
+                // it is where a user looks for "what is this".
+                actions = {
+                    IconButton(onClick = onAbout) {
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = "About KraftTools",
+                        )
+                    }
+                },
+            )
+        },
     ) { padding ->
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
