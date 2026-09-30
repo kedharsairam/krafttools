@@ -107,6 +107,14 @@ app/src/test/          329 JVM tests, including source lints
 app/src/androidTest/   the instrumented sweep and the tally regression
 ```
 
+## Support
+
+If you enjoy KraftTools, buy me a coffee:
+
+<p align="center">
+  <a href="https://buymeacoffee.com/kedhartech"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="182"></a>
+</p>
+
 ## Licence
 
 MIT. See [LICENSE](LICENSE).
