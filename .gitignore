@@ -24,3 +24,13 @@ keystore.properties
 # OS
 .DS_Store
 Thumbs.db
+
+# Artefacts of my own adb sweeps. A uiautomator dump and a screenshot
+# both look enough like project files to survive review, and neither
+# belongs in a public repository. Real image assets live in
+# app/src/main/res and in icons/.
+/u.xml
+/u2.xml
+/u3.xml
+/d.xml
+/*.png
