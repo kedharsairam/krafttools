@@ -192,6 +192,10 @@ fun VibrationScreen(onBack: () -> Unit) {
             // over itself, which is fixed in TraceGraph.
             TraceGraph(
                 values = window,
+                label = "Vibration trace",
+                spokenValue = "%.2f %s".format(
+                    Locale.ROOT, value.toDouble(), axis.unit,
+                ),
                 max = scale.ceiling,
                 peak = window.maxOrNull() ?: 0f,
                 showZero = true,

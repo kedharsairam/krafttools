@@ -70,13 +70,7 @@ fun CompassScreen(onBack: () -> Unit) {
         permission = android.Manifest.permission.ACCESS_FINE_LOCATION,
         alsoAccepts = android.Manifest.permission.ACCESS_COARSE_LOCATION,
         tool = "Compass",
-        reason = "Optional. A compass needs no permission at all — this " +
-            "one only uses your position to work out magnetic " +
-            "declination, so the heading can be corrected to true " +
-            "north. Without it the dial still works and reads " +
-            "magnetic north. Your position is used once, is never " +
-            "stored, and this app has no network permission, so it " +
-            "cannot be sent anywhere.",
+        reason = "To correct the compass to true north.",
         optional = true,
         onBack = onBack,
     ) {

@@ -224,6 +224,12 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                     modifier = Modifier.touchTarget(),
                 ) { Text("Freeze") }
             }
+            // The one button on this screen that was missed when the
+            // others got `touchTarget()`. It measured 126x40dp: wide
+            // enough, eight dp too short, and a hard press to hit. The
+            // instrumented sweep found it, and only found it, because
+            // this button does not exist until the camera has delivered
+            // a sample — so a cold dump of the screen never showed it.
             OutlinedButton(
                 onClick = {
                     if (palette.none { it == rgb }) {
@@ -231,6 +237,7 @@ private fun ColorPickerBody(onBack: () -> Unit) {
                         if (palette.size > 12) palette.removeLast()
                     }
                 },
+                modifier = Modifier.touchTarget(),
             ) {
                 Text("Save swatch")
             }

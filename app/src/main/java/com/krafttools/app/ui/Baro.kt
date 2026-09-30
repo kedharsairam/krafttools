@@ -230,10 +230,12 @@ fun BarometerScreen(onBack: () -> Unit) {
         // metres, which is why the reference is editable.
         val errorM = kotlin.math.abs(metresPerHpa(pressure, p0 ?: STANDARD_SEA_LEVEL_HPA))
 
+        val shownText = "%.2f".format(Locale.ROOT, pressure.toDouble())
+
         ToolColumn(padding) {
             Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
-                value = "%.2f".format(Locale.ROOT, pressure.toDouble()),
+                value = shownText,
                 unit = "hPa",
                 status = when {
                     fault != null -> "sensor fault"
@@ -271,6 +273,8 @@ fun BarometerScreen(onBack: () -> Unit) {
             // the empty area.
             TraceGraph(
                 values = window,
+                label = "Barometer trace",
+                spokenValue = "$shownText hPa",
                 max = scale.ceiling,
                 min = scale.floor,
                 peak = peakHigh,
@@ -353,15 +357,14 @@ fun BarometerScreen(onBack: () -> Unit) {
                 }
             }
 
+            // Forty-five words was a paragraph about hPa, altitude and
+            // HVAC on a screen whose number is right above it. The
+            // figure the user needs is the one that tells them whether
+            // the reading is worth anything: how many centimetres each
+            // chip of error is worth.
             ToolHint(
-                (
-                    "One hPa is about %.0f m here, so the reading is good " +
-                        "to roughly %.1f m — and a mis-set reference is the " +
-                        "only thing that will really ruin it. A falling " +
-                        "trace can mean weather or climbing stairs; doors " +
-                        "and HVAC gust the sensor, so trust the mean over " +
-                        "a spike."
-                    ).format(Locale.ROOT, errorM, errorM * 0.012),
+                "Good to about %.0f cm. Check the sea-level reference."
+                    .format(Locale.ROOT, errorM * 100f * 0.012f),
             )
         }
     }

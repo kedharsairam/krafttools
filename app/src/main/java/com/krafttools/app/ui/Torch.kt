@@ -65,8 +65,7 @@ fun TorchScreen(onBack: () -> Unit) {
     PermissionGate(
         permission = android.Manifest.permission.CAMERA,
         tool = "Torch",
-        reason = "Android puts the torch behind the camera, so it asks for " +
-            "camera. The lens is never used.",
+        reason = "Android routes the torch through the camera.",
     
         onBack = onBack,
     ) {

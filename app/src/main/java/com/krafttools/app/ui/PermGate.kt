@@ -148,8 +148,7 @@ fun PermissionGate(
             )
             if (optional) {
                 Text(
-                    text = "This tool works without it. You will get " +
-                        "less detail, not less function.",
+                    text = "Optional — the tool still works without it.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

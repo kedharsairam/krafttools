@@ -168,14 +168,18 @@ fun EmfScreen(onBack: () -> Unit) {
     // the only interesting value on this screen.
     val band = remember(base) { EmfScale() }
 
+        // One rounding rule for the header and for what the trace
+        // announces, so the two can never disagree.
+        val shownText = if (base == null) {
+            "%.1f".format(Locale.ROOT, total.toDouble())
+        } else {
+            "%+.1f".format(Locale.ROOT, dev.toDouble())
+        }
+
         ToolColumn(padding) {
             Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
-                value = if (base == null) {
-                    "%.1f".format(Locale.ROOT, total.toDouble())
-                } else {
-                    "%+.1f".format(Locale.ROOT, dev.toDouble())
-                },
+                value = shownText,
                 unit = "µT",
                 // The alarm is the most important state on this screen,
                 // so it gets the *loudest* colour, not the quiet one.
@@ -191,6 +195,8 @@ fun EmfScreen(onBack: () -> Unit) {
             // ambient is invisible without one.
             TraceGraph(
                 values = series,
+                label = "EMF trace",
+                spokenValue = "$shownText µT",
                 max = band.ceiling(series),
                 min = band.floor(series),
                 peak = series.maxOrNull() ?: 0f,
@@ -285,9 +291,7 @@ fun EmfScreen(onBack: () -> Unit) {
 
             ToolHint(
                 if (base == null) {
-                    "Hold the phone away from metal and tap Set baseline. " +
-                        "Everything is then reported as a change from there, " +
-                        "so it reads the same wherever you are."
+                    "Tap Set baseline away from metal."
                 } else {
                     emfCapabilityNote() +
                         " Watch the trace: bring something close and the " +

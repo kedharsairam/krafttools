@@ -139,15 +139,19 @@ fun LuxScreen(onBack: () -> Unit) {
         val band = luxBand(shown)
         val ev = evAt(shown)
         val series = window.toList()
+        // One rounding rule, used by the header and by the trace's
+        // spoken value. Two copies of it is how a screen ends up
+        // announcing one number above a different one.
+        val shownText = if (shown >= 100f) {
+            "%.0f".format(Locale.ROOT, shown.toDouble())
+        } else {
+            "%.1f".format(Locale.ROOT, shown.toDouble())
+        }
 
         ToolColumn(padding) {
             Spacer(modifier = Modifier.height(4.dp))
             ReadingHeader(
-                value = if (shown >= 100f) {
-                    "%.0f".format(Locale.ROOT, shown.toDouble())
-                } else {
-                    "%.1f".format(Locale.ROOT, shown.toDouble())
-                },
+                value = shownText,
                 unit = "lx",
                 status = band.label,
                 live = heldLux == null,
@@ -164,6 +168,8 @@ fun LuxScreen(onBack: () -> Unit) {
             // marked. On a linear axis 17.7 lx sat at 13% of the panel.
             TraceGraph(
                 values = series,
+                label = "Light trace",
+                spokenValue = "$shownText lx",
                 min = 0.1f,
                 max = 100000f,
                 peak = peak.value,

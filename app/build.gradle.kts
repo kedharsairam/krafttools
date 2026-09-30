@@ -86,8 +86,36 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test:runner:1.7.0")
     androidTestImplementation("androidx.test:rules:1.7.0")
+    androidTestImplementation("androidx.test:core:1.7.0")
+    // Espresso arrives transitively through ui-test-junit4, and merely
+    // removing the direct dependency is not enough: Compose picks its
+    // synchronisation by asking whether Espresso is *on the classpath*,
+    // so the transitive copy is enough to keep selecting it.
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Espresso has to be here: AndroidJUnitRunner's test loader resolves
+    // androidx.test.espresso.IdlingResource while reading the test
+    // class, and without it the suite dies at NoClassDefFoundError
+    // before a single test runs.
+    //
+    // It is also the source of every timeout this suite had, because
+    // Compose selects its Espresso-backed synchronisation by asking
+    // whether Espresso is on the classpath, and Espresso's definition of
+    // an idle app includes "no Choreographer frame is pending". A
+    // gesture asks for frames; a stopped Compose clock never delivers
+    // one; the wait for idle therefore never ends:
+    //
+    //   MAIN_LOOPER_HAS_IDLED(last message: { callback=android.view.Choreogr... })
+    //
+    // Sixty seconds of spinning, per action. So the clock is stopped for
+    // reading, which is what needs it, and running again for the one
+    // thing that cannot work without frames — see ToolUiTest.reveal.
+    //
+    // Note also that the transitive copy is 3.5.0, which is broken on
+    // this device regardless: it calls the hidden
+    // InputManager.getInstance and dies with NoSuchMethodException.
+    // Pinning the current version is what keeps it working at all.
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 
     testImplementation("junit:junit:4.13.2")

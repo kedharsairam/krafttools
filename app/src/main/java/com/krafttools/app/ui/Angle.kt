@@ -197,9 +197,7 @@ fun AngleScreen(onBack: () -> Unit) {
             }
 
             ToolHint(
-                "Phone-grade MEMS, about 0.5° of noise before filtering. " +
-                    "Good for setting a miter or a shelf; not inspection " +
-                    "grade. The needle points the way gravity pulls.",
+                "Phone-grade sensor. Good for a miter, not for inspection.",
             )
         }
     }

@@ -99,8 +99,7 @@ fun WifiScreen(onBack: () -> Unit) {
         // either one is enough for a scan or a position fix.
         alsoAccepts = android.Manifest.permission.ACCESS_COARSE_LOCATION,
         tool = "WiFi analyzer",
-        reason = "Android only gives WiFi scan results to apps with " +
-            "location. Names are shown, never stored.",
+        reason = "To list nearby networks.",
         onBack = onBack,
     ) {
         WifiBody(onBack)

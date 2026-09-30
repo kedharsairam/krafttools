@@ -174,6 +174,8 @@ fun niceCeiling(v: Float): Float {
 @Composable
 fun TraceGraph(
     values: List<Float>,
+    label: String,
+    spokenValue: String,
     modifier: Modifier = Modifier,
     max: Float? = null,
     min: Float? = null,
@@ -190,7 +192,20 @@ fun TraceGraph(
         fontSize = 10.sp,
         fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
     )
-    Canvas(modifier = modifier) {
+    // A Canvas carries no content by construction, so a screen reader
+    // has nothing to announce for one. Ten of the fourteen tools draw
+    // their own instrument and name it; these four draw a trace, and
+    // on all four the trace IS the instrument, so they said nothing at
+    // all. Naming it here rather than at each call site is also why
+    // `label` and `spokenValue` are required: a default would let a
+    // fifth caller ship unnamed, which is exactly how the first four
+    // did.
+    Canvas(
+        modifier = modifier.instrumentSemantics(
+            label = label,
+            value = spokenValue,
+        ),
+    ) {
         // A non-zero floor is legitimate: a barometer's signal is a
         // small variation high up the range, and a zero-based axis
         // draws it as a flat line against the top edge.

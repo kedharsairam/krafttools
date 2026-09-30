@@ -60,17 +60,38 @@ class SourceLintTest {
                 // first version of this lint looked only at the rest of
                 // the current line and reported a false positive on
                 // every multi-line format in the app.
+                // Start on this line just after the call's opening
+                // bracket, then walk forward a line at a time until the
+                // bracket closes.
+                //
+                // The version before this seeded the walk with
+                // `at + ".format(".length` and then used that number to
+                // index *lines*. `at` is a character offset, so on a
+                // file of any length it lands on some unrelated line
+                // near the top, that line supplies a closing bracket,
+                // and the "call" the lint inspects is one line that
+                // never contained a locale. It passed 76 call sites by
+                // accident and failed on the first multi-line call it
+                // met — a correct `Locale.ROOT` in Vibration.kt, which
+                // is what finally made it visible.
                 var depth = 1
-                var j = at + ".format(".length - 1
+                val start = (at + ".format(".length)
+                    .coerceIn(0, line.length)
+                val scanned = StringBuilder(line.substring(start))
+                for (c in line.substring(start)) {
+                    if (c == '(') depth++
+                    if (c == ')') depth--
+                }
+                var j = i + 1
                 while (j < src.size && depth > 0) {
+                    scanned.append(' ').append(src[j])
                     for (c in src[j]) {
                         if (c == '(') depth++
                         if (c == ')') depth--
                     }
                     j++
                 }
-                val call = src.subList(i, maxOf(i + 1, minOf(j, src.size)))
-                    .joinToString(" ")
+                val call = scanned.toString()
                 if (!call.contains("Locale.")) {
                     offenders += "${file.name}:${i + 1}"
                 }
