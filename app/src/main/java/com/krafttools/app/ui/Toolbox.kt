@@ -113,10 +113,20 @@ private val TOOLS = listOf(
     Tool("pressure", "Barometer", Icons.Filled.Air),
 )
 
+/** The About screen's route. A destination, but not an instrument. */
+private const val ABOUT_ROUTE = "about"
+
 @Composable
 fun ToolboxNav(startRoute: String? = null) {
     val nav = rememberNavController()
-    val valid = TOOLS.map { it.route }.toSet()
+    // Every destination, not just the instruments. "about" is a real
+    // route with its own composable, and leaving it out of this list
+    // meant a deep link to it silently fell back to the grid — which is
+    // how a screen that exists and works can still be unreachable by
+    // the one route that names it. The list was written when every
+    // destination was a tool, and adding a non-tool destination is
+    // exactly the case it never accounted for.
+    val valid = TOOLS.map { it.route }.toSet() + ABOUT_ROUTE
     val start = if (startRoute in valid) startRoute!! else "grid"
     NavHost(
         navController = nav,
@@ -156,7 +166,7 @@ fun ToolboxNav(startRoute: String? = null) {
             // flag on every tap before navigating. The flag is gone.
             ToolGrid(
                 onOpen = { route -> nav.navigate(route) },
-                onAbout = { nav.navigate("about") },
+                onAbout = { nav.navigate(ABOUT_ROUTE) },
             )
         }
         composable("level") { LevelScreen(onBack = { nav.popBackStack() }) }
@@ -179,7 +189,9 @@ fun ToolboxNav(startRoute: String? = null) {
         composable("pressure") {
             BarometerScreen(onBack = { nav.popBackStack() })
         }
-        composable("about") { AboutScreen(onBack = { nav.popBackStack() }) }
+        composable(ABOUT_ROUTE) {
+            AboutScreen(onBack = { nav.popBackStack() })
+        }
     }
 }
 
