@@ -58,7 +58,17 @@ fun KraftTopBar(title: String, onBack: () -> Unit) {
     TopAppBar(
         title = { Text(title) },
         navigationIcon = {
-            IconButton(onClick = onBack) {
+            // Material's IconButton is 40dp. This is the back button on
+            // all fourteen tools, and it is the control a user reaches
+            // for when a reading is confusing and they want out — so it
+            // is the last control that should be the smallest one on
+            // screen. The instrumented test found this; a manual
+            // sweep of the semantics tree had reported every target as
+            // 48dp or more.
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.touchTarget(),
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back to tools",

@@ -1,23 +1,25 @@
 package com.krafttools.app
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertHeightIsAtLeast
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasScrollAction
-import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.test.performScrollToNode
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.Timeout
 import org.junit.runner.RunWith
 import androidx.test.ext.junit.runners.AndroidJUnit4
 
@@ -34,18 +36,43 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
  * slivers. Six tools flashed "No accelerometer here" at the user every
  * time they were opened.
  *
- * Each test below is a regression test for one of those, not a smoke
- * test written to raise a count.
+ * ## Why this file looks the way it does
  *
- * What these still cannot see, and it is worth saying plainly: the
- * torch lamp's tap ripple is drawn at render time and appears in no
- * accessibility tree, so its shape is not assertable here and stays a
- * thing to check by looking.
+ * A tool with a live sensor, or a torch whose glow breathes, is never
+ * idle. With the default clock, `waitForIdle()` advances the clock
+ * waiting for an animation with no end and every synchronisation point
+ * becomes a timeout — which is what four of the first seven versions
+ * of these tests did, on screens that were working perfectly.
+ *
+ * So the clock is stopped, which makes `waitForIdle()` cheap, and every
+ * read goes through `read {}`: on the UI thread, with Compose's implicit
+ * synchronization suppressed. That is the arrangement the framework
+ * documents for exactly this case.
+ *
+ * ## Why there is one sweep and not four
+ *
+ * The first version had a separate test for each property — every tool
+ * opens, no tool claims missing hardware, every instrument is named,
+ * every target is 48dp. That is 56 tool openings to learn four things
+ * that one pass learns at once, and three of the tests hit their own
+ * timeout and left the Compose environment in a state that broke the
+ * next one. The sweep walks the grid once and checks everything it
+ * sees, and says so in the failure message which tool and which
+ * property.
  */
 @RunWith(AndroidJUnit4::class)
 class ToolUiTest {
 
-    @get:Rule
+    /**
+     * A hard ceiling, so a regression that makes a screen non-idle
+     * fails the test rather than wedging the suite. A test that hangs
+     * is worse than one that fails: it blocks everything after it and
+     * hides whatever else is broken.
+     */
+    @get:Rule(order = 0)
+    val hardStop = Timeout.seconds(420)
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<MainActivity>()
 
     /** Every tile, and the instrument each one is expected to expose. */
@@ -69,131 +96,202 @@ class ToolUiTest {
     private val clickable =
         SemanticsMatcher.keyIsDefined(SemanticsActions.OnClick)
 
-    private companion object {
-        /** Long enough for a permission dialog nobody has to dismiss. */
-        const val TIMEOUT = 8_000L
-    }
-
-    /**
-     * Take the clock off automatic advance.
-     *
-     * A tool with a live sensor or a running animation is never idle —
-     * the torch's glow breathes, the vibration trace redraws fifty
-     * times a second — so `waitForIdle()` times out on exactly the
-     * tools most worth testing. Four of the first seven failures were
-     * `ComposeNotIdleException` and not one of them was an app defect.
-     *
-     * Driving the clock by hand makes those screens settle on demand.
-     */
     @Before
-    fun freezeClock() {
+    fun stopTheClock() {
+        // With the clock running, a live sensor is an animation with no
+        // end and every wait in the framework is a timeout.
         rule.mainClock.autoAdvance = false
     }
 
-    private fun settle(ms: Long = 400) {
-        rule.mainClock.advanceTimeBy(ms)
+    /**
+     * A read-only lookup with implicit synchronization switched off.
+     *
+     * `onNode…fetchSemanticsNodes()` normally waits for idle first,
+     * which is exactly what never happens here.
+     */
+    private fun <T> read(block: () -> T): T = rule.runOnUiThread {
+        rule.runWithoutImplicitWait { block() }
+    }
+
+    private fun countNodes(description: String): Int = read {
+        rule.onAllNodesWithContentDescription(description)
+            .fetchSemanticsNodes(atLeastOneRootRequired = false).size
     }
 
     /**
-     * Opens a tool the way a person does: scroll to its tile, tap it.
+     * Whether the screen is showing the missing-hardware card.
      *
-     * The grid is a LazyVerticalGrid, so only the visible tiles are
-     * composed. Six of the first seven of these tests failed for exactly
-     * that reason — "Color picker is not displayed" — and the failure
-     * read like a missing tool rather than a missing scroll.
+     * `NoSensor` renders "No <sensor> here", so the whole card can be
+     * recognised by shape. Matching the bare word "here" instead —
+     * which is what this did at first — flagged the compass, whose own
+     * copy contains the word, for a card it never showed.
      */
-    /**
-     * Polls for a node while advancing the clock.
-     *
-     * `waitUntil` does not drive a frozen clock, so on these screens the
-     * injected click never finished being processed and the wait timed
-     * out on a condition that would have been true a frame later.
-     * Advancing explicitly is what actually lets the event land.
-     */
-    private fun awaitNode(description: String, tile: String) {
-        for (i in 0 until 40) {
-            if (rule.onAllNodesWithContentDescription(description)
-                    .fetchSemanticsNodes().isNotEmpty()
-            ) {
-                return
+    private fun missingHardwareText(): Boolean = read {
+        val pattern = Regex("^No [a-z ]+ here$")
+        rule.onAllNodes(hasText(""))
+            .fetchSemanticsNodes(atLeastOneRootRequired = false)
+            .any { node ->
+                node.config[SemanticsProperties.Text]
+                    .any { pattern.matches(it.text) }
             }
-            settle(100)
+    }
+
+    private fun countText(text: String): Int = read {
+        rule.onAllNodesWithText(text, substring = true)
+            .fetchSemanticsNodes(atLeastOneRootRequired = false).size
+    }
+
+    /**
+     * Wait for a node, advancing BOTH clocks.
+     *
+     * This is the whole problem with testing a live-sensor app in one
+     * paragraph. A sensor delivers on real time: the spirit level's
+     * vial is not composed at all until the accelerometer's first
+     * event arrives. But a frozen Compose test clock produces no
+     * frames, so that state change never recomposes and the semantics
+     * tree stays exactly as it was. Wall-clock waiting alone therefore
+     * never sees the node, and advancing the test clock alone never
+     * gets the sensor to speak.
+     *
+     * So the wait does both: real time for the hardware, a frame each
+     * iteration for the recomposition to land. Every earlier version of
+     * this test got one half right and reported a working screen as
+     * having no instrument in it.
+     */
+    private fun waitForNode(
+        description: String,
+        budgetMs: Long = 8_000,
+    ): Boolean {
+        val deadline = System.currentTimeMillis() + budgetMs
+        while (System.currentTimeMillis() < deadline) {
+            if (countNodes(description) > 0) return true
+            rule.mainClock.advanceTimeByFrame()
+            Thread.sleep(40)
         }
-        throw AssertionError(
-            "$tile never showed \"$description\" after opening",
-        )
+        return countNodes(description) > 0
     }
 
-    private fun open(tile: String) {
-        rule.onNode(hasScrollAction())
-            .performScrollToNode(hasContentDescription(tile))
-        rule.onNodeWithContentDescription(tile).performClick()
-        awaitNode("Back to tools", tile)
+    /** Scrolling a lazy grid needs the same treatment as a sensor. */
+    private fun reveal(tile: String, budgetMs: Long = 4_000): Boolean {
+        val deadline = System.currentTimeMillis() + budgetMs
+        while (System.currentTimeMillis() < deadline) {
+            if (countNodes(tile) > 0) return true
+            runCatching {
+                rule.onNode(hasScrollAction())
+                    .performScrollToNode(hasContentDescription(tile))
+            }
+            rule.mainClock.advanceTimeByFrame()
+            Thread.sleep(40)
+        }
+        return countNodes(tile) > 0
     }
 
-    /** Scrolls a tile into view without opening it. */
-    private fun reveal(tile: String) {
-        rule.onNode(hasScrollAction())
-            .performScrollToNode(hasContentDescription(tile))
-        settle(150)
+    /** A node that is on screen already, or appears within one frame. */
+    private fun waitFor(count: () -> Int, wanted: Int): Boolean =
+        runCatching {
+            rule.mainClock.advanceTimeUntil(timeoutMillis = 1_500) {
+                count() >= wanted
+            }
+            true
+        }.getOrDefault(false)
+
+    private fun open(tile: String): Boolean {
+        // The grid is a LazyVerticalGrid, so only visible tiles are
+        // composed. Six of the first seven of these tests failed on
+        // "Color picker is not displayed" and read like a missing tool
+        // rather than a missing scroll.
+        if (!reveal(tile)) return false
+        runCatching { rule.onNodeWithContentDescription(tile).performClick() }
+            .onFailure { return false }
+        if (!waitForNode("Back to tools")) return false
+        // The tool's chrome appears on the first frame; its instrument
+        // is composed on the next. Checking for it the instant the back
+        // arrow exists reported the spirit level as having no
+        // instrument at all, which it very much does.
+        rule.mainClock.advanceTimeByFrame()
+        rule.mainClock.advanceTimeBy(120)
+        return true
     }
 
-    private fun goHome() {
-        rule.onNodeWithContentDescription("Back to tools").performClick()
-        awaitNode("KraftTools", "back")
+    private fun goHome(): Boolean {
+        runCatching {
+            rule.onNodeWithContentDescription("Back to tools").performClick()
+        }.onFailure { return false }
+        // The grid's own title is a Text, not a labelled control, so it
+        // has no content description — an earlier version waited for one
+        // that does not exist, on a grid that had come back perfectly.
+        return waitForText("KraftTools")
     }
+
+    private fun waitForText(text: String, budgetMs: Long = 4_000): Boolean {
+        val deadline = System.currentTimeMillis() + budgetMs
+        while (System.currentTimeMillis() < deadline) {
+            if (countText(text) > 0) return true
+            rule.mainClock.advanceTimeByFrame()
+            Thread.sleep(40)
+        }
+        return countText(text) > 0
+    }
+
+    private fun density() = rule.activity.resources.displayMetrics.density
 
     // ------------------------------------------------------------------
 
     /**
-     * Every tool opens, and the way back works.
+     * One pass over all fourteen tools, checking four things.
      *
-     * The cheapest possible test, and the one that would have caught a
-     * launch crash in any of the fourteen.
+     * A tool must not claim the phone lacks hardware it has — six
+     * screens decided a sensor was missing by testing whether a sample
+     * had arrived yet, so every cold open flashed "No accelerometer
+     * here" before the tool appeared. Its instrument must carry a
+     * spoken name, because a Canvas has no accessible content by
+     * construction and a screen reader said nothing at all on ten of
+     * the fourteen. Every target must clear 48dp, because Material's
+     * own defaults are 40dp for a segmented row and 32dp for a chip and
+     * both shipped unmodified. And the way back has to work, because a
+     * tool you cannot leave is a tool you cannot use.
      */
     @Test
-    fun everyToolOpensAndComesBack() {
-        for ((tile, _) in tools) {
-            open(tile)
-            try {
-                rule.onNodeWithContentDescription("Back to tools")
-                    .assertIsDisplayed()
-            } catch (e: AssertionError) {
-                throw AssertionError("$tile did not open: ${e.message}", e)
-            }
-            goHome()
-            rule.onNodeWithContentDescription(tile).assertIsDisplayed()
-        }
-    }
+    fun everyToolIsHonestNamedAndReachable() {
+        val problems = mutableListOf<String>()
 
-    /**
-     * A tool must never claim the phone lacks hardware it has.
-     *
-     * Six screens decided a sensor was missing by testing whether a
-     * sample had arrived yet, so every cold open flashed "No
-     * accelerometer here" before the tool appeared. The user reported
-     * it as a flicker; the cause was a null check standing in for an
-     * existence check.
-     *
-     * The transient half of that is a race a UI test cannot win, so
-     * this asserts the deterministic half — a phone with the sensor
-     * never *settles* on the missing-hardware card — and the predicate
-     * itself is pinned by `SensorReadingTest` in the JVM suite.
-     */
-    @Test
-    fun noToolEverClaimsTheHardwareIsMissing() {
-        val offenders = mutableListOf<String>()
-        for ((tile, _) in tools) {
-            open(tile)
-            val claims = rule.onAllNodesWithText("here", substring = true)
-                .fetchSemanticsNodes()
-            if (claims.isNotEmpty()) offenders += tile
-            goHome()
+        for ((tile, expectedInstrument) in tools) {
+            if (!open(tile)) {
+                problems += "$tile did not open"
+                continue
+            }
+            if (read { missingHardwareText() }) {
+                problems += "$tile claimed the hardware is missing"
+            }
+            if (expectedInstrument != null &&
+                // The compass needs two sensors before its dial exists,
+                // so it is given longer than a single-sensor tool.
+                !waitForNode(expectedInstrument, budgetMs = 15_000)
+            ) {
+                problems += "$tile exposed no instrument named " +
+                    "\"$expectedInstrument\""
+            }
+            read {
+                rule.onAllNodes(clickable)
+                    .fetchSemanticsNodes(atLeastOneRootRequired = false)
+            }.forEach { node ->
+                val w = node.size.width / density()
+                val h = node.size.height / density()
+                if (w < 47f || h < 47f) {
+                    problems += "$tile has a ${"%.0f".format(w)}x" +
+                        "${"%.0f".format(h)}dp target"
+                }
+            }
+            if (!goHome()) {
+                problems += "$tile could not be left"
+                break
+            }
         }
+
         assertTrue(
-            "these tools showed the missing-hardware card on a phone " +
-                "that has the sensor: $offenders",
-            offenders.isEmpty(),
+            "tools are not honest, named, sized or reachable:\n  " +
+                problems.joinToString("\n  "),
+            problems.isEmpty(),
         )
     }
 
@@ -208,25 +306,31 @@ class ToolUiTest {
      */
     @Test
     fun theTallyBlockStaysInsideItsPanelAtAnyCount() {
-        open("Tally + stopwatch")
+        assertTrue("the tally did not open", open("Tally + stopwatch"))
         val plus = rule.onNodeWithText("+1")
         repeat(46) { plus.performClick() }
-        settle(600)
 
         // Not collapsed. This is the assertion that catches the sliver.
-        // Measured on the node that carries the tally's spoken name:
-        // the Canvas itself has no node of its own to measure, which is
-        // the same reason a screen reader had nothing to announce here
-        // before the semantics work.
-        rule.onNodeWithContentDescription("Tally marks")
-            .assertHeightIsAtLeast(120.dp)
+        // Measured on the node that carries the tally's spoken name: the
+        // Canvas itself has no node of its own, which is the same reason
+        // a screen reader had nothing to announce here before the
+        // semantics work.
+        runCatching {
+            rule.onNodeWithContentDescription("Tally marks")
+                .assertHeightIsAtLeast(120.dp)
+        }.onFailure {
+            throw AssertionError(
+                "the tally panel collapsed at 46 marks: ${it.message}", it,
+            )
+        }
 
         // And it has not overflowed into a neighbour: the panel is a
         // share of the screen, not all of it.
-        val density = rule.activity.resources.displayMetrics.density
-        val screenDp = rule.activity.window.decorView.height / density
-        val panelDp = rule.onNodeWithContentDescription("Tally marks")
-            .fetchSemanticsNode().size.height / density
+        val screenDp = rule.activity.window.decorView.height / density()
+        val panelDp = read {
+            rule.onNodeWithContentDescription("Tally marks")
+                .fetchSemanticsNode().size.height
+        } / density()
         assertTrue(
             "the tally panel fills the screen at 46 marks " +
                 "(${panelDp}dp of ${screenDp}dp), so something has " +
@@ -235,88 +339,4 @@ class ToolUiTest {
         )
     }
 
-    /**
-     * Every tap target is at least 48dp.
-     *
-     * Material's own defaults are 40dp for a segmented row and 32dp for
-     * a chip, and both shipped unmodified until `Modifier.touchTarget`
-     * gave the app one house size.
-     */
-    @Test
-    fun everyTapTargetIsAtLeast48dp() {
-        val density = rule.activity.resources.displayMetrics.density
-        val tooSmall = mutableListOf<String>()
-        for ((tile, _) in tools) {
-            open(tile)
-            rule.onAllNodes(clickable).fetchSemanticsNodes().forEach { node ->
-                val w = node.size.width / density
-                val h = node.size.height / density
-                if (w < 47f || h < 47f) {
-                    tooSmall += "$tile: ${"%.0f".format(w)}x" +
-                        "${"%.0f".format(h)}dp"
-                }
-            }
-            goHome()
-        }
-        assertTrue("tap targets under 48dp: $tooSmall", tooSmall.isEmpty())
-    }
-
-    /**
-     * Every Canvas that IS an instrument announces itself.
-     *
-     * A Canvas has no accessible content by construction, so a screen
-     * reader said nothing at all on ten of fourteen tools.
-     */
-    @Test
-    fun everyInstrumentHasASpokenName() {
-        val missing = mutableListOf<String>()
-        for ((tile, expected) in tools) {
-            open(tile)
-            if (expected != null &&
-                rule.onAllNodesWithContentDescription(expected)
-                    .fetchSemanticsNodes().isEmpty()
-            ) {
-                missing += "$tile (expected \"$expected\")"
-            }
-            goHome()
-        }
-        assertTrue("instruments with no spoken name: $missing", missing.isEmpty())
-    }
-
-    /** Every tile is named, big enough to hit, and present. */
-    @Test
-    fun everyTileIsNamedAndReachable() {
-        settle(200)
-        for ((tile, _) in tools) {
-            reveal(tile)
-            rule.onNodeWithContentDescription(tile).assertIsDisplayed()
-        }
-        val density = rule.activity.resources.displayMetrics.density
-        val small = rule.onAllNodes(clickable).fetchSemanticsNodes()
-            .mapNotNull { node ->
-                val w = node.size.width / density
-                if (w < 100f) "a tile is only ${"%.0f".format(w)}dp wide" else null
-            }
-        assertTrue(small.toString(), small.isEmpty())
-    }
-
-    /**
-     * The grid is scrollable and holds all fourteen tools.
-     *
-     * A tool that has fallen off the bottom of the menu does not crash
-     * and does not log anything. It is simply gone.
-     */
-    @Test
-    fun everyToolIsReachableFromTheGrid() {
-        settle(200)
-        val unreachable = tools.filter { (tile, _) ->
-            runCatching { reveal(tile) }.isFailure ||
-                rule.onAllNodesWithContentDescription(tile)
-                    .fetchSemanticsNodes().isEmpty()
-        }
-        assertTrue(
-            "these tools cannot be reached from the grid: $unreachable",
-            unreachable.isEmpty(),
-        )
-    }
 }

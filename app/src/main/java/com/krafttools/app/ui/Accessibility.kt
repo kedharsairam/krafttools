@@ -1,6 +1,6 @@
 package com.krafttools.app.ui
 
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -74,6 +74,15 @@ val MinTouchTarget = 48.dp
  * that Android's accessibility guidance asks for and awkward to hit
  * one-handed. Applied consistently so the whole app has one target
  * size rather than three.
+ *
+ * BOTH dimensions, and that is not a detail. This was
+ * `heightIn(min = 48.dp)` for most of its life, which quietly fixed the
+ * height of a square control and left the width at Material's 40dp —
+ * so the shared back button measured 40 x 48 and the instrumented
+ * sweep reported it on every one of the fourteen tools. A modifier
+ * named `touchTarget` that only constrains one axis is a lie in a
+ * smaller way than the bug it was meant to prevent.
  */
 @Composable
-fun Modifier.touchTarget(): Modifier = heightIn(min = MinTouchTarget)
+fun Modifier.touchTarget(): Modifier =
+    sizeIn(minWidth = MinTouchTarget, minHeight = MinTouchTarget)
